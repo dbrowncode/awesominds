@@ -12,17 +12,34 @@
     </style>
 </head>
 <body>
-	<ul></ul>
+
 <script type="text/javascript">
 	$(document).ready(function(){
 		$.getJSON('test.php', function(data){
+		document.write('<form action = "#" id="questions">')
 			$.each(data, function(key,val){
-					$('ul').append('<li id="' + key + '">' + val + '</li>');
+					
+					if(key == "question"){
+						document.write(val + '<br>');
+					}else{
+						document.write('<input type="radio" name="question" value='+key+'>'+val+'<br>');
+					}
 			});
-			
 		});
+		/*
+		I had an idea, but it's going nowhere fast.  Should probably log the answer in php and check against that?
+		document.write('<input type="submit" value="Submit">'); 
+		document.write("</form>")	;
+		
+		var answer = document.getElementById("questions").value;
+		if(answer == "answer"){
+			document.write("You answered Correctly");
+		}else{
+			document.write("You answered Correctly");
+		}
+		*/
 	});
-
+	
 </script>
 
 </body>
