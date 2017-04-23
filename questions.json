@@ -1,0 +1,33 @@
+{ "all":[
+    {
+  		"question":"What is the chemical symbol for the element oxygen?",
+  		"choices":[
+  			"ox2",
+  			"O",
+  			"X",
+  			"G"
+  		],
+  		"answer":1
+    },
+    {
+			"question":"What comes after a million, billion and trillion?",
+			"choices":[
+				"Quatrillion",
+				"Quadrillion",
+				"Fourtrillion",
+				"Fourthrillion"
+			],
+			"answer":1
+		},
+    {
+			"question":"How many options does a binary choice offer?",
+			"choices":[
+				"One",
+				"Two",
+				"Three",
+				"None"
+			],
+			"answer":1
+		}
+  ]
+}
