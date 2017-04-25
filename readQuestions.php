@@ -1,10 +1,7 @@
 <?php
-	// grab filename from get request.
-	// ?argument1=yadayada
-	//$filename = $_GET['argument1'];
-    //$filename .='.doc';
+	//TODO: Open connection to DB.
+	//$target_file determined by upload script.
  	$filename = $target_file;
-	
 	//create temporary file for use
 	$temp_file = tempnam(sys_get_temp_dir(), 'qs');
 	//grab the doc file and convert it to .txt
@@ -74,8 +71,19 @@
 			//to match letter use
 			$questionBank["answer$index"] = $answer;
 			$index+=1;
+			//TODO database tom foolery
+			//insert statements to questiontable.
+			//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, week(chapter)) VALUES(?,?)");
+			//$stmt->bind_param("data_types",$insertQuestion, $insertWeek);
+			//$insertQuestion = json_encode($questionBank);
+			//$insertWeek = "";
+			//$stmt->execute();
+			
 		}
 	}
+	//close db connection and stmt
+	//$stmt->close();
+	//$conn->close();
 	//close file
 	fclose($questionFile);
 	
