@@ -3,9 +3,12 @@
 	// ?argument1=yadayada
 	//$filename = $_GET['argument1'];
     //$filename .='.doc';
- 	$filename = "gerrig_2ce_tif_sec_ch01.doc";
+ 	$filename = $target_file;
+	
+	//create temporary file for use
+	$temp_file = tempnam(sys_get_temp_dir(), 'qs');
 	//grab the doc file and convert it to .txt
-	function read_doc($file) {
+	function read_doc($file, $tmp) {
 		//open file
 		$fileHandle = fopen($file, "r");
 		//store whole contents on a single line.
@@ -13,29 +16,32 @@
 		//create array of strings based on null character for delimiter and $line string
 		$lines = explode(chr(0x0D),$line);
 		$outtext = "";
-		foreach($lines as $thisline)
-		  {
+		foreach($lines as $thisline){
 			//find the position of the null characters in the string
 			$pos = strpos($thisline, chr(0x00));
 			//if not null character or string is empty continue
 			if (($pos !== FALSE)||(strlen($thisline)==0)){
-			  } 
-			  //otherwise add newline to string
-			  else {
+			} 
+			//otherwise add newline to string
+			else{
 				$outtext .= $thisline."\n";
-			  }
-		  }
-		//matche all characters and add to new string 
+			}
+		}
+		fclose($fileHandle); 		
 		//create name for new .txt file and write the newly created string to it.
+		$tempFile = fopen($tmp,"r+");
+		//matche all characters and add to new string 
 		$outtext = preg_replace("/[^a-zA-Z0-9\s\,\.\-\n\r\t@\/\_\(\)]/","",$outtext);
-		$newfile = "questionFile.txt";
-		file_put_contents($newfile, $outtext);
-		return $newfile;
+		fputs($tempFile, $outtext);
+		//$newfile = "questionFile.txt";
+		//file_put_contents($newfile, $outtext);
+		rewind($tempFile);
+		return $tempFile;
 	}
-	$scrapeQuestions = read_doc($filename); 
+	$scrapeQuestions = read_doc($filename, $temp_file); 
 	$index = 1;
 	$questionBank = array();
-	$questionFile = fopen($scrapeQuestions, "r") or die("file not found");
+	$questionFile = fopen($temp_file, "r") or die("file not found");
 	//iterate over question document, check if it is a question or an answer. add to appropriate array.
 	$newQuestion = array($index => '');		
 	while(!feof($questionFile)){	
@@ -45,8 +51,6 @@
 			$question = substr($line,3);
 			$question = trim($question, ' \0\t\n\x0b\r');
 			$questionBank["question$index"] = $question;
-			
-		
 		}
 		//check if it's a possible answer operates under the assumption a b c and d are the only choices.
 		//can probably spruce this up a little nicer. cascading switch statement maybe?
@@ -63,18 +67,21 @@
 			//php seems to require this before it recognizes A as A.
 			$a = ord($answer);
 			$a = chr($a);
-
 			$questionBank["question$index"] = $question;
 			$questionBank["choices$index"] = $choices;
 			//to match text string use
-			$questionBank["answer$index"] = $choices[$a];
+			//$questionBank["answer$index"] = $choices[$a];
 			//to match letter use
-			//$questionBank["answer$index"] = $answer;
+			$questionBank["answer$index"] = $answer;
 			$index+=1;
-			//echo $a;
-			//echo '<br>';
 		}
 	}
+	//close file
+	fclose($questionFile);
+	
+	//currently don't have permissions on windows box, may change with linux.
+	//unlink($temp_file);
+	unlink($target_file);
 	//don't currently have permissions to delete the file after we're done with it. This can be remedied with linux user permissions.
 	//unlink($scrapeQuestions);
 	//var_dump($questionBank);
