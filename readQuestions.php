@@ -73,12 +73,20 @@
 			$index+=1;
 			//TODO database tom foolery
 			//insert statements to questiontable.
+			
+			//bound params
 			//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, week(chapter)) VALUES(?,?)");
 			//$stmt->bind_param("data_types",$insertQuestion, $insertWeek);
+			
+			//PDO
+			//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, week(chapter))
+			//VALUES (:question, :week)");
+			//$stmt->bind_param(':question', $insertQuestion);
+			//$stmt->bind_param(':week', $insertWeek);
+	
 			//$insertQuestion = json_encode($questionBank);
 			//$insertWeek = "";
 			//$stmt->execute();
-			
 		}
 	}
 	//close db connection and stmt
