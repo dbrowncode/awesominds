@@ -6,19 +6,27 @@
  	$filename = "gerrig_2ce_tif_sec_ch01.doc";
 	//grab the doc file and convert it to .txt
 	function read_doc($file) {
+		//open file
 		$fileHandle = fopen($file, "r");
+		//store whole contents on a single line.
 		$line = @fread($fileHandle, filesize($file));   
+		//create array of strings based on null character for delimiter and $line string
 		$lines = explode(chr(0x0D),$line);
 		$outtext = "";
 		foreach($lines as $thisline)
 		  {
+			//find the position of the null characters in the string
 			$pos = strpos($thisline, chr(0x00));
-			if (($pos !== FALSE)||(strlen($thisline)==0))
-			  {
-			  } else {
+			//if not null character or string is empty continue
+			if (($pos !== FALSE)||(strlen($thisline)==0)){
+			  } 
+			  //otherwise add newline to string
+			  else {
 				$outtext .= $thisline."\n";
 			  }
 		  }
+		//matche all characters and add to new string 
+		//create name for new .txt file and write the newly created string to it.
 		$outtext = preg_replace("/[^a-zA-Z0-9\s\,\.\-\n\r\t@\/\_\(\)]/","",$outtext);
 		$newfile = "questionFile.txt";
 		file_put_contents($newfile, $outtext);
@@ -27,7 +35,7 @@
 	$scrapeQuestions = read_doc($filename); 
 	$index = 1;
 	$questionBank = array();
-	$questionFile = fopen("questionFile.txt", "r") or die("file not found");
+	$questionFile = fopen($scrapeQuestions, "r") or die("file not found");
 	//iterate over question document, check if it is a question or an answer. add to appropriate array.
 	$newQuestion = array($index => '');		
 	while(!feof($questionFile)){	
