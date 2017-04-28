@@ -98,7 +98,8 @@
 				
 				//PDO prefer to use this
 				$insertQuestion = json_encode($questionBank);
-				$stmt = $dbcon->prepare("INSERT INTO question (question, chapter, courseid) VALUES (:question, :chapter :courseid)");
+				$stmt = $dbcon->prepare("INSERT INTO question (questionid, question, chapter, courseid) VALUES (:questionid, :question, :chapter :courseid)");
+				$stmt->bindParam(':questionid', null);
 				$stmt->bindParam(':question', $insertQuestion);
 				$stmt->bindParam(':chapter', $insertChapter);
 				$stmt->bindParam(':courseid', $courseid);
@@ -109,7 +110,7 @@
 		$conn=null;
 		//close file
 		fclose($questionFile);
-		echo $index . "questions uploaded for " . $insertChapter . "on course: " . $courseid;
+		echo $index . "questions uploaded for chapter " . $insertChapter . " on course: " . $courseid;
 		//this is only for debug purposes, uncomment PDO statements when ready.
 		//$qbjson = json_encode($questionBank);
 		//echo $qbjson;
