@@ -52,8 +52,7 @@
 		$questionBank = array();
 		$index = 0;		
 		$questionFile = fopen($temp_file, "r") or die("file not found");
-		//iterate over question document, check if it is a question or an answer. add to appropriate array.
-		$newQuestion = array($index => '');		
+		//iterate over question document, check if it is a question or an answer. add to appropriate array.	
 		while(!feof($questionFile)){	
 			$line = fgets($questionFile);
 
@@ -99,19 +98,23 @@
 				//PDO prefer to use this
 				$insertQuestion = json_encode($questionBank);
 				$stmt = $dbcon->prepare("INSERT INTO question (question, chapter, courseid) VALUES (:question, :chapter :courseid)");
-				//$dbcon->bindParam(':question', $insertQuestion);
-				//$dbcon->bindParam(':chapter', $insertChapter);
-				//$dbcon->bindParam(':courseid', $courseid);
-				$stmt->execute(['question' => $insertQuestion, 'chapter' => $insertChaper, 'courseid' => $courseid]);
-				echo $insertQuestion;
-				echo '<br>';
+				$stmt->bindParam(':question', $insertQuestion);
+				$stmt->bindParam(':chapter', $insertChapter);
+				$stmt->bindParam(':courseid', $courseid);
+				if($stmt->execute()){
+					echo 'inserted';
+				}else{
+					echo $e->getMessage();
+				}
+				//echo $insertQuestion;
+				//echo '<br>';
 			}
 		}
 		//close db connection
 		$conn=null;
 		//close file
 		fclose($questionFile);
-		echo $index . "questions uploaded for chapter " . $insertChapter . " on course: " . $courseid;
+		echo $index . " questions uploaded for chapter " . $insertChapter . " on course: " . $courseid;
 		//this is only for debug purposes, uncomment PDO statements when ready.
 		//$qbjson = json_encode($questionBank);
 		//echo $qbjson;
