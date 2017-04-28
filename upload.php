@@ -37,7 +37,7 @@ if ($uploadOk == 0) {
 	//on succesful upload call appropriate functions
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
 		read_doc($filename, $temp_file);
-		tmpToDb($temp_file);
+		tmpToDb($temp_file,$dbcon);
 	} else {
 		//this will print the file to be uploaded array
 		//for debug purposes, TODO remove once finished debugging.
