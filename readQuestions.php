@@ -106,7 +106,7 @@
 			}
 		}
 		//close db connection and stmt
-		$stmt->close();
+		//$stmt->close();
 		$conn->close();
 		//close file
 		fclose($questionFile);
