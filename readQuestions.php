@@ -103,8 +103,6 @@
 				$stmt->bindParam(':courseid', $courseid);
 				if($stmt->execute()){
 					echo 'inserted';
-				}else{
-					echo $e->getMessage();
 				}
 				//echo $insertQuestion;
 				//echo '<br>';
