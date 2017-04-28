@@ -50,7 +50,7 @@
 	function tmpToDB($temp_file, $dbcon){
 		$courseid = 150;
 		$questionBank = array();
-		$index = 1;		
+		$index = 0;		
 		$questionFile = fopen($temp_file, "r") or die("file not found");
 		//iterate over question document, check if it is a question or an answer. add to appropriate array.
 		$newQuestion = array($index => '');		
@@ -67,7 +67,7 @@
 			if(is_numeric(substr($line,0,1))){
 				$question = substr($line,3);
 				$question = trim($question, ' \0\t\n\x0b\r');
-				$questionBank["question$index"] = $question;
+				$questionBank["question"] = $question;
 			}
 			//check if it's a possible answer operates under the assumption a b c and d are the only choices.
 			//can probably spruce this up a little nicer. cascading switch statement maybe?
@@ -75,7 +75,7 @@
 				$choice = strtoupper(substr($line,0,1));
 				$choice = trim($choice, ' \0\t\n\x0b\r');
 				$choices[$choice] = substr($line,3);
-				$questionBank["choices$index"] = $choices;			
+				$questionBank["choices"] = $choices;			
 			}
 			//assign questions, choices and answers to question bank.
 			if(strtoupper(substr($line,0,6)) == "ANSWER"){
