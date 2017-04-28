@@ -1,5 +1,6 @@
 <?php
 	//TODO: Open connection to DB.
+	Require('../../conn.php');
 	//$target_file determined by upload script.
  	$filename = $target_file;
 	//create temporary file for use
@@ -32,6 +33,7 @@
 		fputs($tempFile, $outtext);
 		//$newfile = "questionFile.txt";
 		//file_put_contents($newfile, $outtext);
+		unlink($file);
 		rewind($tempFile);
 		return $tempFile;
 	}
@@ -44,6 +46,11 @@
 	while(!feof($questionFile)){	
 		$line = fgets($questionFile);
 		//check if it's a question
+		if(strpos($line,"Chapter ")!==FALSE){
+			$lineArray =  explode(" ", $line);
+			$insertChapter = $lineArray[1];
+
+		}
 		if(is_numeric(substr($line,0,1))){
 			$question = substr($line,3);
 			$question = trim($question, ' \0\t\n\x0b\r');
@@ -75,17 +82,17 @@
 			//insert statements to questiontable.
 			
 			//bound params
-			//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, week(chapter)) VALUES(?,?)");
-			//$stmt->bind_param("data_types",$insertQuestion, $insertWeek);
+			//$stmt = $dbcon->prepare("INSERT INTO db.table (question, chapter, courseid)) VALUES(?,?)");
+			//$stmt->bind_param("data_types",$insertQuestion, $insertChaper);
 			
 			//PDO
-			//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, week(chapter))
+			//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, chapter, courseid))
 			//VALUES (:question, :week)");
 			//$stmt->bind_param(':question', $insertQuestion);
-			//$stmt->bind_param(':week', $insertWeek);
+			//$stmt->bind_param(':week', $insertChapter);
 	
 			//$insertQuestion = json_encode($questionBank);
-			//$insertWeek = "";
+			
 			//$stmt->execute();
 		}
 	}
@@ -97,7 +104,7 @@
 	
 	//currently don't have permissions on windows box, may change with linux.
 	//unlink($temp_file);
-	unlink($target_file);
+	//unlink($target_file);
 	//don't currently have permissions to delete the file after we're done with it. This can be remedied with linux user permissions.
 	//unlink($scrapeQuestions);
 	//var_dump($questionBank);
