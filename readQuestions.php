@@ -48,6 +48,7 @@
 	//loads into JSON then stores in db
 	//parameters: file to be parsed <might want to add courseid too, dpeneding on how that's being entered>
 	function tmpToDB($temp_file){
+		$courseid = 150;
 		$questionBank = array();
 		$index = 1;		
 		$questionFile = fopen($temp_file, "r") or die("file not found");
@@ -100,7 +101,7 @@
 				$stmt = $dbcon->prepare("INSERT INTO db.table (question, chapter, courseid) VALUES (:question, :week :courseid)");
 				$stmt->bind_param(':question', $insertQuestion);
 				$stmt->bind_param(':week', $insertChapter);
-				$stmt->bind_param(':courseid', 150);
+				$stmt->bind_param(':courseid', $courseid);
 				$stmt->execute();
 			}
 		}
@@ -109,6 +110,7 @@
 		$conn->close();
 		//close file
 		fclose($questionFile);
+		echo $index . "questions uploaded for " . $insertChapter . "on course: " . $courseid;
 		//this is only for debug purposes, uncomment PDO statements when ready.
 		//$qbjson = json_encode($questionBank);
 		//echo $qbjson;
