@@ -103,6 +103,9 @@
 				$stmt->bindParam(':courseid', $courseid);
 				if($stmt->execute()){
 					echo 'inserted';
+				}else{
+					echo "\nPDOStatement::errorInfo(): <br>";
+					echo 'error <br>';				
 				}
 				//echo $insertQuestion;
 				//echo '<br>';
