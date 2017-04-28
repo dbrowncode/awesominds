@@ -47,7 +47,7 @@
 	//takes the tmp file and parses through it line by line looking for key words
 	//loads into JSON then stores in db
 	//parameters: file to be parsed <might want to add courseid too, dpeneding on how that's being entered>
-	function tmpToDB($temp_file){
+	function tmpToDB($temp_file, $dbcon){
 		$courseid = 150;
 		$questionBank = array();
 		$index = 1;		
