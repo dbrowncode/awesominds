@@ -104,8 +104,9 @@
 				if($stmt->execute()){
 					echo 'inserted';
 				}else{
-					echo "\nPDOStatement::errorInfo(): <br>";
-					echo 'error <br>';				
+					echo 'error <br>';
+					$arr = $stmt->errorInfo();
+					print_r($arr);
 				}
 				//echo $insertQuestion;
 				//echo '<br>';
