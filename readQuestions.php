@@ -105,9 +105,8 @@
 				$stmt->execute();
 			}
 		}
-		//close db connection and stmt
-		//$stmt->close();
-		$conn->close();
+		//close db connection
+		$conn=null;
 		//close file
 		fclose($questionFile);
 		echo $index . "questions uploaded for " . $insertChapter . "on course: " . $courseid;
