@@ -103,6 +103,8 @@
 				$stmt->bindParam(':chapter', $insertChapter);
 				$stmt->bindParam(':courseid', $courseid);
 				$stmt->execute();
+				echo $insertQuestion;
+				echo '<br>';
 			}
 		}
 		//close db connection
