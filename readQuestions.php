@@ -98,8 +98,7 @@
 				
 				//PDO prefer to use this
 				$insertQuestion = json_encode($questionBank);
-				$stmt = $dbcon->prepare("INSERT INTO question (questionid, question, chapter, courseid) VALUES (:questionid, :question, :chapter :courseid)");
-				$stmt->bindParam(':questionid', null);
+				$stmt = $dbcon->prepare("INSERT INTO awomeinds.question (question, chapter, courseid) VALUES (:question, :chapter :courseid)");
 				$stmt->bindParam(':question', $insertQuestion);
 				$stmt->bindParam(':chapter', $insertChapter);
 				$stmt->bindParam(':courseid', $courseid);
