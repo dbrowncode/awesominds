@@ -3,6 +3,7 @@ $target_dir = "";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
 $FileType = pathinfo($target_file,PATHINFO_EXTENSION);
+include 'readQuestions.php';
 // Check if file is a file
 if(isset($_POST["submit"])) {
     $check = filesize($_FILES["fileToUpload"]["tmp_name"]);
@@ -15,23 +16,17 @@ if(isset($_POST["submit"])) {
 }
 
 // Check if file already exists
-// TODO delete file immediately after use is finished
-// LATER TODO load file into input stream so no file is saved on disk to begin with.
-
+//can combine many of these checks to minimze code.
 if (file_exists($target_file)) {
     echo "Sorry, file already exists.";
     $uploadOk = 0;
 }
-// Check file size
-// not worrying about that for now.
-//if ($_FILES["fileToUpload"]["size"] > 500000) {
-//   echo "Sorry, your file is too large.";
-//   $uploadOk = 0;
-//}
+
 // Allow certain file formats
+// Can use this to call different file formats should we go that route
 if($FileType != "doc") {
 	//ungracious exit of php script.
-    die("Sorry, only doc file types at this point.");
+    echo "Sorry, only .doc file types at this point.";
     $uploadOk = 0;
 }
 // Check if $uploadOk is set to 0 by an error
@@ -39,10 +34,14 @@ if ($uploadOk == 0) {
     echo "Sorry, your file was not uploaded.";
 // if everything is ok, try to upload file
 } else {
+	//on succesful upload call appropriate functions
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-    //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
-    include 'readQuestions.php';
+		read_doc($filename, $temp_file);
+		tmpToDb($temp_file);
 	} else {
+		//this will print the file to be uploaded array
+		//for debug purposes, TODO remove once finished debugging.
+		print_r($_FILES);
         echo "Sorry, there was an error uploading your file.";
     }
 }

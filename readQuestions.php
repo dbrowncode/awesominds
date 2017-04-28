@@ -1,17 +1,20 @@
 <?php
 	//TODO: Open connection to DB.
-	Require('../../conn.php');
+	//Require('../../conn.php');
+
 	//$target_file determined by upload script.
- 	$filename = $target_file;
-	//create temporary file for use
+ 	//create temporary file for use
+	$filename = $target_file;
 	$temp_file = tempnam(sys_get_temp_dir(), 'qs');
-	//grab the doc file and convert it to .txt
+	
+	//takes the uploaded doc file and converts it to tmp file
+	//parameters: .doc file to be uploaded, path and name of tmpFile.
 	function read_doc($file, $tmp) {
-		//open file
+		
 		$fileHandle = fopen($file, "r");
-		//store whole contents on a single line.
+		//stores whole contents on a single line.
 		$line = @fread($fileHandle, filesize($file));   
-		//create array of strings based on null character for delimiter and $line string
+		//create array of strings, each index is new line
 		$lines = explode(chr(0x0D),$line);
 		$outtext = "";
 		foreach($lines as $thisline){
@@ -35,80 +38,84 @@
 		//file_put_contents($newfile, $outtext);
 		unlink($file);
 		rewind($tempFile);
-		return $tempFile;
 	}
-	$scrapeQuestions = read_doc($filename, $temp_file); 
-	$index = 1;
-	$questionBank = array();
-	$questionFile = fopen($temp_file, "r") or die("file not found");
-	//iterate over question document, check if it is a question or an answer. add to appropriate array.
-	$newQuestion = array($index => '');		
-	while(!feof($questionFile)){	
-		$line = fgets($questionFile);
-		//check if it's a question
-		if(strpos($line,"Chapter ")!==FALSE){
-			$lineArray =  explode(" ", $line);
-			$insertChapter = $lineArray[1];
+	
+	
+	
+	//could separate this into it's own php file.
+	//probably need to pass db conn as param.
+	//takes the tmp file and parses through it line by line looking for key words
+	//loads into JSON then stores in db
+	//parameters: file to be parsed <might want to add courseid too, dpeneding on how that's being entered>
+	function tmpToDB($temp_file){
+		$questionBank = array();
+		$index = 1;		
+		$questionFile = fopen($temp_file, "r") or die("file not found");
+		//iterate over question document, check if it is a question or an answer. add to appropriate array.
+		$newQuestion = array($index => '');		
+		while(!feof($questionFile)){	
+			$line = fgets($questionFile);
 
-		}
-		if(is_numeric(substr($line,0,1))){
-			$question = substr($line,3);
-			$question = trim($question, ' \0\t\n\x0b\r');
-			$questionBank["question$index"] = $question;
-		}
-		//check if it's a possible answer operates under the assumption a b c and d are the only choices.
-		//can probably spruce this up a little nicer. cascading switch statement maybe?
-		if(strtoupper(substr($line,0,2)) == 'A)' | strtoupper(substr($line,0,2)) == 'B)' | strtoupper(substr($line,0,2)) == 'C)' | strtoupper(substr($line,0,2)) == 'D)'){
-			$choice = strtoupper(substr($line,0,1));
-			$choice = trim($choice, ' \0\t\n\x0b\r');
-			$choices[$choice] = substr($line,3);
-			$questionBank["choices$index"] = $choices;			
-		}
-		//assign questions, choices and answers to question bank.
-		if(strtoupper(substr($line,0,6)) == "ANSWER"){
-			$answer= substr($line,7,8);
-			$answer = trim($answer, ' \0\t\n\x0b\r');
-			//php seems to require this before it recognizes A as A.
-			$a = ord($answer);
-			$a = chr($a);
-			$questionBank["question$index"] = $question;
-			$questionBank["choices$index"] = $choices;
-			//to match text string use
-			//$questionBank["answer$index"] = $choices[$a];
-			//to match letter use
-			$questionBank["answer$index"] = $answer;
-			$index+=1;
-			//TODO database tom foolery
-			//insert statements to questiontable.
+			//find chapter number
+			if(strpos($line,"Chapter ")!==FALSE){
+				$lineArray =  explode(" ", $line);
+				$insertChapter = $lineArray[1];
+			}
 			
-			//bound params
-			//$stmt = $dbcon->prepare("INSERT INTO db.table (question, chapter, courseid)) VALUES(?,?)");
-			//$stmt->bind_param("data_types",$insertQuestion, $insertChaper);
-			
-			//PDO
-			//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, chapter, courseid))
-			//VALUES (:question, :week)");
-			//$stmt->bind_param(':question', $insertQuestion);
-			//$stmt->bind_param(':week', $insertChapter);
-	
-			//$insertQuestion = json_encode($questionBank);
-			
-			//$stmt->execute();
+			//check if it's a question
+			if(is_numeric(substr($line,0,1))){
+				$question = substr($line,3);
+				$question = trim($question, ' \0\t\n\x0b\r');
+				$questionBank["question$index"] = $question;
+			}
+			//check if it's a possible answer operates under the assumption a b c and d are the only choices.
+			//can probably spruce this up a little nicer. cascading switch statement maybe?
+			if(strtoupper(substr($line,0,2)) == 'A)' | strtoupper(substr($line,0,2)) == 'B)' | strtoupper(substr($line,0,2)) == 'C)' | strtoupper(substr($line,0,2)) == 'D)'){
+				$choice = strtoupper(substr($line,0,1));
+				$choice = trim($choice, ' \0\t\n\x0b\r');
+				$choices[$choice] = substr($line,3);
+				$questionBank["choices$index"] = $choices;			
+			}
+			//assign questions, choices and answers to question bank.
+			if(strtoupper(substr($line,0,6)) == "ANSWER"){
+				$answer= substr($line,7,8);
+				$answer = trim($answer, ' \0\t\n\x0b\r');
+				//php seems to require this before it recognizes A as A.
+				$a = ord($answer);
+				$a = chr($a);
+				//remove $index when loading into db.
+				$questionBank["question$index"] = $question;
+				$questionBank["choices$index"] = $choices;
+				$questionBank["answer$index"] = $answer;
+				$index+=1;
+				//TODO database tom foolery
+				//insert statements to questiontable.
+				
+				//bound params
+				//$stmt = $dbcon->prepare("INSERT INTO db.table (question, chapter, courseid)) VALUES(?,?)");
+				//$stmt->bind_param("data_types",$insertQuestion, $insertChaper);
+				
+				//PDO prefer to use this
+				//$insertQuestion = json_encode($questionBank);
+				//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, chapter, courseid))
+				//VALUES (:question, :week)");
+				//$stmt->bind_param(':question', $insertQuestion);
+				//$stmt->bind_param(':week', $insertChapter);
+				//$stmt->bind_param(':courseid', 150);
+				//$stmt->execute();
+			}
 		}
+		//close db connection and stmt
+		//$stmt->close();
+		//$conn->close();
+		//close file
+		fclose($questionFile);
+		//this is only for debug purposes, uncomment PDO statements when ready.
+		$qbjson = json_encode($questionBank);
+		echo $qbjson;
+		//unlink($temp_file);
 	}
-	//close db connection and stmt
-	//$stmt->close();
-	//$conn->close();
-	//close file
-	fclose($questionFile);
-	
-	//currently don't have permissions on windows box, may change with linux.
-	//unlink($temp_file);
-	//unlink($target_file);
-	//don't currently have permissions to delete the file after we're done with it. This can be remedied with linux user permissions.
-	//unlink($scrapeQuestions);
-	//var_dump($questionBank);
-	$qbjson = json_encode($questionBank);
-	echo $qbjson;
+
+
 
 ?>
