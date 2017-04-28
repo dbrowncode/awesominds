@@ -1,6 +1,6 @@
 <?php
 	//TODO: Open connection to DB.
-	//Require('../../conn.php');
+	Require('../../conn.php');
 
 	//$target_file determined by upload script.
  	//create temporary file for use
@@ -84,9 +84,9 @@
 				$a = ord($answer);
 				$a = chr($a);
 				//remove $index when loading into db.
-				$questionBank["question$index"] = $question;
-				$questionBank["choices$index"] = $choices;
-				$questionBank["answer$index"] = $answer;
+				$questionBank["question"] = $question;
+				$questionBank["choices"] = $choices;
+				$questionBank["answer"] = $answer;
 				$index+=1;
 				//TODO database tom foolery
 				//insert statements to questiontable.
@@ -96,23 +96,22 @@
 				//$stmt->bind_param("data_types",$insertQuestion, $insertChaper);
 				
 				//PDO prefer to use this
-				//$insertQuestion = json_encode($questionBank);
-				//$stmt = $dbconnection->prepare("INSERT INTO db.table (question, chapter, courseid))
-				//VALUES (:question, :week)");
-				//$stmt->bind_param(':question', $insertQuestion);
-				//$stmt->bind_param(':week', $insertChapter);
-				//$stmt->bind_param(':courseid', 150);
-				//$stmt->execute();
+				$insertQuestion = json_encode($questionBank);
+				$stmt = $dbcon->prepare("INSERT INTO db.table (question, chapter, courseid) VALUES (:question, :week :courseid)");
+				$stmt->bind_param(':question', $insertQuestion);
+				$stmt->bind_param(':week', $insertChapter);
+				$stmt->bind_param(':courseid', 150);
+				$stmt->execute();
 			}
 		}
 		//close db connection and stmt
-		//$stmt->close();
-		//$conn->close();
+		$stmt->close();
+		$conn->close();
 		//close file
 		fclose($questionFile);
 		//this is only for debug purposes, uncomment PDO statements when ready.
-		$qbjson = json_encode($questionBank);
-		echo $qbjson;
+		//$qbjson = json_encode($questionBank);
+		//echo $qbjson;
 		//unlink($temp_file);
 	}
 
