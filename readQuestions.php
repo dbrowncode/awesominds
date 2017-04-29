@@ -87,7 +87,7 @@
 				$questionBank["question"] = $question;
 				$questionBank["choices"] = $choices;
 				$questionBank["answer"] = $answer;
-				$index+=1;
+			
 				//TODO database tom foolery
 				//insert statements to questiontable.
 				
@@ -102,14 +102,12 @@
 				$stmt->bindParam(':chapter', $insertChapter);
 				$stmt->bindParam(':courseid', $courseid);
 				if($stmt->execute()){
-					echo 'inserted';
+					$index+=1;
 				}else{
 					echo 'error <br>';
 					$arr = $stmt->errorInfo();
 					print_r($arr);
 				}
-				//echo $insertQuestion;
-				//echo '<br>';
 			}
 		}
 		//close db connection
@@ -120,7 +118,7 @@
 		//this is only for debug purposes, uncomment PDO statements when ready.
 		//$qbjson = json_encode($questionBank);
 		//echo $qbjson;
-		//unlink($temp_file);
+
 	}
 
 
