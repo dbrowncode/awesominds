@@ -8,14 +8,4 @@
 
   $result = $query->fetchAll(PDO::FETCH_ASSOC);
   echo json_encode($result);
-
-  // $questions = "{";
-  // while($row = $query->fetch(PDO::FETCH_ASSOC)){
-  //   $questions .= $row['question'];
-  // }
-  // $questions .= "}";
-  // echo json_encode($questions);
-
-  //echo json_encode($query->fetch(PDO::FETCH_ASSOC)['question']);
-  //echo json_encode($query->fetchAll());
 ?>
