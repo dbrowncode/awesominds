@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
 		  <div class="field-wrap">
             <label>
-              Camosun I.D<span class="req">*</span>
+              C Number<span class="req">*</span>
             </label>
             <input type="text"required autocomplete="off" name='text' />
           </div>
