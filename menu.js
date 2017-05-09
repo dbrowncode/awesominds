@@ -29,9 +29,11 @@ var menuState = {
 		item.fill = '#ffffff';
 	},
 	playGame: function(){
+		//game.state.start('game');
 		console.log("start Game");
 	},
 	addQuestions: function(){
+		//game.state.start('addQ');
 		console.log("add questions");	
 	},
 	
