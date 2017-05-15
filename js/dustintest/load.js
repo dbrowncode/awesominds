@@ -1,13 +1,16 @@
 var loadState = {
   preload: function() {
+    //TODO: work on responsiveness using scalemanager
+    //game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     game.load.image('sky', 'assets/sky.png');
     game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
   },
 
   create: function() {
     game.global.background = game.add.sprite(0, 0, 'sky');
-    game.global.mainFont = { font: 'Arial', fontSize: '20px', fill: '#000' };
-    game.global.optionFont = { font: 'Arial', fontSize: '26px', fill: '#fff', align: 'center'};
+    //TODO: dynamic font sizes for responsiveness?
+    game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center' };
+    game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center'};
     game.global.letters = ['A', 'B', 'C', 'D'];
     game.global.numRounds = 4;
     game.global.totalStats = {
@@ -22,14 +25,18 @@ var loadState = {
       console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
       // record correct or incorrect and update score
+      //TODO: determine score gain/loss amount based on time/other mechanics
       if (game.global.roundStats[game.global.currentRound].correct){
         game.global.roundStats[game.global.currentRound].numRight++;
+        game.global.totalStats.numRight++;
         game.global.roundStats[game.global.currentRound].score += 100;
+        game.global.totalStats.score += 100;
       } else {
         game.global.roundStats[game.global.currentRound].numWrong++;
+        game.global.totalStats.numWrong++;
         game.global.roundStats[game.global.currentRound].score -= 50;
+        game.global.totalStats.score -= 50;
       }
-
 
       //show the next question if there is one
       if (game.global.questionsAnswered < game.global.qPerRound){
@@ -37,7 +44,6 @@ var loadState = {
       } else {
         //if no questions left in the round, round is over
         game.global.removeQuestion();
-        console.log(game.global);
         //TODO: go to "end of round" state, probably
       }
     };
@@ -56,22 +62,35 @@ var loadState = {
         game.global.removeQuestion();
       }
 
+      //create a timer to delay showing the answer options by 2 seconds
+      var timer = game.time.create(false);
+      timer.add(2000, showChoices, this);
+      timer.start();
+
       //then make the new question
-      game.global.questionText = game.add.text(16, 16, question.question, game.global.mainFont);
+      //TODO: add background sprite for the question
+      game.global.questionText = game.add.text(game.world.width + 1000, 40, question.question, game.global.mainFont);
+      game.global.questionText.anchor.set(0.5);
+
+      game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250, 0, false);
       game.global.buttons = [];
 
-      //Create a button for each choice, and put some data into it in case we need it
-      for (var i = 0; i < 4; i++) {
-        game.global.buttons[i] = game.add.button(game.world.centerX - 95, 100 + (71 * i), 'button', game.global.btnClick, game.global.buttons[i], 2, 1, 0);
-        //Set the letter of this option
-        game.global.buttons[i].data.letter = game.global.letters[i];
-        //Storing the option text as part of this button's data just in case we need to access it later.
-        //Center text over the button
-        game.global.buttons[i].data.text = game.add.text(game.global.buttons[i].x + game.global.buttons[i].width/2, game.global.buttons[i].y + game.global.buttons[i].height/2, question.choices[game.global.letters[i]], game.global.optionFont);
-        game.global.buttons[i].data.text.anchor.set(0.5);
+      function showChoices(){
+        //Create a button for each choice, and put some data into it in case we need it
+        for (var i = 0; i < 4; i++) {
+          game.global.buttons[i] = game.add.button(game.world.width + 1000, 100 + (71 * i), 'button', game.global.btnClick, game.global.buttons[i], 2, 1, 0);
+          //Set the letter of this option
+          game.global.buttons[i].data.letter = game.global.letters[i];
+          //Storing the option text as part of this button's data just in case we need to access it later.
+          game.global.buttons[i].data.text = game.add.text(0, 0, question.choices[game.global.letters[i]], game.global.optionFont);
+          game.global.buttons[i].data.text.anchor.set(0.5);
 
-        //Store a boolean that indicates whether this is the correct answer
-        game.global.buttons[i].data.correct = (game.global.letters[i] == question.answer[0]);
+          //Store a boolean that indicates whether this is the correct answer
+          game.global.buttons[i].data.correct = (game.global.letters[i] == question.answer[0]);
+
+          //animate button coming in
+          game.add.tween(game.global.buttons[i]).to({x: game.world.centerX - game.global.buttons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i, 0, false);
+        }
       }
     };
 
@@ -81,6 +100,7 @@ var loadState = {
       $.ajax({
         type: 'POST',
         url: 'getquestion.php',
+        //TODO: use courseid and chapter chosen by user
         data: { 'courseid': 150, 'chapter': 1 },
         dataType: 'json',
         success: function(data){
@@ -90,7 +110,7 @@ var loadState = {
           }
           // set the number of questions per round
           // TODO: proper function to determine number of questions per round
-          // game.global.qPerRound = data.length / game.global.numRounds;
+          // game.global.qPerRound = data.length / game.global.numRounds; something like this but accounting for remainder
           game.global.qPerRound = 12;
           //once the questions are successfully loaded, set up the rounds and move to the play state
           game.global.currentRound = 0;
