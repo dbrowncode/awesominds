@@ -2,8 +2,6 @@ var loadState = {
   preload: function() {
     //TODO: work on responsiveness using scalemanager
     //game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-    game.load.image('sky', 'assets/sky.png');
-    game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
   },
 
   create: function() {
