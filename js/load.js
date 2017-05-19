@@ -24,7 +24,7 @@ var loadState = {
 
       // record correct or incorrect and update score
       //TODO: determine score gain/loss amount based on time/other mechanics
-      if (game.global.roundStats[game.global.currentRound].correct){
+      if (this.data.correct){
         game.global.roundStats[game.global.currentRound].numRight++;
         game.global.totalStats.numRight++;
         game.global.roundStats[game.global.currentRound].score += 100;
