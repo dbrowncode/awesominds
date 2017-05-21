@@ -5,10 +5,6 @@ var loadState = {
   },
 
   create: function() {
-    game.global.background = game.add.sprite(0, 0, 'sky');
-    //TODO: dynamic font sizes for responsiveness?
-    game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center',wordWrap: true, wordWrapWidth: 450 };
-    game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center'}
     game.global.letters = ['A', 'B', 'C', 'D'];
     game.global.numRounds = 4;
     game.global.totalStats = {
@@ -16,23 +12,23 @@ var loadState = {
       numWrong: 0,
       score: 0
     };
-    
-//Temporary math fixers
+
+    //Temporary math fixers
     game.global.answersShown = false;
     game.global.numCor = 0;
     game.global.numWro = 0;
     game.global.btnClick = function(){
-   
+
       //increment number of answered questions
       game.global.questionsAnswered++;
       console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
-   
+
       if(game.global.numCor == 6){
-	game.global.numCor = 0;	
-      }   
+	       game.global.numCor = 0;
+      }
       if(game.global.numWro == 6){
-	game.global.numWro = 0;
+	       game.global.numWro = 0;
       }
       // record correct or incorrect and update score
       //TODO: determine score gain/loss amount based on time/other mechanics
@@ -40,43 +36,43 @@ var loadState = {
         game.global.roundStats[game.global.currentRound].numRight++;
         game.global.totalStats.numRight++;
         if(game.global.answerShown == false){
-		game.global.roundStats[game.global.currentRound].score += 100;
+		      game.global.roundStats[game.global.currentRound].score += 100;
         	game.global.totalStats.score += 100;
-	}else{
-		game.global.roundStats[game.global.currentRound].score += 50;
-		game.global.totalStats.score += 50;
-	}
-	
-	//add up two stacks of 6, second stack has no limit yet.
-	if(game.global.totalStats.numRight <= 6){
-		correct = game.add.sprite(16,((game.height - 150) - (50 * game.global.numCor)) ,'right');
-	}
-	if(game.global.totalStats.numRight > 6){
-		correct = game.add.sprite(25,(game.height - 150) - (50 * game.global.numCor),'right');
-	}	
-	correct.scale.setTo(.1,.1);
-	game.global.numCor++;
-	
-       } else {
+	      }else{
+      		game.global.roundStats[game.global.currentRound].score += 50;
+      		game.global.totalStats.score += 50;
+	      }
+
+      	//add up two stacks of 6, second stack has no limit yet.
+      	if(game.global.totalStats.numRight <= 6){
+      		correct = game.add.sprite(16,((game.height - 150) - (50 * game.global.numCor)) ,'right');
+      	}
+      	if(game.global.totalStats.numRight > 6){
+      		correct = game.add.sprite(25,(game.height - 150) - (50 * game.global.numCor),'right');
+      	}
+      	correct.scale.setTo(.1,.1);
+      	game.global.numCor++;
+
+      } else {
         game.global.roundStats[game.global.currentRound].numWrong++;
         game.global.totalStats.numWrong++;
         game.global.roundStats[game.global.currentRound].score -= 50;
         game.global.totalStats.score -= 50;
 
-	if(game.global.totalStats.numWrong <= 6){
-		wrong = game.add.sprite((game.width - 16),((game.height - 150) - (50 * game.global.numWro)) , 'wrong');
-	}
-	if(game.global.totalStats.numWrong > 6){
-		wrong = game.add.sprite((game.width - 25),((game.height - 150) - (50 * game.global.numWro)), 'wrong');
-	}
-	wrong.scale.setTo(.1,.1);
-	game.global.numWro++;
+      	if(game.global.totalStats.numWrong <= 6){
+      		wrong = game.add.sprite((game.width - 16),((game.height - 150) - (50 * game.global.numWro)) , 'wrong');
+      	}
+      	if(game.global.totalStats.numWrong > 6){
+      		wrong = game.add.sprite((game.width - 25),((game.height - 150) - (50 * game.global.numWro)), 'wrong');
+      	}
+      	wrong.scale.setTo(.1,.1);
+      	game.global.numWro++;
 
       }
       //remove answers from screen, needs some timer magic as they pop up almost immediately.
       game.global.answerShown = false;
       for(i = 1; i < 4; i++){
-	game.global.chars[i].answer.kill();
+	       game.global.chars[i].answer.kill();
       }
 
       //show the next question if there is one
@@ -85,7 +81,7 @@ var loadState = {
       } else {
         //if no questions left in the round, round is over
         game.global.removeQuestion();
-        //TODO: go to "end of round" state, probably
+        game.state.start('endOfRound');
       }
     };
 
@@ -99,7 +95,6 @@ var loadState = {
 
     game.global.showQuestion = function(question){
       //first clear any question that is already up
-      
       if (game.global.questionsAnswered > 0){
         game.global.removeQuestion();
       }
@@ -116,8 +111,7 @@ var loadState = {
       game.global.questionText = game.add.text(game.world.width + 1000, 40, question.question, game.global.mainFont);
       game.global.questionText.anchor.set(0.5);
 
-
-      game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250, 0, false);
+      game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250);
       game.global.buttons = [];
 
       function showChoices(){
@@ -134,18 +128,16 @@ var loadState = {
           game.global.buttons[i].data.correct = (game.global.letters[i] == question.answer[0]);
 
           //animate button coming in
-          game.add.tween(game.global.buttons[i]).to({x: game.world.centerX - game.global.buttons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i, 0, false);
+          game.add.tween(game.global.buttons[i]).to({x: game.world.centerX - game.global.buttons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i);
         }
-      } 
-    function showAnswers() {
-	//unnecesarry as already an array for this.
-	choices = ['A','B','C','D'];
-	game.global.answersShown = true;
-	for(i=1;i<4;i++){
-	  game.global.chars[i].answer = game.add.text((((game.width/4) *(i +1)-game.width/4) +game.global.chars[i].sprite.width), game.height - 70, choices[i-1],game.global.mainFont);
-	}
-	}
-    	
+      };
+
+      function showAnswers() {
+      	game.global.answersShown = true;
+      	for(i=1;i<4;i++){
+      	  game.global.chars[i].answer = game.add.text((((game.width/4) *(i +1)-game.width/4) +game.global.chars[i].sprite.width), game.height - 70, game.global.letters[i-1],game.global.mainFont);
+      	}
+    	};
     };
 
 
@@ -165,7 +157,7 @@ var loadState = {
           // set the number of questions per round
           // TODO: proper function to determine number of questions per round
           // game.global.qPerRound = data.length / game.global.numRounds; something like this but accounting for remainder
-          game.global.qPerRound = 12;
+          game.global.qPerRound = 2;
           //once the questions are successfully loaded, set up the rounds and move to the play state
           game.global.currentRound = 0;
           game.global.roundStats = [];
@@ -175,6 +167,7 @@ var loadState = {
             game.global.roundStats[i].numWrong = 0;
             game.global.roundStats[i].score = 0;
           }
+          game.global.questionsAnswered = 0;
           game.state.start('play');
         }
       });

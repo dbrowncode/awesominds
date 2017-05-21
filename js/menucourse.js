@@ -1,7 +1,7 @@
 var menuCourseState = {
   create: function(){
     console.log('state: menuCourse');
-    game.global.background = game.add.sprite(0, 0, 'sky');
+    //game.global.background = game.add.sprite(0, 0, 'sky');
     game.global.courseButtons = [];
 
     game.global.courseBtnClick = function(){
@@ -40,7 +40,7 @@ var menuCourseState = {
       game.global.courseButtons[i].data.course = game.global.courses[i];
 
       //animate button coming in
-      game.add.tween(game.global.courseButtons[i]).to({x: game.world.centerX - game.global.courseButtons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i, 0, false);
+      game.add.tween(game.global.courseButtons[i]).to({x: game.world.centerX - game.global.courseButtons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i);
     }
   },
   update: function(){

@@ -1,7 +1,7 @@
 var menuState = {
 
 	create: function() {
-	game.add.tileSprite(0, 0, 1000, 600, 'sky');
+	//game.add.tileSprite(0, 0, 1000, 600, 'sky');
 
 	var nameLabel = game.add.text(game.world.centerX,80, 'AWESOMINDS', {font: '50px Arial', fill: '#ffffff', align: "center"});
 	nameLabel.anchor.set(0.5);
