@@ -5,10 +5,7 @@ var loadState = {
   },
 
   create: function() {
-    game.global.background = game.add.sprite(0, 0, 'sky');
-    //TODO: dynamic font sizes for responsiveness?
-    game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center' };
-    game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center'};
+    //game.global.background = game.add.sprite(0, 0, 'sky');
     game.global.letters = ['A', 'B', 'C', 'D'];
     game.global.numRounds = 4;
     game.global.totalStats = {
@@ -42,7 +39,7 @@ var loadState = {
       } else {
         //if no questions left in the round, round is over
         game.global.removeQuestion();
-        //TODO: go to "end of round" state, probably
+        game.state.start('endOfRound');
       }
     };
 
@@ -70,7 +67,7 @@ var loadState = {
       game.global.questionText = game.add.text(game.world.width + 1000, 40, question.question, game.global.mainFont);
       game.global.questionText.anchor.set(0.5);
 
-      game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250, 0, false);
+      game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250);
       game.global.buttons = [];
 
       function showChoices(){
@@ -87,7 +84,7 @@ var loadState = {
           game.global.buttons[i].data.correct = (game.global.letters[i] == question.answer[0]);
 
           //animate button coming in
-          game.add.tween(game.global.buttons[i]).to({x: game.world.centerX - game.global.buttons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i, 0, false);
+          game.add.tween(game.global.buttons[i]).to({x: game.world.centerX - game.global.buttons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i);
         }
       }
     };
@@ -109,7 +106,7 @@ var loadState = {
           // set the number of questions per round
           // TODO: proper function to determine number of questions per round
           // game.global.qPerRound = data.length / game.global.numRounds; something like this but accounting for remainder
-          game.global.qPerRound = 12;
+          game.global.qPerRound = 2;
           //once the questions are successfully loaded, set up the rounds and move to the play state
           game.global.currentRound = 0;
           game.global.roundStats = [];
@@ -119,6 +116,7 @@ var loadState = {
             game.global.roundStats[i].numWrong = 0;
             game.global.roundStats[i].score = 0;
           }
+          game.global.questionsAnswered = 0;
           game.state.start('play');
         }
       });

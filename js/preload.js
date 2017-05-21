@@ -11,8 +11,10 @@ var preloadState = {
 	},
 
 	create: function() {
-		game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center' };
-		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center'};
+    //TODO: dynamic font sizes for responsiveness?
+		game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center', wordWrap: true, wordWrapWidth: game.width * .75};
+		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: 193};
+
 		game.state.start('menuCourse');
 	},
 };

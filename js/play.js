@@ -1,7 +1,6 @@
 var playState = {
   create: function(){
-    game.global.background = game.add.sprite(0, 0, 'sky');
-    game.global.questionsAnswered = 0;
+    //game.global.background = game.add.sprite(0, 0, 'sky');
 
     game.global.jinny = game.add.sprite(0,0, 'jinny');
     game.global.jinny.scale.setTo(.1,.1);
@@ -9,12 +8,11 @@ var playState = {
     game.global.chars = [];
     var sprites = ['beaver','rabbit','cat','beaver']
     for(var i = 0; i < 4; i++){
-	game.global.chars[i] = {};
-	game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110,sprites[i]);
-	game.global.chars[i].sprite.scale.setTo(.3,.3);
-	game.global.chars[i].score = game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width),game.height - 50, '0', game.global.mainFont);
+    	game.global.chars[i] = {};
+    	game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110,sprites[i]);
+    	game.global.chars[i].sprite.scale.setTo(.3,.3);
+    	game.global.chars[i].score = game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width),game.height - 50, '0', game.global.mainFont);
     }
-    
 
     game.global.showQuestion(game.global.questions[game.global.questionsAnswered]);
   },
