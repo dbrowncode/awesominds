@@ -7,8 +7,8 @@ var loadState = {
   create: function() {
     game.global.background = game.add.sprite(0, 0, 'sky');
     //TODO: dynamic font sizes for responsiveness?
-    game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center' };
-    game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center'};
+    game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center',wordWrap: true, wordWrapWidth: 450 };
+    game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center'}
     game.global.letters = ['A', 'B', 'C', 'D'];
     game.global.numRounds = 4;
     game.global.totalStats = {
@@ -16,24 +16,67 @@ var loadState = {
       numWrong: 0,
       score: 0
     };
-
+    
+//Temporary math fixers
+    game.global.answersShown = false;
+    game.global.numCor = 0;
+    game.global.numWro = 0;
     game.global.btnClick = function(){
+   
       //increment number of answered questions
       game.global.questionsAnswered++;
       console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
+   
+      if(game.global.numCor == 6){
+	game.global.numCor = 0;	
+      }   
+      if(game.global.numWro == 6){
+	game.global.numWro = 0;
+      }
       // record correct or incorrect and update score
       //TODO: determine score gain/loss amount based on time/other mechanics
       if (this.data.correct){
         game.global.roundStats[game.global.currentRound].numRight++;
         game.global.totalStats.numRight++;
-        game.global.roundStats[game.global.currentRound].score += 100;
-        game.global.totalStats.score += 100;
-      } else {
+        if(game.global.answerShown == false){
+		game.global.roundStats[game.global.currentRound].score += 100;
+        	game.global.totalStats.score += 100;
+	}else{
+		game.global.roundStats[game.global.currentRound].score += 50;
+		game.global.totalStats.score += 50;
+	}
+	
+	//add up two stacks of 6, second stack has no limit yet.
+	if(game.global.totalStats.numRight <= 6){
+		correct = game.add.sprite(16,((game.height - 150) - (50 * game.global.numCor)) ,'right');
+	}
+	if(game.global.totalStats.numRight > 6){
+		correct = game.add.sprite(25,(game.height - 150) - (50 * game.global.numCor),'right');
+	}	
+	correct.scale.setTo(.1,.1);
+	game.global.numCor++;
+	
+       } else {
         game.global.roundStats[game.global.currentRound].numWrong++;
         game.global.totalStats.numWrong++;
         game.global.roundStats[game.global.currentRound].score -= 50;
         game.global.totalStats.score -= 50;
+
+	if(game.global.totalStats.numWrong <= 6){
+		wrong = game.add.sprite((game.width - 16),((game.height - 150) - (50 * game.global.numWro)) , 'wrong');
+	}
+	if(game.global.totalStats.numWrong > 6){
+		wrong = game.add.sprite((game.width - 25),((game.height - 150) - (50 * game.global.numWro)), 'wrong');
+	}
+	wrong.scale.setTo(.1,.1);
+	game.global.numWro++;
+
+      }
+      //remove answers from screen, needs some timer magic as they pop up almost immediately.
+      game.global.answerShown = false;
+      for(i = 1; i < 4; i++){
+	game.global.chars[i].answer.kill();
       }
 
       //show the next question if there is one
@@ -56,6 +99,7 @@ var loadState = {
 
     game.global.showQuestion = function(question){
       //first clear any question that is already up
+      
       if (game.global.questionsAnswered > 0){
         game.global.removeQuestion();
       }
@@ -63,12 +107,15 @@ var loadState = {
       //create a timer to delay showing the answer options by 2 seconds
       var timer = game.time.create(false);
       timer.add(2000, showChoices, this);
+      //add timer to delay until answers are shown.
+      timer.add(10000, showAnswers, this);
       timer.start();
 
       //then make the new question
       //TODO: add background sprite for the question
       game.global.questionText = game.add.text(game.world.width + 1000, 40, question.question, game.global.mainFont);
       game.global.questionText.anchor.set(0.5);
+
 
       game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250, 0, false);
       game.global.buttons = [];
@@ -89,7 +136,16 @@ var loadState = {
           //animate button coming in
           game.add.tween(game.global.buttons[i]).to({x: game.world.centerX - game.global.buttons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i, 0, false);
         }
-      }
+      } 
+    function showAnswers() {
+	//unnecesarry as already an array for this.
+	choices = ['A','B','C','D'];
+	game.global.answersShown = true;
+	for(i=1;i<4;i++){
+	  game.global.chars[i].answer = game.add.text((((game.width/4) *(i +1)-game.width/4) +game.global.chars[i].sprite.width), game.height - 70, choices[i-1],game.global.mainFont);
+	}
+	}
+    	
     };
 
 
