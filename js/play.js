@@ -14,7 +14,8 @@ var playState = {
 	game.global.chars[i].sprite.scale.setTo(.3,.3);
 	game.global.chars[i].score = game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width),game.height - 50, '0', game.global.mainFont);
    	if(i!=0){
-		game.global.chars[i].answer = '';
+		//placeholder text to make kill not break game.
+		game.global.chars[i].answer = game.add.text(0,0,'');
 		//need to set this percent during preload states probably.
 		game.global.chars[i].chance = 20 * i;
 	}	

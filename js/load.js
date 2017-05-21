@@ -73,6 +73,12 @@ var loadState = {
 	game.global.numWro++;
 
       }
+      //remove answers from screen, needs some timer magic as they pop up almost immediately.
+      game.global.answerShown = false;
+      for(i = 1; i < 4; i++){
+	game.global.chars[i].answer.kill();
+      }
+
       //show the next question if there is one
       if (game.global.questionsAnswered < game.global.qPerRound){
         game.global.showQuestion(game.global.questions[game.global.questionsAnswered]);
@@ -89,10 +95,6 @@ var loadState = {
         game.global.buttons[i].data.text.kill();
         game.global.buttons[i].kill();
       }
-      game.global.answerShown = false;
-	for(i = 1; i < 4; i++){
-	   game.global.chars[i].answer.kill();
-	}
     }
 
     game.global.showQuestion = function(question){
@@ -105,6 +107,7 @@ var loadState = {
       //create a timer to delay showing the answer options by 2 seconds
       var timer = game.time.create(false);
       timer.add(2000, showChoices, this);
+      //add timer to delay until answers are shown.
       timer.add(10000, showAnswers, this);
       timer.start();
 
@@ -135,6 +138,7 @@ var loadState = {
         }
       } 
     function showAnswers() {
+	//unnecesarry as already an array for this.
 	choices = ['A','B','C','D'];
 	game.global.answersShown = true;
 	for(i=1;i<4;i++){
