@@ -1,17 +1,22 @@
 var playState = {
   create: function(){
-    //game.global.background = game.add.sprite(0, 0, 'sky');
-
     game.global.jinny = game.add.sprite(0,0, 'jinny');
     game.global.jinny.scale.setTo(.1,.1);
-//set up game characters
-    game.global.chars = [];
+    game.global.roundText = game.add.text(0, 0, 'Round ' + (game.global.currentRound + 1), game.global.rightSideFont);
+    game.global.roundText.setTextBounds(0, 0, game.width-10, game.height-10);
+    //set up game characters
+    if(game.global.currentRound == 0){
+      game.global.chars = [];
+    }
     var sprites = ['beaver','rabbit','cat','beaver']
     for(var i = 0; i < 4; i++){
-    	game.global.chars[i] = {};
+      if(game.global.currentRound == 0){
+      	game.global.chars[i] = {};
+      }
     	game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110,sprites[i]);
     	game.global.chars[i].sprite.scale.setTo(.3,.3);
-    	game.global.chars[i].score = game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width),game.height - 50, '0', game.global.mainFont);
+      game.global.chars[i].score = 0;
+      game.global.chars[i].scoreText = game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY, game.global.chars[i].score, game.global.mainFont);
      	if(i!=0){
     		//placeholder text to make kill not break game.
     		game.global.chars[i].answer = game.add.text(0,0,'');
@@ -24,11 +29,14 @@ var playState = {
   },
   update: function(){
     //update score text
-    game.global.chars[0].score.text = game.global.roundStats[game.global.currentRound].score;
+    for (var i = 1; i < game.global.chars.length; i++) {
+      game.global.chars[i].scoreText.text = game.global.chars[i].score;
+    }
+    game.global.chars[0].scoreText.text = game.global.roundStats[game.global.currentRound].score;
     //update answer text position to keep each one moving with its button
     for (var i = 0; i < game.global.buttons.length; i++) {
-      game.global.buttons[i].data.text.x = Math.floor(game.global.buttons[i].x + game.global.buttons[i].width / 2);
-      game.global.buttons[i].data.text.y = Math.floor(game.global.buttons[i].y + game.global.buttons[i].height / 2);
+      game.global.buttons[i].data.text.x = Math.floor(game.global.buttons[i].centerX);
+      game.global.buttons[i].data.text.y = Math.floor(game.global.buttons[i].centerY);
     }
 
   },
