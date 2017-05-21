@@ -6,6 +6,7 @@ var loadState = {
 
   create: function() {
     game.global.letters = ['A', 'B', 'C', 'D'];
+    game.global.questionShown = false;
     game.global.numRounds = 4;
     game.global.totalStats = {
       numRight: 0,
@@ -17,10 +18,12 @@ var loadState = {
     game.global.answersShown = false;
     game.global.numCor = 0;
     game.global.numWro = 0;
+
     game.global.btnClick = function(){
 
       //increment number of answered questions
       game.global.questionsAnswered++;
+      game.global.roundStats[game.global.currentRound].answered++;
       console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
 
@@ -35,7 +38,7 @@ var loadState = {
       if (this.data.correct){
         game.global.roundStats[game.global.currentRound].numRight++;
         game.global.totalStats.numRight++;
-        if(game.global.answerShown == false){
+        if(game.global.answersShown == false){
 		      game.global.roundStats[game.global.currentRound].score += 100;
         	game.global.totalStats.score += 100;
 	      }else{
@@ -70,13 +73,13 @@ var loadState = {
 
       }
       //remove answers from screen, needs some timer magic as they pop up almost immediately.
-      game.global.answerShown = false;
+      game.global.answersShown = false;
       for(i = 1; i < 4; i++){
 	       game.global.chars[i].answer.kill();
       }
 
       //show the next question if there is one
-      if (game.global.questionsAnswered < game.global.qPerRound){
+      if (game.global.roundStats[game.global.currentRound].answered < game.global.qPerRound){
         game.global.showQuestion(game.global.questions[game.global.questionsAnswered]);
       } else {
         //if no questions left in the round, round is over
@@ -90,21 +93,26 @@ var loadState = {
       for (var i = 0; i < 4; i++){
         game.global.buttons[i].data.text.kill();
         game.global.buttons[i].kill();
+
+        //not sure if this is needed here, was testing stuff
+        if(i>0 && game.global.answersShown){
+          game.global.chars[i].answer.kill();
+        }
       }
+      game.global.questionShown = false;
     }
 
     game.global.showQuestion = function(question){
       //first clear any question that is already up
-      if (game.global.questionsAnswered > 0){
+      if (game.global.questionShown){
         game.global.removeQuestion();
       }
 
       //create a timer to delay showing the answer options by 2 seconds
       var timer = game.time.create(false);
       timer.add(2000, showChoices, this);
-      //add timer to delay until answers are shown.
-      timer.add(10000, showAnswers, this);
       timer.start();
+
 
       //then make the new question
       //TODO: add background sprite for the question
@@ -130,14 +138,20 @@ var loadState = {
           //animate button coming in
           game.add.tween(game.global.buttons[i]).to({x: game.world.centerX - game.global.buttons[i].width/2}, 500, Phaser.Easing.Default, true, 250 * i);
         }
-      };
+        game.global.questionShown = true;
+        //add timer to delay until answers are shown.
+        timer.add(2000, showAnswers, this);
 
-      function showAnswers() {
-      	game.global.answersShown = true;
-      	for(i=1;i<4;i++){
-      	  game.global.chars[i].answer = game.add.text((((game.width/4) *(i +1)-game.width/4) +game.global.chars[i].sprite.width), game.height - 70, game.global.letters[i-1],game.global.mainFont);
-      	}
-    	};
+        function showAnswers() {
+          if(!game.global.answersShown){
+          	game.global.answersShown = true;
+          	for(i=1;i<4;i++){
+          	  game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1],game.global.mainFont);
+          	}
+          }
+      	};
+
+      };
     };
 
 
@@ -147,7 +161,7 @@ var loadState = {
         type: 'POST',
         url: 'getquestion.php',
         //TODO: use courseid and chapter chosen by user
-        data: { 'courseid': 150, 'chapter': 1 },
+        data: { 'courseid': game.global.selectedCourse, 'chapter': 1 },
         dataType: 'json',
         success: function(data){
           game.global.questions = [];
@@ -157,15 +171,17 @@ var loadState = {
           // set the number of questions per round
           // TODO: proper function to determine number of questions per round
           // game.global.qPerRound = data.length / game.global.numRounds; something like this but accounting for remainder
-          game.global.qPerRound = 2;
+          game.global.qPerRound = 12;
           //once the questions are successfully loaded, set up the rounds and move to the play state
           game.global.currentRound = 0;
           game.global.roundStats = [];
           for (var i = 0; i < game.global.numRounds; i++) {
-            game.global.roundStats[i] = {};
-            game.global.roundStats[i].numRight = 0;
-            game.global.roundStats[i].numWrong = 0;
-            game.global.roundStats[i].score = 0;
+            game.global.roundStats[i] = {
+              numRight: 0,
+              numWrong: 0,
+              score: 0,
+              answered: 0
+            };
           }
           game.global.questionsAnswered = 0;
           game.state.start('play');

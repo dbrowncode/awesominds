@@ -46,8 +46,8 @@ var menuCourseState = {
   update: function(){
     //update text position to keep each one moving with its button
     for (var i = 0; i < game.global.courseButtons.length; i++) {
-      game.global.courseButtons[i].data.text.x = Math.floor(game.global.courseButtons[i].x + game.global.courseButtons[i].width / 2);
-      game.global.courseButtons[i].data.text.y = Math.floor(game.global.courseButtons[i].y + game.global.courseButtons[i].height / 2);
+      game.global.courseButtons[i].data.text.x = Math.floor(game.global.courseButtons[i].centerX);
+      game.global.courseButtons[i].data.text.y = Math.floor(game.global.courseButtons[i].centerY);
     }
   }
 }
