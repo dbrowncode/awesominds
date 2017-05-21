@@ -93,11 +93,6 @@ var loadState = {
       for (var i = 0; i < 4; i++){
         game.global.buttons[i].data.text.kill();
         game.global.buttons[i].kill();
-
-        //not sure if this is needed here, was testing stuff
-        if(i>0 && game.global.answersShown){
-          game.global.chars[i].answer.kill();
-        }
       }
       game.global.questionShown = false;
     }
@@ -107,12 +102,12 @@ var loadState = {
       if (game.global.questionShown){
         game.global.removeQuestion();
       }
+      game.global.questionShown = false;
 
       //create a timer to delay showing the answer options by 2 seconds
-      var timer = game.time.create(false);
-      timer.add(2000, showChoices, this);
-      timer.start();
-
+      game.global.timer = game.time.create(false);
+      game.global.timer.add(2000, showChoices, this);
+      game.global.timer.start();
 
       //then make the new question
       //TODO: add background sprite for the question
@@ -140,14 +135,16 @@ var loadState = {
         }
         game.global.questionShown = true;
         //add timer to delay until answers are shown.
-        timer.add(2000, showAnswers, this);
+        game.global.timer.stop();
+        game.global.timer.add(2000, showAnswers, this);
+        game.global.timer.start();
 
         function showAnswers() {
-          if(!game.global.answersShown){
-          	game.global.answersShown = true;
+          if((!game.global.answersShown) && game.global.questionShown){
           	for(i=1;i<4;i++){
-          	  game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1],game.global.mainFont);
+          	  game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1], game.global.mainFont);
           	}
+            game.global.answersShown = true;
           }
       	};
 

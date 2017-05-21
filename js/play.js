@@ -2,8 +2,10 @@ var playState = {
   create: function(){
     game.global.jinny = game.add.sprite(0,0, 'jinny');
     game.global.jinny.scale.setTo(.1,.1);
-    game.global.roundText = game.add.text(0, 0, 'Round ' + (game.global.currentRound + 1), game.global.rightSideFont);
-    game.global.roundText.setTextBounds(0, 0, game.width-10, game.height-10);
+    game.global.roundText = game.add.text(0, 5, 'Round ' + (game.global.currentRound + 1) + ' of ' + game.global.numRounds, game.global.rightSideFont);
+    game.global.roundText.setTextBounds(0, 5, game.width-10, game.height-10);
+    game.global.questionNumText = game.add.text(0, 15, 'Question ' + (game.global.roundStats[game.global.currentRound].answered + 1) + ' of ' + game.global.qPerRound, game.global.rightSideFont);
+    game.global.questionNumText.setTextBounds(0, 15, game.width-10, game.height-10);
     //set up game characters
     if(game.global.currentRound == 0){
       game.global.chars = [];
@@ -38,6 +40,7 @@ var playState = {
       game.global.buttons[i].data.text.x = Math.floor(game.global.buttons[i].centerX);
       game.global.buttons[i].data.text.y = Math.floor(game.global.buttons[i].centerY);
     }
+    game.global.questionNumText.text = 'Question ' + (game.global.roundStats[game.global.currentRound].answered + 1) + ' of ' + game.global.qPerRound;
 
   },
   resize: function(width, height){
