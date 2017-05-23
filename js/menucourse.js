@@ -1,7 +1,10 @@
 var menuCourseState = {
   create: function(){
     console.log('state: menuCourse');
-    //game.global.background = game.add.sprite(0, 0, 'sky');
+    game.global.chooseCourseText = game.add.text(game.world.width + 1000, 40, 'Select a Course', game.global.mainFont);
+    game.global.chooseCourseText.anchor.set(0.5);
+    game.add.tween(game.global.chooseCourseText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250);
+
     game.global.courseButtons = [];
 
     game.global.courseBtnClick = function(){
