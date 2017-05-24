@@ -26,25 +26,34 @@ var loadState = {
       game.global.roundStats[game.global.currentRound].answered++;
       console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
-
+  
       if(game.global.numCor == 6){
 	       game.global.numCor = 0;
       }
       if(game.global.numWro == 6){
 	       game.global.numWro = 0;
       }
+
+      //add points to AI if correct
+      for(i = 1 ; i < 4; i++){
+          if(game.global.chars[i].correct){
+             game.global.chars[i].score += 25;
+          }
+             
+      }   
+
       // record correct or incorrect and update score
       //TODO: determine score gain/loss amount based on time/other mechanics
       if (this.data.correct){
         game.global.roundStats[game.global.currentRound].numRight++;
         game.global.totalStats.numRight++;
         if(game.global.answersShown == false){
-		      game.global.roundStats[game.global.currentRound].score += 100;
+		    game.global.roundStats[game.global.currentRound].score += 100;
         	game.global.totalStats.score += 100;
-	      }else{
+	    }else{
       		game.global.roundStats[game.global.currentRound].score += 50;
       		game.global.totalStats.score += 50;
-	      }
+	    }
 
       	//add up two stacks of 6, second stack has no limit yet.
       	if(game.global.totalStats.numRight <= 6){
@@ -56,7 +65,7 @@ var loadState = {
       	correct.scale.setTo(.1,.1);
       	game.global.numCor++;
 
-      } else {
+        } else {
         game.global.roundStats[game.global.currentRound].numWrong++;
         game.global.totalStats.numWrong++;
         game.global.roundStats[game.global.currentRound].score -= 50;
@@ -117,6 +126,18 @@ var loadState = {
       game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250);
       game.global.buttons = [];
 
+
+      //check if ai knows the answer.
+      game.global.winThreshold = Math.floor(Math.random() * 100) + 1;
+      //check if ai got it right
+      console.log(game.global.winThreshold);
+      for(i = 1; i < 4; i++){
+          if(game.global.winThreshold <= game.global.chars[i].chance){
+              game.global.chars[i].correct = true;
+          }else{
+              game.global.chars[i].correct = false;
+          }
+      }
       function showChoices(){
         //Create a button for each choice, and put some data into it in case we need it
         for (var i = 0; i < 4; i++) {
@@ -139,11 +160,21 @@ var loadState = {
         game.global.timer.add(2000, showAnswers, this);
         game.global.timer.start();
 
+        //temporary fix to show answers,
+        //TODO refactor once array is randomized
         function showAnswers() {
           if((!game.global.answersShown) && game.global.questionShown){
           	for(i=1;i<4;i++){
-          	  game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1], game.global.mainFont);
-          	}
+              if(game.global.chars[i].correct){
+                game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.questions[game.global.questionsAnswered].answer, game.global.mainFont);
+              }else{
+          	    game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1], game.global.mainFont);
+                while(game.global.chars[i].answer==game.global.questions[game.global.questionsAnswered].answer){
+                    game.global.chars[i].answer = game.global.letters[Math.floor(Math.random() * 3)]; 
+                }
+
+              }
+            }
             game.global.answersShown = true;
           }
       	};

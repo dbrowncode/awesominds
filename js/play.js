@@ -7,23 +7,40 @@ var playState = {
     game.global.questionNumText = game.add.text(0, 15, 'Question ' + (game.global.roundStats[game.global.currentRound].answered + 1) + ' of ' + game.global.qPerRound, game.global.rightSideFont);
     game.global.questionNumText.setTextBounds(0, 15, game.width-10, game.height-10);
     //set up game characters
+    //create array of chances, randomize for replayability.
+    var winChances = [20, 40, 60, 75]; 
+
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+    winChances = shuffleArray(winChances);
     if(game.global.currentRound == 0){
       game.global.chars = [];
     }
-    var sprites = ['beaver','rabbit','cat','beaver']
+    var sprites = ['beaver','rabbit','cat','beaver'];
+    var characterPercent = 0;
     for(var i = 0; i < 4; i++){
       if(game.global.currentRound == 0){
       	game.global.chars[i] = {};
       }
-    	game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110,sprites[i]);
-    	game.global.chars[i].sprite.scale.setTo(.3,.3);
-      game.global.chars[i].score = 0;
-      game.global.chars[i].scoreText = game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY, game.global.chars[i].score, game.global.mainFont);
+        game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110,sprites[i]);
+        game.global.chars[i].sprite.scale.setTo(.3,.3);
+        game.global.chars[i].score = 0;
+        game.global.chars[i].scoreText = game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY, game.global.chars[i].score, game.global.mainFont);
      	if(i!=0){
     		//placeholder text to make kill not break game.
     		game.global.chars[i].answer = game.add.text(0,0,'');
     		//need to set this percent during preload states probably.
-    		game.global.chars[i].chance = 20 * i;
+            characterPercent = winChances[i];
+    		game.global.chars[i].chance = characterPercent;
+            game.global.chars[i].correct = false;
+            console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
     	}
     }
 
