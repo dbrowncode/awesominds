@@ -7,9 +7,11 @@ var playState = {
     game.global.questionNumText = game.add.text(0, 15, 'Question ' + (game.global.roundStats[game.global.currentRound].answered + 1) + ' of ' + game.global.qPerRound, game.global.rightSideFont);
     game.global.questionNumText.setTextBounds(0, 15, game.width-10, game.height-10);
     //set up game characters
-    //create array of chances, randomize for replayability.
+    
+    //create array of chances
+    //shuffle for replayability.
+    //assign win % to NPC
     var winChances = [20, 40, 60, 75]; 
-
     function shuffleArray(array) {
       for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -40,7 +42,7 @@ var playState = {
             characterPercent = winChances[i];
     		game.global.chars[i].chance = characterPercent;
             game.global.chars[i].correct = false;
-            console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
+            //console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
     	}
     }
 
