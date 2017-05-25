@@ -18,7 +18,10 @@ var loadState = {
     game.global.answersShown = false;
     game.global.numCor = 0;
     game.global.numWro = 0;
-
+    game.global.lXOffset = 16;
+    game.global.rXOffset = 16;
+    game.global.winStreak = 1;
+    game.global.loseStreak = 1;
     game.global.btnClick = function(){
 
       //increment number of answered questions
@@ -26,58 +29,69 @@ var loadState = {
       game.global.roundStats[game.global.currentRound].answered++;
       console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
-
-      if(game.global.numCor == 6){
+      //temp until I fix modulus methods.
+      if(game.global.numCor == 5){
 	       game.global.numCor = 0;
       }
-      if(game.global.numWro == 6){
+      if(game.global.numWro == 5){
 	       game.global.numWro = 0;
       }
+
+      //add points to AI if correct
+      for(i = 1 ; i < 4; i++){
+          if(game.global.chars[i].correct){
+             game.global.chars[i].score += 25;
+          }
+             
+      }   
+
       // record correct or incorrect and update score
       //TODO: determine score gain/loss amount based on time/other mechanics
       if (this.data.correct){
         game.global.roundStats[game.global.currentRound].numRight++;
         game.global.totalStats.numRight++;
+        game.global.numCor++;
+
         if(game.global.answersShown == false){
-		      game.global.roundStats[game.global.currentRound].score += 100;
-        	game.global.totalStats.score += 100;
-	      }else{
+		    game.global.roundStats[game.global.currentRound].score += 100;
+        	game.global.totalStats.score += 25;
+	    }else{
       		game.global.roundStats[game.global.currentRound].score += 50;
-      		game.global.totalStats.score += 50;
-	      }
-
-      	//add up two stacks of 6, second stack has no limit yet.
-      	if(game.global.totalStats.numRight <= 6){
-      		correct = game.add.sprite(16,((game.height - 150) - (50 * game.global.numCor)) ,'right');
-      	}
-      	if(game.global.totalStats.numRight > 6){
-      		correct = game.add.sprite(25,(game.height - 150) - (50 * game.global.numCor),'right');
-      	}
+      		game.global.totalStats.score += 10;
+	    }
+        //TODO adjust offsets every five questions
+        //for some reason need 2 more than numWro to make five.
+        if((game.global.totalStats.numRight + 1) % 7 == 0){
+           game.global.lXOffset +=6;
+        }
+        
+      	correct = game.add.sprite((game.global.lXOffset),((game.height - 150) - (50 * game.global.numCor)) ,'right');
       	correct.scale.setTo(.1,.1);
-      	game.global.numCor++;
-
+        game.global.loseStreak = 1;
+        game.global.winStreak += 1;
+        
       } else {
         game.global.roundStats[game.global.currentRound].numWrong++;
         game.global.totalStats.numWrong++;
+        game.global.numWro++;
         game.global.roundStats[game.global.currentRound].score -= 50;
-        game.global.totalStats.score -= 50;
-
-      	if(game.global.totalStats.numWrong <= 6){
-      		wrong = game.add.sprite((game.width - 16),((game.height - 150) - (50 * game.global.numWro)) , 'wrong');
-      	}
-      	if(game.global.totalStats.numWrong > 6){
-      		wrong = game.add.sprite((game.width - 25),((game.height - 150) - (50 * game.global.numWro)), 'wrong');
-      	}
-      	wrong.scale.setTo(.1,.1);
-      	game.global.numWro++;
-
+        game.global.totalStats.score += 2;
+        //TODO fix offset mess doesn't always work
+        if((game.global.totalStats.numWrong + 1) % 7 == 0){
+            game.global.rXOffset += 6;
+        }
+      	wrong = game.add.sprite((game.width - game.global.rXOffset),((game.height - 150) - (50 * game.global.numWro)) , 'wrong');
+        wrong.scale.setTo(.1,.1);
+        game.global.loseStreak += 1;
+        game.global.winStreak = 1;
       }
       //remove answers from screen, needs some timer magic as they pop up almost immediately.
       game.global.answersShown = false;
       for(i = 1; i < 4; i++){
 	       game.global.chars[i].answer.kill();
       }
-
+      
+     
       //show the next question if there is one
       if (game.global.roundStats[game.global.currentRound].answered < game.global.qPerRound){
         game.global.showQuestion(game.global.questions[game.global.questionsAnswered]);
@@ -102,7 +116,20 @@ var loadState = {
       if (game.global.questionShown){
         game.global.removeQuestion();
       }
+     
       game.global.questionShown = false;
+ 
+        //adjust ai by %5 up/down if on a streak
+        if(game.global.winStreak % 4 == 0){
+         for(i = 1; i < 4; i++){
+            game.global.chars[i].chance += 5;
+         }
+        }else if(game.global.loseStreak % 4 == 0){
+         for(i = 1; i < 4; i++){
+            game.global.chars[i].chance -= 5;
+         }
+        }
+
 
       //create a timer to delay showing the answer options by 2 seconds
       game.global.timer = game.time.create(false);
@@ -117,6 +144,17 @@ var loadState = {
       game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250);
       game.global.buttons = [];
 
+      //check if ai knows the answer.
+      game.global.winThreshold = Math.floor(Math.random() * 100) + 1;
+      //check if ai got it right
+      console.log(game.global.winThreshold);
+      for(i = 1; i < 4; i++){
+          if(game.global.winThreshold <= game.global.chars[i].chance){
+              game.global.chars[i].correct = true;
+          }else{
+              game.global.chars[i].correct = false;
+          }
+      }
       function showChoices(){
         //Create a button for each choice, and put some data into it in case we need it
         for (var i = 0; i < 4; i++) {
@@ -139,11 +177,22 @@ var loadState = {
         game.global.timer.add(2000, showAnswers, this);
         game.global.timer.start();
 
+        //temporary fix to show answers,
+        //TODO refactor once array is randomized
         function showAnswers() {
           if((!game.global.answersShown) && game.global.questionShown){
           	for(i=1;i<4;i++){
-          	  game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1], game.global.mainFont);
-          	}
+              if(game.global.chars[i].correct){
+                game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.questions[game.global.questionsAnswered].answer, game.global.mainFont);
+              }else{
+          	    game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1], game.global.mainFont);
+                //randomize answer so it isn't the correct one.
+                while(game.global.chars[i].answer==game.global.questions[game.global.questionsAnswered].answer){
+                    game.global.chars[i].answer = game.global.letters[Math.floor(Math.random() * 3)]; 
+                }
+
+              }
+            }
             game.global.answersShown = true;
           }
       	};
