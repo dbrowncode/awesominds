@@ -74,7 +74,9 @@ var preloadState = {
       }
 
       // Add the tail
-      this.tail = this.addChild(game.make.image(x + 18, y + 3 + height, 'bubble-tail'));
+    //  this.tail = this.addChild(game.make.image(x + 18, y + 3 + height, 'bubble-tail'));
+      this.tail = this.addChild(game.make.image(x + 6, y  + height/2, 'bubble-tail'));
+	    this.tail.angle = 90;
 
       // Add our text last so it's on top
       this.addChild(this.bitmapText);
@@ -82,6 +84,8 @@ var preloadState = {
 
       // Offset the position to be centered on the end of the tail
       this.pivot.set(x + 25, y + height + 24);
+      this.bounds = bounds;
+      this.bubbleheight = height;
     };
 
     game.global.SpeechBubble.prototype = Object.create(Phaser.Sprite.prototype);
