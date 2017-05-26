@@ -14,7 +14,7 @@
         while(!feof($questionFile)){
             $line = fgets($questionFile);
             //find chapter number
-            echo $line . '<br>';
+            $line . '<br>';
             if(preg_match("/CHAPTER \d+|CHAPTER \d+ |CHAPTER \d+:/",strToUpper($line),$match)){    
                 $lineArray =  explode(" ", $line);
                 $insertChapter = str_replace(":",'',$lineArray[1]);
@@ -23,16 +23,18 @@
 		
             //check if it's a question
             if(is_numeric(substr($line,0,1))){
-                $question =  preg_replace("/^\d+\) /","",$line);
+                $question =  preg_replace("/^\d+\) |^\d+\)/","",$line);
+                //this might not always be right conversion string to use, but it works for now
+                $question = trim(iconv("Windows-1252","UTF-8//IGNORE",$question));
                 $questionBank["question"] = $question;
                 $arrayFilled[0] = 1;
                 $questionBank["question"] . '<br>';
 			}
 			
             //check if it's a possible answer operates under the assumption a b c d or e are only answers and are uppperCase
-            if(preg_match("/[ABCDE]\) /", strToUpper($line), $matches)){
-                $choice = preg_replace("/\)/","",$matches[0]);
-                $choices[$choice] = preg_replace("/[ABCDEabcde]+\) /","",strToUpper($line));
+            if(preg_match("/[ABCDE]\) |[A-Z]\)/", strToUpper($line), $matches)){
+                $choice = trim(preg_replace("/\)/","",$matches[0]));
+                $choices[$choice] = trim(preg_replace("/[A-Z]\) |[A-Z]\)/","",strToUpper($line)));
                 $arrayFilled[1] = 1;
             }
 			//assign questions, choices and answers to question bank.
@@ -41,9 +43,9 @@
                 $arrayFilled[2] = 1;
             }
             if($arrayFilled[0] == 1 && $arrayFilled[1] == 1 && $arrayFilled[2] == 1){
-	            $questionBank["question"] = $question;
+	            $questionBank["question"] = trim($question);
 				$questionBank["choices"] = $choices;
-                $questionBank["answer"] = $answer;
+                $questionBank["answer"] = trim($answer);
                 unset($choices);
                 insertIntoDB($questionBank, $insertChapter, $courseid, $dbcon, $index);
                 unset($arrayFilled);

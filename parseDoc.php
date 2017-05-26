@@ -20,16 +20,27 @@
 			//otherwise add newline to string
 			else{
 				$outtext .= $thisline."\n";
-			}
-		}
+            
+           }
+          /* this will find what encoding you need to use to convert the doc*/
+          /*$tab = array("UTF-8", "ASCII", "Windows-1252", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"); 
+                $chain = ""; 
+                foreach ($tab as $i){ 
+                  foreach ($tab as $j){ 
+                      $chain = " $i$j ".iconv($i, $j, "$thisline");
+                     echo $chain . '<br>' ; 
+                  } 
+               } 
+
+         */  
+        }
+        
 		fclose($fileHandle); 		
 		//create name for new .txt file and write the newly created string to it.
 		$tempFile = fopen($tmp,"r+");
 		//matche all characters and add to new string 
-		$outtext = preg_replace("/[^a-zA-Z0-9\s\,\.\-\n\r\t@\/\_\(\)]/","",$outtext);
+		//$outtext = preg_replace("/[^a-zA-Z0-9\s\,\.\-\n\r\t@\/\_\(\)]/","",$outtext);
 		fputs($tempFile, $outtext);
-		//$newfile = "questionFile.txt";
-		//file_put_contents($newfile, $outtext);
 		unlink($file);
         rewind($tempFile);
         echo 'file successfully converted <br>';
