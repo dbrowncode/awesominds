@@ -160,6 +160,7 @@ var loadState = {
       //TODO: add background sprite for the question
       game.global.questionText = game.add.text(game.world.width + 1000, 40, question.question, game.global.mainFont);
       game.global.questionText.anchor.set(0.5);
+      var bubble = game.world.add(new game.global.SpeechBubble(game, game.world.x + game.global.jinny.width, game.world.y + game.global.jinny.centerY, game.world.width * .8, question.question));
 
       game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250);
       game.global.buttons = [];
