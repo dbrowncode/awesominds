@@ -37,7 +37,7 @@ var playState = {
     		game.global.chars[i].answer = game.add.text(0,0,'');
     		game.global.chars[i].chance = winChances[i];
         game.global.chars[i].correct = false;
-        //console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
+        console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
     	}
     }
 

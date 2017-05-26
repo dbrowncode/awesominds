@@ -162,8 +162,8 @@ var loadState = {
       game.global.questionText = game.add.text(game.world.width + 1000, 40, '', game.global.mainFont);
       game.global.questionText.anchor.set(0.5);
       game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.x + game.global.jinny.width, game.world.y + game.global.jinny.centerY, game.world.width * .8, question.question));
-      console.log(game.global.jinny.centerY);
-      console.log(game.global.bubble);
+      //console.log(game.global.jinny.centerY);
+      //console.log(game.global.bubble);
       game.global.bubble.y += Math.floor(game.global.bubble.bubbleheight);
 
       game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250);
@@ -172,7 +172,7 @@ var loadState = {
       //check if ai knows the answer.
       game.global.winThreshold = Math.floor(Math.random() * 100) + 1;
       //check if ai got it right
-      console.log(game.global.winThreshold);
+      console.log('ai wins if over ' + game.global.winThreshold);
       for(i = 1; i < 4; i++){
         game.global.chars[i].correct = (game.global.winThreshold <= game.global.chars[i].chance);
       }
@@ -207,11 +207,19 @@ var loadState = {
               if(game.global.chars[i].correct){
                 game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.questions[game.global.questionsAnswered].answer, game.global.mainFont);
               }else{
-          	    game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1], game.global.mainFont);
+          	    choice = game.global.letters[Math.floor(Math.random() * 4)]; 
+                answer = game.global.questions[game.global.questionsAnswered].answer;
+                //strip any whitespace so the god damn comparisons will work... this stupid bug took way to fucking long to fix.
+                answer = answer.replace(/(^\s+|\s+$)/g,"");
+                choice = choice.replace(/(^\s+|\s+$)/g,"");
+
                 //randomize answer so it isn't the correct one.
-                while(game.global.chars[i].answer==game.global.questions[game.global.questionsAnswered].answer){
-                  game.global.chars[i].answer = game.global.letters[Math.floor(Math.random() * 3)];
+                while(choice == answer){
+                  console.log('first conditional worked');
+                  choice = game.global.letters[Math.floor(Math.random() * 4)]; 
+                  console.log('ai choosing answer' + choice);
                 }
+                game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, choice, game.global.mainFont); 
               }
             }
             game.global.answersShown = true;
