@@ -159,9 +159,9 @@ var loadState = {
 
       //then make the new question
       //TODO: add background sprite for the question
-      game.global.questionText = game.add.text(game.world.width + 1000, 40, question.question, game.global.mainFont);
+      game.global.questionText = game.add.text(game.world.width + 1000, 40, '', game.global.mainFont);
       game.global.questionText.anchor.set(0.5);
-      game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.x + game.global.jinny.width, game.world.y + game.global.jinny.centerY, game.world.width * .8, "WHO let the dogs out who who who  who who who who who who who who who who who who  who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who who"));
+      game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.x + game.global.jinny.width, game.world.y + game.global.jinny.centerY, game.world.width * .8, question.question));
       console.log(game.global.jinny.centerY);
       console.log(game.global.bubble);
       game.global.bubble.y += Math.floor(game.global.bubble.bubbleheight);
