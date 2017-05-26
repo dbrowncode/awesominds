@@ -7,12 +7,6 @@ var loadState = {
   create: function() {
     game.global.letters = ['A', 'B', 'C', 'D'];
     game.global.questionShown = false;
-    game.global.numRounds = 4;
-    game.global.totalStats = {
-      numRight: 0,
-      numWrong: 0,
-      score: 0
-    };
 
     //Temporary math fixers
     game.global.answersShown = false;
@@ -22,84 +16,111 @@ var loadState = {
     game.global.rXOffset = 16;
     game.global.winStreak = 1;
     game.global.loseStreak = 1;
+
     game.global.btnClick = function(){
+      //disable each button and alter its appearance
+      for (var i = 0; i < game.global.buttons.length; i++) {
+        game.global.buttons[i].inputEnabled = false;
+      }
+      //TODO: decide how button should look when pressed; find or make appropriate assets
+      //for now this changes which frames it shows
+      this.setFrames(0, 0, 0);
+
+      //bring in a symbol of right or wrong
+      game.global.symbol = game.add.sprite(game.width + 1000, Math.floor(this.centerY), this.data.correct ? 'check' : 'x');
+      game.global.symbol.height = game.global.symbol.width = this.height;
+      game.global.symbol.anchor.setTo(0.5,0.5);
+      game.add.tween(game.global.symbol).to({x: this.right + 10}, 1000, Phaser.Easing.Default, true, 250);
 
       //increment number of answered questions
       game.global.questionsAnswered++;
-      game.global.roundStats[game.global.currentRound].answered++;
       console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
-      //temp until I fix modulus methods.
-      if(game.global.numCor == 5){
-	       game.global.numCor = 0;
-      }
-      if(game.global.numWro == 5){
-	       game.global.numWro = 0;
-      }
+      game.global.updateScores = function(answerCorrect){
+        //temp until I fix modulus methods.
+        if(game.global.numCor == 5){
+          game.global.numCor = 0;
+        }
+        if(game.global.numWro == 5){
+          game.global.numWro = 0;
+        }
 
-      //add points to AI if correct
-      for(i = 1 ; i < 4; i++){
+        //add points to AI if correct
+        for(i = 1 ; i < 4; i++){
           if(game.global.chars[i].correct){
-             game.global.chars[i].score += 25;
+            game.global.chars[i].score += 25;
           }
-             
-      }   
-
-      // record correct or incorrect and update score
-      //TODO: determine score gain/loss amount based on time/other mechanics
-      if (this.data.correct){
-        game.global.roundStats[game.global.currentRound].numRight++;
-        game.global.totalStats.numRight++;
-        game.global.numCor++;
-
-        if(game.global.answersShown == false){
-		    game.global.roundStats[game.global.currentRound].score += 100;
-        	game.global.totalStats.score += 25;
-	    }else{
-      		game.global.roundStats[game.global.currentRound].score += 50;
-      		game.global.totalStats.score += 10;
-	    }
-        //TODO adjust offsets every five questions
-        //for some reason need 2 more than numWro to make five.
-        if((game.global.totalStats.numRight + 1) % 7 == 0){
-           game.global.lXOffset +=6;
         }
-        
-      	correct = game.add.sprite((game.global.lXOffset),((game.height - 150) - (50 * game.global.numCor)) ,'right');
-      	correct.scale.setTo(.1,.1);
-        game.global.loseStreak = 1;
-        game.global.winStreak += 1;
-        
-      } else {
-        game.global.roundStats[game.global.currentRound].numWrong++;
-        game.global.totalStats.numWrong++;
-        game.global.numWro++;
-        game.global.roundStats[game.global.currentRound].score -= 50;
-        game.global.totalStats.score += 2;
-        //TODO fix offset mess doesn't always work
-        if((game.global.totalStats.numWrong + 1) % 7 == 0){
-            game.global.rXOffset += 6;
+
+        // record correct or incorrect and update score
+        //TODO: determine score gain/loss amount based on time/other mechanics
+        if (answerCorrect){
+          game.global.totalStats.numRight++;
+          game.global.numCor++;
+
+          if(!game.global.answersShown){
+          	game.global.totalStats.score += 25;
+          }else{
+        		game.global.totalStats.score += 10;
+          }
+          //TODO adjust offsets every five questions
+          //for some reason need 2 more than numWro to make five.
+          if((game.global.totalStats.numRight + 1) % 7 == 0){
+             game.global.lXOffset +=6;
+          }
+
+        	correct = game.add.sprite((game.global.lXOffset),((game.height - 150) - (50 * game.global.numCor)) ,'right');
+        	correct.scale.setTo(.1,.1);
+          game.global.loseStreak = 1;
+          game.global.winStreak += 1;
+
+        } else {
+          game.global.totalStats.numWrong++;
+          game.global.numWro++;
+          game.global.totalStats.score += 2;
+          //TODO fix offset mess doesn't always work
+          if((game.global.totalStats.numWrong + 1) % 7 == 0){
+              game.global.rXOffset += 6;
+          }
+        	wrong = game.add.sprite((game.width - game.global.rXOffset),((game.height - 150) - (50 * game.global.numWro)) , 'wrong');
+          wrong.scale.setTo(.1,.1);
+          game.global.loseStreak += 1;
+          game.global.winStreak = 1;
         }
-      	wrong = game.add.sprite((game.width - game.global.rXOffset),((game.height - 150) - (50 * game.global.numWro)) , 'wrong');
-        wrong.scale.setTo(.1,.1);
-        game.global.loseStreak += 1;
-        game.global.winStreak = 1;
-      }
-      //remove answers from screen, needs some timer magic as they pop up almost immediately.
-      game.global.answersShown = false;
-      for(i = 1; i < 4; i++){
-	       game.global.chars[i].answer.kill();
-      }
-      
-     
-      //show the next question if there is one
-      if (game.global.roundStats[game.global.currentRound].answered < game.global.qPerRound){
-        game.global.showQuestion(game.global.questions[game.global.questionsAnswered]);
-      } else {
-        //if no questions left in the round, round is over
-        game.global.removeQuestion();
-        game.state.start('endOfRound');
-      }
+      };
+
+      game.global.timer.stop();
+      game.global.timer.add(3000, animateOut, this);
+      game.global.timer.start();
+
+      function animateOut(){
+        game.add.tween(game.global.questionText).to({x: game.world.x - 1000}, 500, Phaser.Easing.Default, true, 250);
+        for (var i = 0; i < game.global.buttons.length; i++) {
+          game.add.tween(game.global.buttons[i]).to({x: game.world.x - 1000}, 500, Phaser.Easing.Default, true, 250);
+        }
+        game.add.tween(game.global.symbol).to({x: game.world.x - 1000}, 500, Phaser.Easing.Default, true, 250);
+        game.global.updateScores(this.data.correct);
+        //remove answers from screen
+        game.global.answersShown = false;
+        for(i = 1; i < 4; i++){
+           game.global.chars[i].answer.kill();
+        }
+
+        game.global.timer.stop();
+        game.global.timer.add(3000, nextQuestion, this);
+        game.global.timer.start();
+
+        function nextQuestion(){
+          //show the next question if there is one
+          if (game.global.questionsAnswered < game.global.numQuestions){
+            game.global.showQuestion(game.global.questions[game.global.questionsAnswered]);
+          } else {
+            //if no questions left in the game, game is over
+            game.global.removeQuestion();
+            game.state.start('endOfGame');
+          }
+        };
+      };
     };
 
     game.global.removeQuestion = function(){
@@ -116,20 +137,19 @@ var loadState = {
       if (game.global.questionShown){
         game.global.removeQuestion();
       }
-     
-      game.global.questionShown = false;
- 
-        //adjust ai by %5 up/down if on a streak
-        if(game.global.winStreak % 4 == 0){
-         for(i = 1; i < 4; i++){
-            game.global.chars[i].chance += 5;
-         }
-        }else if(game.global.loseStreak % 4 == 0){
-         for(i = 1; i < 4; i++){
-            game.global.chars[i].chance -= 5;
-         }
-        }
 
+      game.global.questionShown = false;
+
+      //adjust ai by %5 up/down if on a streak
+      if(game.global.winStreak % 4 == 0){
+        for(i = 1; i < 4; i++){
+          game.global.chars[i].chance += 5;
+        }
+      }else if(game.global.loseStreak % 4 == 0){
+        for(i = 1; i < 4; i++){
+          game.global.chars[i].chance -= 5;
+        }
+      }
 
       //create a timer to delay showing the answer options by 2 seconds
       game.global.timer = game.time.create(false);
@@ -149,12 +169,9 @@ var loadState = {
       //check if ai got it right
       console.log(game.global.winThreshold);
       for(i = 1; i < 4; i++){
-          if(game.global.winThreshold <= game.global.chars[i].chance){
-              game.global.chars[i].correct = true;
-          }else{
-              game.global.chars[i].correct = false;
-          }
+        game.global.chars[i].correct = (game.global.winThreshold <= game.global.chars[i].chance);
       }
+
       function showChoices(){
         //Create a button for each choice, and put some data into it in case we need it
         for (var i = 0; i < 4; i++) {
@@ -188,9 +205,8 @@ var loadState = {
           	    game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.letters[i-1], game.global.mainFont);
                 //randomize answer so it isn't the correct one.
                 while(game.global.chars[i].answer==game.global.questions[game.global.questionsAnswered].answer){
-                    game.global.chars[i].answer = game.global.letters[Math.floor(Math.random() * 3)]; 
+                  game.global.chars[i].answer = game.global.letters[Math.floor(Math.random() * 3)];
                 }
-
               }
             }
             game.global.answersShown = true;
@@ -214,22 +230,7 @@ var loadState = {
           for (var i = 0; i < data.length; i++) {
             game.global.questions[i] = $.parseJSON(data[i]["question"]);
           }
-          // set the number of questions per round
-          // TODO: proper function to determine number of questions per round
-          // game.global.qPerRound = data.length / game.global.numRounds; something like this but accounting for remainder
-          game.global.qPerRound = 12;
-          //once the questions are successfully loaded, set up the rounds and move to the play state
-          game.global.currentRound = 0;
-          game.global.roundStats = [];
-          for (var i = 0; i < game.global.numRounds; i++) {
-            game.global.roundStats[i] = {
-              numRight: 0,
-              numWrong: 0,
-              score: 0,
-              answered: 0
-            };
-          }
-          game.global.questionsAnswered = 0;
+          //once the questions are successfully loaded, move to the play state
           game.state.start('play');
         }
       });

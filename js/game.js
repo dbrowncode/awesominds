@@ -7,7 +7,7 @@ game.state.add('menuCourse', menuCourseState);
 game.state.add('menu', menuState);
 game.state.add('load', loadState);
 game.state.add('play', playState);
-game.state.add('endOfRound', endOfRoundState);
+game.state.add('endOfGame', endOfGameState);
 
 // call first state
 game.state.start('preload');
