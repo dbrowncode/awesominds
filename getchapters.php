@@ -1,0 +1,10 @@
+<?php
+  require('../../conn.php');
+
+  $query = $dbcon->prepare("SELECT DISTINCT chapter FROM question WHERE courseid = :courseid ORDER BY chapter");
+  $query->bindParam(':courseid', $_GET["courseid"]);
+  $query->execute();
+
+  $result = $query->fetchAll(PDO::FETCH_ASSOC);
+  echo json_encode($result);
+?>

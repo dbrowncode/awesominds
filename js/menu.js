@@ -29,12 +29,13 @@ var menuState = {
 		item.fill = '#ffffff';
 	},
 	playGame: function(){
-		game.state.start('load');
-		console.log("start Game");
+		game.state.start('menuChapter');
 	},
 	addQuestions: function(){
 		//game.state.start('addQ');
-		console.log("add questions");
+		console.log("add questions button pressed");
+    //open the upload form modal
+    $('#uploadModal').modal();
 	},
 
 };

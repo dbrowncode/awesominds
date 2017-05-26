@@ -1,7 +1,7 @@
 <?php
   require('../../conn.php');
-  //TODO: change this to query the course table when it exists
-  $query = $dbcon->prepare("SELECT courseid FROM questions");
+
+  $query = $dbcon->prepare("SELECT * FROM course");
   $query->execute();
 
   $result = $query->fetchAll(PDO::FETCH_ASSOC);
