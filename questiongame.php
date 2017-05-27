@@ -3,8 +3,10 @@
 <head>
 	<meta charset="UTF-8" />
     <title>Questions</title>
+  <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="js/phaser.min.js"></script>
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="js/jquery.modal.min.js"></script>
 	<script type="text/javascript" src="js/menu.js"></script>
   <script type="text/javascript" src="js/menuchapter.js"></script>
 	<script type="text/javascript" src="js/menucourse.js"></script>
@@ -41,6 +43,8 @@
 </head>
 <body>
   <div id="wrapper">
+    <!-- button in game will use this link open the upload modal -->
+    <a href="upload.html" rel="modal" id="uploadModal"></a>
     <div id="gameDiv"></div>
   </div>
 </body>

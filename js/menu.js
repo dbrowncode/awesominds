@@ -34,6 +34,8 @@ var menuState = {
 	addQuestions: function(){
 		//game.state.start('addQ');
 		console.log("add questions button pressed");
+    //open the upload form modal
+    $('#uploadModal').modal();
 	},
 
 };
