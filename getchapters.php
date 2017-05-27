@@ -1,7 +1,7 @@
 <?php
   require('../../conn.php');
-  //TODO: change this to query the course table when it exists
-  $query = $dbcon->prepare("SELECT DISTINCT chapter FROM question WHERE courseid = :courseid");
+
+  $query = $dbcon->prepare("SELECT DISTINCT chapter FROM question WHERE courseid = :courseid ORDER BY chapter");
   $query->bindParam(':courseid', $_GET["courseid"]);
   $query->execute();
 
