@@ -16,8 +16,8 @@
 
 <script>
 //configuration
-var max_file_size           = 2048576; //allowed file size. (1 MB = 1048576)
-var allowed_file_types      = ['application/msword']; //allowed file types
+var max_file_size           = 1048576 * 3; //allowed file size. (1 MB = 1048576)
+//var allowed_file_types      = ['application/msword']; //allowed file types
 var result_output           = '#output'; //ID of an element for response output
 var my_form_id              = '#uploadForm'; //ID of an element for response output
 var total_files_allowed     = 1; //Number files allowed to upload
@@ -42,11 +42,6 @@ $(my_form_id).on( "submit", function(event) {
          //iterate files in file input field
         $(this.elements['fileToUpload'].files).each(function(i, ifile){
             if(ifile.value !== ""){ //continue only if file(s) are selected
-                if(allowed_file_types.indexOf(ifile.type) === -1){ //check unsupported file
-                    error.push( "<b>"+ ifile.name + "</b> is unsupported file type!"); //push error text
-                    proceed = false; //set proceed flag to false
-                }
-
                 total_files_size = total_files_size + ifile.size; //add file size to total size
             }
         });
@@ -89,6 +84,5 @@ $(my_form_id).on( "submit", function(event) {
 
 });
 </script>
-
 </body>
 </html>
