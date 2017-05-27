@@ -14,36 +14,40 @@
         while(!feof($questionFile)){
             $line = fgets($questionFile);
             //find chapter number
-            if(preg_match("/Chapter \d+ |Chapter \d+:/",$line,$match)){    
-				$lineArray =  explode(" ", $line);
+            $line . '<br>';
+            if(preg_match("/CHAPTER \d+|CHAPTER \d+ |CHAPTER \d+:/",strToUpper($line),$match)){    
+                $lineArray =  explode(" ", $line);
                 $insertChapter = str_replace(":",'',$lineArray[1]);
-                $chapterName = preg_replace("/Chapter \d+|Chapter \d+:/","",$line);
+                $chapterName = preg_replace("/CHAPTER \d+|CHAPTER \d+:/","",strToUpper($line));
 			}
 		
             //check if it's a question
             if(is_numeric(substr($line,0,1))){
-                $question =  preg_replace("/^\d+\) /","",$line);
+                $question =  preg_replace("/^\d+\) |^\d+\)/","",$line);
+                //this might not always be right conversion string to use, but it works for now
+                $question = trim(iconv("Windows-1252","UTF-8//IGNORE",$question));
                 $questionBank["question"] = $question;
                 $arrayFilled[0] = 1;
+                $questionBank["question"] . '<br>';
 			}
-			//check if it's a possible answer operates under the assumption a b c and d are the only choices.
-			//can probably spruce this up a little nicer. cascading switch statement maybe?
-            if(preg_match("/^[ABCDabcd]\) /", $line, $matches)){
-                $choice = preg_replace("/\)/","",$matches[0]);
-                $choices[$choice] = preg_replace("/^[ABCDabcd]\) /","",$line);
+			
+            //check if it's a possible answer operates under the assumption a b c d or e are only answers and are uppperCase
+            if(preg_match("/[ABCDE]\) |[A-Z]\)/", strToUpper($line), $matches)){
+                $choice = trim(preg_replace("/\)/","",$matches[0]));
+                $choices[$choice] = trim(preg_replace("/[A-Z]\) |[A-Z]\)/","",strToUpper($line)));
                 $arrayFilled[1] = 1;
-			}
+            }
 			//assign questions, choices and answers to question bank.
-            if(preg_match("/Answer |Answer:/",$line,$match)){
+            if(preg_match("/ANSWER |ANSWER:/",strToUpper($line),$match)){
                 $answer = preg_replace("/Answer |Answer:/","",$line);
                 $arrayFilled[2] = 1;
             }
             if($arrayFilled[0] == 1 && $arrayFilled[1] == 1 && $arrayFilled[2] == 1){
-	            $questionBank["question"] = $question;
+	            $questionBank["question"] = trim($question);
 				$questionBank["choices"] = $choices;
-                $questionBank["answer"] = $answer;
-				$insertQuestion = json_encode($questionBank);
-                insertIntoDB($insertQuestion, $insertChapter, $courseid, $dbcon, $index);
+                $questionBank["answer"] = trim($answer);
+                unset($choices);
+                insertIntoDB($questionBank, $insertChapter, $courseid, $dbcon, $index);
                 unset($arrayFilled);
                 $arrayFilled = array();
 
