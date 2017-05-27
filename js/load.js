@@ -207,7 +207,7 @@ var loadState = {
               if(game.global.chars[i].correct){
                 game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.questions[game.global.questionsAnswered].answer, game.global.mainFont);
               }else{
-          	    choice = game.global.letters[Math.floor(Math.random() * 4)]; 
+          	    choice = game.global.letters[Math.floor(Math.random() * 4)];
                 answer = game.global.questions[game.global.questionsAnswered].answer;
                 //strip any whitespace so the god damn comparisons will work... this stupid bug took way to fucking long to fix.
                 answer = answer.replace(/(^\s+|\s+$)/g,"");
@@ -216,10 +216,10 @@ var loadState = {
                 //randomize answer so it isn't the correct one.
                 while(choice == answer){
                   console.log('first conditional worked');
-                  choice = game.global.letters[Math.floor(Math.random() * 4)]; 
+                  choice = game.global.letters[Math.floor(Math.random() * 4)];
                   console.log('ai choosing answer' + choice);
                 }
-                game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, choice, game.global.mainFont); 
+                game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, choice, game.global.mainFont);
               }
             }
             game.global.answersShown = true;
@@ -233,16 +233,16 @@ var loadState = {
     // get a chapter of questions from the database and load them into the questions array
     $(function (){
       $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: 'getquestion.php',
-        //TODO: use courseid and chapter chosen by user
-        data: { 'courseid': game.global.selectedCourse, 'chapter': 1 },
+        data: { 'courseid': game.global.selectedCourse, 'chapter': game.global.selectedChapter },
         dataType: 'json',
         success: function(data){
           game.global.questions = [];
           for (var i = 0; i < data.length; i++) {
             game.global.questions[i] = $.parseJSON(data[i]["question"]);
           }
+          console.log('chapter ' + game.global.selectedChapter + '; ' + game.global.questions.length + ' questions loaded');
           //once the questions are successfully loaded, move to the play state
           game.state.start('play');
         }
