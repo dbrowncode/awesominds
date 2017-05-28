@@ -158,12 +158,9 @@ var loadState = {
       game.global.timer.start();
 
       //then make the new question
-      //TODO: add background sprite for the question
       game.global.questionText = game.add.text(game.world.width + 1000, 40, '', game.global.mainFont);
       game.global.questionText.anchor.set(0.5);
-      game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.x + game.global.jinny.width, game.world.y + game.global.jinny.centerY, game.world.width * .8, question.question));
-      //console.log(game.global.jinny.centerY);
-      //console.log(game.global.bubble);
+      game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.x + game.global.jinny.width, game.world.y + game.global.jinny.centerY, game.world.width * .8, question.question, true));
       game.global.bubble.y += Math.floor(game.global.bubble.bubbleheight);
 
       game.add.tween(game.global.questionText).to({x: game.world.centerX}, 500, Phaser.Easing.Default, true, 250);

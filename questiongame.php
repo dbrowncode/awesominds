@@ -32,8 +32,8 @@
           filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0085ad', endColorstr='#fcfcfc', GradientType=0 );
           margin: 0;
           padding: 0;
-          width: 800px;
-          height: 600px;
+          /*width: 800px;*/
+          /*height: 600px;*/
         }
         #gamediv {
           margin: 0;

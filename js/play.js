@@ -2,8 +2,8 @@ var playState = {
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
-    // set the number of questions per game
-    game.global.numQuestions = 2;
+    // set the number of questions per game; will use all questions if there are less than the desired number
+    game.global.numQuestions = Math.min(2, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.totalStats = {
       numRight: 0,
