@@ -1,5 +1,7 @@
 var menuCourseState = {
   create: function(){
+      
+    game.global.music['menu'].play();
     console.log('state: menuCourse');
     game.global.chooseCourseText = game.add.text(game.world.width + 1000, 40, 'Select a Course', game.global.mainFont);
     game.global.chooseCourseText.anchor.set(0.5);

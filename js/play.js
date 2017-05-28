@@ -10,7 +10,8 @@ var playState = {
       numWrong: 0,
       score: 0
     };
-
+    game.global.music['menu'].pause();
+    game.global.music['play'].play();
     game.global.jinny = game.add.sprite(0,0, 'jinny');
     game.global.jinny.scale.setTo(.1,.1);
     game.global.questionNumText = game.add.text(0, 5, 'Question ' + (game.global.questionsAnswered + 1) + ' of ' + game.global.numQuestions, game.global.rightSideFont);

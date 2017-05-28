@@ -20,7 +20,16 @@ var menuState = {
 	questionText.events.onInputOut.add(this.out, this);
 	questionText.events.onInputDown.add(this.addQuestions,this);
 
+	
+    var optionsText= game.add.text(game.world.centerX,400,'Options', {font: '32px Arial', fill: '#ffffff', align: "center"});
+	optionsText.anchor.set(0.5);
+	optionsText.inputEnabled = true;
+	optionsText.events.onInputOver.add(this.over, this);
+	optionsText.events.onInputOut.add(this.out, this);
+	optionsText.events.onInputDown.add(this.Options,this);
+
 	},
+
 	//seems to only function while clicking.
 	over: function(item){
 		item.fill = '#ffff44';
@@ -37,5 +46,8 @@ var menuState = {
     //open the upload form modal
     $('#uploadModal').modal();
 	},
+    Options: function(){
+        game.state.start('options');
+    },
 
 };

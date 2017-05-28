@@ -22,7 +22,7 @@ if(!isset($_FILES['fileToUpload']) || !is_uploaded_file($_FILES['fileToUpload'][
 switch($filetype){
     case 'doc':
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)){
-         read_doc($target_file, $temp_file);
+            read_doc($target_file, $temp_file);
         } else {
             $errorUpload = 1;
         }

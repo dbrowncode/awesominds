@@ -13,9 +13,14 @@ var preloadState = {
 		game.load.image('rabbit', 'assets/rabbit.png');
 		game.load.image('right', 'assets/right.png');
 		game.load.image('wrong', 'assets/wrong.png');
-    game.load.image('check', 'assets/check.png');
-    game.load.image('x', 'assets/x.png');
-
+        game.load.image('check', 'assets/check.png');
+        //game.load.spritesheet('volUp','assets/up.png',1438,720,2);
+        //game.load.spritesheet('volDown','assets/down.png',1438,720,2);
+        //game.load.image('mute','assets/mute.png');
+        //game.load.image('volume','assets/volume.png');
+        game.load.image('x', 'assets/x.png');
+        game.load.audio('mush',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
+        game.load.audio('crystal',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']); 
 		game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
 
     game.global.borderFrameSize = 9 * dpr;
@@ -25,6 +30,11 @@ var preloadState = {
   },
 
 	create: function() {
+        game.global.music['menu'] = game.add.audio('crystal');
+        game.global.music['play'] = game.add.audio('mush');
+        game.global.music['menu'].volume = 0.5;
+        game.global.music['play'].volume = 0.5;
+    
     //TODO: dynamic font sizes for responsiveness?
 		game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center', wordWrap: true, wordWrapWidth: game.width * .75};
 		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: 193};
