@@ -1,42 +1,51 @@
 var preloadState = {
-    preload: function() {
-		console.log('state: preload');
-        game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-        game.scale.pageAlignHorizontally = true;
-        game.scale.pageAlignVertically = false;
-        game.scale.windowConstraints.bottom = "visual";
-    
-    	game.load.image('sky', 'assets/sky.png');
-    	game.load.image('jinny', 'assets/animal.png');
-    	game.load.image('cat', 'assets/cat.png');
-    	game.load.image('beaver', 'assets/beaver.png');
-    	game.load.image('rabbit', 'assets/rabbit.png');
-    	game.load.image('right', 'assets/right.png');
-    	game.load.image('wrong', 'assets/wrong.png');
-        game.load.image('check', 'assets/check.png');
-        //game.load.spritesheet('volUp','assets/up.png',1438,720,2);
-        //game.load.spritesheet('volDown','assets/down.png',1438,720,2);
-        //game.load.image('mute','assets/mute.png');
-        //game.load.image('volume','assets/volume.png');
-        game.load.image('x', 'assets/x.png');
-        game.load.audio('mush',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
-        game.load.audio('crystal',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']); 
-    	game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
-    	
-    	game.global.music = [];
-    
-        game.global.borderFrameSize = 9 * dpr;
-        game.load.spritesheet('bubble-border','assets/bubbleborder' + dpr + '.png', game.global.borderFrameSize, game.global.borderFrameSize);
-        game.load.image('bubble-tail', 'assets/bubbletailleft' + dpr + '.png');
-        game.load.bitmapFont('8bitoperator', 'assets/8bitoperator.png', 'assets/8bitoperator.xml');
-    },
+  preload: function() {
+	  console.log('state: preload');
+    game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    game.scale.pageAlignHorizontally = true;
+    game.scale.pageAlignVertically = false;
+    game.scale.windowConstraints.bottom = "visual";
+    game.stage.disableVisibilityChange = true;
+
+  	game.load.image('sky', 'assets/sky.png');
+  	game.load.image('jinny', 'assets/animal.png');
+  	game.load.image('cat', 'assets/cat.png');
+  	game.load.image('beaver', 'assets/beaver.png');
+  	game.load.image('rabbit', 'assets/rabbit.png');
+  	game.load.image('right', 'assets/right.png');
+  	game.load.image('wrong', 'assets/wrong.png');
+    game.load.image('check', 'assets/check.png');
+    game.load.image('arrow', 'assets/arrow.png');
+    //game.load.spritesheet('volUp','assets/up.png',1438,720,2);
+    //game.load.spritesheet('volDown','assets/down.png',1438,720,2);
+    //game.load.image('mute','assets/mute.png');
+    //game.load.image('volume','assets/volume.png');
+    game.load.image('x', 'assets/x.png');
+    game.load.audio('mush',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
+    game.load.audio('crystal',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
+  	game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
+
+    var numOppImages = 11;
+    game.global.oppImageKeys = [];
+    for (var i = 1; i <= numOppImages; i++) {
+      game.load.image('opp' + i, 'assets/opp/opp' +  i + '.png');
+      game.global.oppImageKeys[i-1] = 'opp' + i;
+    }
+
+  	game.global.music = [];
+
+    game.global.borderFrameSize = 9 * dpr;
+    game.load.spritesheet('bubble-border','assets/bubbleborder' + dpr + '.png', game.global.borderFrameSize, game.global.borderFrameSize);
+    game.load.image('bubble-tail', 'assets/bubbletailleft' + dpr + '.png');
+    game.load.bitmapFont('8bitoperator', 'assets/8bitoperator.png', 'assets/8bitoperator.xml');
+  },
 
 	create: function() {
-        game.global.music['menu'] = game.add.audio('crystal');
-        game.global.music['play'] = game.add.audio('mush');
-        game.global.music['menu'].volume = 0.5;
-        game.global.music['play'].volume = 0.5;
-    
+    game.global.music['menu'] = game.add.audio('crystal');
+    game.global.music['play'] = game.add.audio('mush');
+    game.global.music['menu'].volume = 0 //0.5;
+    game.global.music['play'].volume = 0 //0.5;
+
     //TODO: dynamic font sizes for responsiveness?
 		game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center', wordWrap: true, wordWrapWidth: game.width * .75};
 		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: 193};
@@ -100,12 +109,13 @@ var preloadState = {
 
       // Add our text last so it's on top
       this.addChild(this.bitmapText);
-      this.bitmapText.tint = 0x111111;
+      this.bitmapText.tint = 0x000000;
 
       // Offset the position to be centered on the end of the tail
       this.pivot.set(x + 25, y + height + 24);
       this.bounds = bounds;
       this.bubbleheight = height;
+      this.bubblewidth = width;
     };
 
     game.global.SpeechBubble.prototype = Object.create(Phaser.Sprite.prototype);
