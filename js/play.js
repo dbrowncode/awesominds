@@ -23,9 +23,7 @@ var playState = {
     winChances = game.global.shuffleArray(winChances);
 
     game.global.chars = [];
-
     game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys);
-    var characterPercent = 0;
     for(var i = 0; i < 4; i++){
     	game.global.chars[i] = {};
       game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110, game.global.oppImageKeys[i]);
@@ -43,6 +41,7 @@ var playState = {
 
     this.showQuestion(game.global.questions[game.global.questionsAnswered]);
   },
+
   update: function(){
     //update score text
     for (var i = 1; i < game.global.chars.length; i++) {
@@ -50,9 +49,11 @@ var playState = {
     }
     game.global.chars[0].scoreText.text = game.global.totalStats.score;
   },
+
   resize: function(width, height){
     //TODO: redraw things on window resize; think about resizing text and elements
   },
+
   showQuestion: function(question){
     //first clear any question that is already up
     if (game.global.questionShown){
@@ -126,8 +127,6 @@ var playState = {
       game.global.timer.add(2000, showAnswers, this);
       game.global.timer.start();
 
-      //temporary fix to show answers,
-      //TODO refactor once array is randomized
       function showAnswers() {
         if((!game.global.answersShown) && game.global.questionShown){
           for(i=1;i<4;i++){
@@ -136,7 +135,7 @@ var playState = {
             }else{
               choice = game.global.letters[Math.floor(Math.random() * 4)];
               answer = game.global.questions[game.global.questionsAnswered].answer;
-              //strip any whitespace so the god damn comparisons will work... this stupid bug took way to fucking long to fix.
+              //strip any whitespace so comparisons will work
               answer = answer.replace(/(^\s+|\s+$)/g,"");
               choice = choice.replace(/(^\s+|\s+$)/g,"");
 
