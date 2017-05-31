@@ -102,6 +102,8 @@ var playState = {
       game.global.choiceBubbles = game.add.group();
       var i = 0;
       var prevHeights = 0;
+      //array to store available letter choices for ai to choose from for this question
+      var availChoices = [];
       for (var c in question.choices) {
         var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, Math.max(game.global.jinny.height, game.global.bubble.y), game.world.width - (game.global.jinny.width*2), c + '. ' + question.choices[c], false));
         cb.y += Math.floor(cb.bubbleheight + prevHeights);
@@ -110,13 +112,25 @@ var playState = {
         cb.data = {
           letter: c,
           text: c + '. ' + question.choices[c],
-          correct: (c == question.answer[0])
+          correct: (c == question.answer[0]),
+          over: function(){
+            for (var b in this.borders) {
+              this.borders[b].tint = 0x5AC5E8;
+            }
+          },
+          out: function(){
+            for (var b in this.borders) {
+              this.borders[b].tint = 0xffffff;
+            }
+          }
         };
         cb.inputEnabled = true;
-        //cb.events.onInputOver.add(cb.data.over, cb);
-        //cb.events.onInputOut.add(cb.data.out, cb);
+        cb.input.useHandCursor = true;
+        cb.events.onInputOver.add(cb.data.over, cb);
+        cb.events.onInputOut.add(cb.data.out, cb);
         cb.events.onInputDown.add(this.btnClick, cb);
         game.global.choiceBubbles.add(cb);
+        availChoices[i] = c;
         i++;
       }
       game.global.questionUI.add(game.global.choiceBubbles);
@@ -133,7 +147,7 @@ var playState = {
             if(game.global.chars[i].correct){
               game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.questions[game.global.questionsAnswered].answer, game.global.mainFont);
             }else{
-              choice = game.global.letters[Math.floor(Math.random() * 4)];
+              choice = availChoices[Math.floor(Math.random() * availChoices.length)];
               answer = game.global.questions[game.global.questionsAnswered].answer;
               //strip any whitespace so comparisons will work
               answer = answer.replace(/(^\s+|\s+$)/g,"");
@@ -142,7 +156,7 @@ var playState = {
               //randomize answer so it isn't the correct one.
               while(choice == answer){
                 console.log('first conditional worked');
-                choice = game.global.letters[Math.floor(Math.random() * 4)];
+                choice = availChoices[Math.floor(Math.random() * availChoices.length)];
                 console.log('ai choosing answer' + choice);
               }
               game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, choice, game.global.mainFont);
@@ -157,10 +171,14 @@ var playState = {
   },
 
   btnClick : function(){
-    //disable each button and alter its appearance
+    //set cursor back to default; gets stuck as 'hand' otherwise
+    game.canvas.style.cursor = "default";
+    //disable each button
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
-    //TODO: decide how button should look when pressed; find or make appropriate assets
-    this.tint = 0x80ff80;
+    //change color of clicked button
+    for (var b in this.borders) {
+      this.borders[b].tint = 0xffffaa;
+    }
 
     //bring in a symbol of right or wrong
     //TODO: better positioning/sizing on mobile
