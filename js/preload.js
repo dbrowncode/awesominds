@@ -41,6 +41,9 @@ var preloadState = {
   },
 
 	create: function() {
+    game.global.logoText = game.add.bitmapText(game.world.centerX, 0, '8bitoperator', 'Awesominds', 22 * dpr);
+    game.global.logoText.x -= game.global.logoText.width/2;
+    game.stage.addChild(game.global.logoText);
     game.global.music['menu'] = game.add.audio('crystal');
     game.global.music['play'] = game.add.audio('mush');
     game.global.music['menu'].volume = 0 //0.5;
@@ -61,7 +64,7 @@ var preloadState = {
       return array;
     };
 
-    game.global.SpeechBubble = function(game, x, y, width, text, withTail) {
+    game.global.SpeechBubble = function(game, x, y, width, text, withTail, asButton, clickFunction) {
       Phaser.Sprite.call(this, game, x, y);
 
       // Some sensible minimum defaults
@@ -111,11 +114,41 @@ var preloadState = {
       this.addChild(this.bitmapText);
       this.bitmapText.tint = 0x000000;
 
-      // Offset the position to be centered on the end of the tail
-      this.pivot.set(x + 25, y + height + 24);
+      this.pivot.set(x, y);
+
+      //make some properties public for positioning purposes
       this.bounds = bounds;
       this.bubbleheight = height;
       this.bubblewidth = width;
+
+      if(asButton){
+        //enable input if this is a button
+        this.inputEnabled = true;
+        this.input.useHandCursor = true;
+        //functions to be used if this is a button
+        this.over = function(){
+          for (var b in this.borders) {
+            this.borders[b].tint = 0x5AC5E8;
+          }
+        };
+
+        this.out = function(){
+          for (var b in this.borders) {
+            this.borders[b].tint = 0xffffff;
+          }
+        };
+
+        this.click = function(){
+          for (var b in this.borders) {
+            this.borders[b].tint = 0xffffaa;
+          }
+          clickFunction.call(this);
+        }
+
+        this.events.onInputOver.add(this.over, this);
+        this.events.onInputOut.add(this.out, this);
+        this.events.onInputDown.add(this.click, this);
+      }
     };
 
     game.global.SpeechBubble.prototype = Object.create(Phaser.Sprite.prototype);

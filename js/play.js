@@ -82,8 +82,9 @@ var playState = {
     game.global.questionNumText = game.add.text(0, 5, 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, game.global.rightSideFont);
     game.global.questionNumText.setTextBounds(0, 5, game.width-10, game.height-10);
     game.global.questionUI.add(game.global.questionNumText);
-    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.world.y + game.global.jinny.centerY, game.world.width - (game.global.jinny.width*2), question.question, true));
-    game.global.bubble.y += Math.floor(game.global.bubble.bubbleheight);
+
+    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), question.question, true, false));
+    //game.global.bubble.y += Math.floor(game.global.bubble.bubbleheight);
     game.global.questionUI.add(game.global.bubble);
 
     game.add.tween(game.global.bubble).to({x: game.world.x + game.global.jinny.width}, 500, Phaser.Easing.Default, true, 250);
@@ -105,30 +106,16 @@ var playState = {
       //array to store available letter choices for ai to choose from for this question
       var availChoices = [];
       for (var c in question.choices) {
-        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, Math.max(game.global.jinny.height, game.global.bubble.y), game.world.width - (game.global.jinny.width*2), c + '. ' + question.choices[c], false));
-        cb.y += Math.floor(cb.bubbleheight + prevHeights);
+        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, Math.floor(game.world.width - (game.global.jinny.width*2)), c + '. ' + question.choices[c], false, true, playState.btnClick));
+        //cb.y += Math.floor(cb.bubbleheight + prevHeights);
+        cb.y += Math.floor(prevHeights);
         prevHeights += cb.bubbleheight;
-        game.add.tween(cb).to({x: game.global.jinny.width}, 500, Phaser.Easing.Default, true, 250 * i);
+        game.add.tween(cb).to({x: Math.floor(game.world.centerX - cb.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
         cb.data = {
           letter: c,
           text: c + '. ' + question.choices[c],
           correct: (c == question.answer[0]),
-          over: function(){
-            for (var b in this.borders) {
-              this.borders[b].tint = 0x5AC5E8;
-            }
-          },
-          out: function(){
-            for (var b in this.borders) {
-              this.borders[b].tint = 0xffffff;
-            }
-          }
         };
-        cb.inputEnabled = true;
-        cb.input.useHandCursor = true;
-        cb.events.onInputOver.add(cb.data.over, cb);
-        cb.events.onInputOut.add(cb.data.out, cb);
-        cb.events.onInputDown.add(this.btnClick, cb);
         game.global.choiceBubbles.add(cb);
         availChoices[i] = c;
         i++;
@@ -175,28 +162,24 @@ var playState = {
     game.canvas.style.cursor = "default";
     //disable each button
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
-    //change color of clicked button
-    for (var b in this.borders) {
-      this.borders[b].tint = 0xffffaa;
-    }
-
+    console.log(this);
     //bring in a symbol of right or wrong
     //TODO: better positioning/sizing on mobile
-    game.global.symbol = game.add.sprite(game.world.x - 1000, this.y - this.bubbleheight - game.global.borderFrameSize, this.data.correct ? 'check' : 'x');
+    game.global.symbol = game.add.sprite(game.world.x - game.world.width, this.centerY, this.data.correct ? 'check' : 'x');
     game.global.symbol.height = game.global.symbol.width = game.global.borderFrameSize * 3;
     game.global.symbol.anchor.setTo(0.5,0.5);
     game.global.questionUI.add(game.global.symbol);
-    game.add.tween(game.global.symbol).to({x: this.x - game.global.symbol.width}, 1000, Phaser.Easing.Default, true, 250);
+    game.add.tween(game.global.symbol).to({x: this.x}, 1000, Phaser.Easing.Default, true, 250);
 
     //if answered wrong, highlight the right answer
     if(!this.data.correct){
       game.global.choiceBubbles.forEach( function(item){
         if(item.data.correct){
-          var arrow = game.add.sprite(game.world.x - 1000, item.y - item.bubbleheight - game.global.borderFrameSize, 'arrow');
+          var arrow = game.add.sprite(game.world.x - game.world.width, item.centerY, 'arrow');
           arrow.height = arrow.width = game.global.borderFrameSize * 3;
           arrow.anchor.setTo(0.5,0.5);
           game.global.questionUI.add(arrow);
-          game.add.tween(arrow).to({x: item.x - arrow.width}, 1000, Phaser.Easing.Default, true, 250);
+          game.add.tween(arrow).to({x: item.x}, 1000, Phaser.Easing.Default, true, 250);
         }
       });
     }
@@ -264,7 +247,7 @@ var playState = {
   },
 
   animateOut : function(){
-    game.add.tween(game.global.questionUI).to({x: game.world.x - 1000}, 500, Phaser.Easing.Default, true, 250);
+    game.add.tween(game.global.questionUI).to({x: game.world.x - game.world.width}, 500, Phaser.Easing.Default, true, 250);
     playState.updateScores(this.data.correct);
     //remove answers from screen
     game.global.answersShown = false;
