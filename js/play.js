@@ -4,7 +4,7 @@ var playState = {
    *sets up number of questions/game 
    *sets up the game NPC's and assigns win % to each
    *
-  */
+   */
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
@@ -187,19 +187,25 @@ var playState = {
     game.global.symbol.height = game.global.symbol.width = game.global.borderFrameSize * 3;
     game.global.symbol.anchor.setTo(0.5,0.5);
     game.global.questionUI.add(game.global.symbol);
-    game.add.tween(game.global.symbol).to({x: this.x}, 1000, Phaser.Easing.Default, true, 250);
+    game.add.tween(game.global.symbol).to({x: this.x}, 200, Phaser.Easing.Default, true, 250);
 
     //if answered wrong, highlight the right answer
     if(!this.data.correct){
+      
       game.global.choiceBubbles.forEach( function(item){
         if(item.data.correct){
+          //play wrong sound
+          game.global.wrongsounds[ Math.floor((Math.random() * game.global.wrongsounds.length))].play();
           var arrow = game.add.sprite(game.world.x - game.world.width, item.centerY, 'arrow');
           arrow.height = arrow.width = game.global.borderFrameSize * 3;
           arrow.anchor.setTo(0.5,0.5);
           game.global.questionUI.add(arrow);
-          game.add.tween(arrow).to({x: item.x}, 1000, Phaser.Easing.Default, true, 250);
+          game.add.tween(arrow).to({x: item.x}, 200, Phaser.Easing.Default, true, 250);
         }
       });
+    }else{
+      //play correct sounds
+      game.global.rightsounds[Math.floor(Math.random() * game.global.rightsounds.length)].play();
     }
 
     //increment number of answered questions
@@ -207,7 +213,7 @@ var playState = {
     console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
     game.global.timer.stop();
-    game.global.timer.add(3000, playState.animateOut, this);
+    game.global.timer.add(1000, playState.animateOut, this);
     game.global.timer.start();
   },
 

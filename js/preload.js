@@ -32,6 +32,8 @@ var preloadState = {
 
     game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
 
+    game.global.wrongsounds = [];
+    game.global.rightsounds = [];
     var numOppImages = 11;
     game.global.oppImageKeys = [];
     for (var i = 1; i <= numOppImages; i++) {
@@ -50,6 +52,9 @@ var preloadState = {
     game.global.logoText.x -= game.global.logoText.width/2;
     game.stage.addChild(game.global.logoText);
 
+
+    game.global.wrongsounds.push(game.add.audio('wrong1'),game.add.audio('wrong2').game.add.audio('wrong3'));
+    game.global.rightsounds.push(game.add.audio('correct'),game.add.audio('correct2'));
     game.global.music = game.add.audio('menu');
     game.sound.volume = .5;
     //TODO: dynamic font sizes for responsiveness?
