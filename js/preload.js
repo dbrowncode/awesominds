@@ -16,14 +16,21 @@ var preloadState = {
   	game.load.image('wrong', 'assets/wrong.png');
     game.load.image('check', 'assets/check.png');
     game.load.image('arrow', 'assets/arrow.png');
-    //game.load.spritesheet('volUp','assets/up.png',1438,720,2);
-    //game.load.spritesheet('volDown','assets/down.png',1438,720,2);
-    //game.load.image('mute','assets/mute.png');
-    //game.load.image('volume','assets/volume.png');
     game.load.image('x', 'assets/x.png');
+    
     game.load.audio('play',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
     game.load.audio('menu',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
-  	game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
+  	game.load.audio('wrong1',['assets/music/WrongAns1.m4a','assets/music/WrongAns1.ogg']);
+    game.load.audio('wrong2',['assets/music/WrongAns2.m4a','assets/music/WrongAns2.ogg']);
+    game.load.audio('wrong3',['assets/music/WrongAns3.m4a','assets/music/WrongAns3.ogg']);
+    game.load.audio('question',['assets/music/QuestionEnters.m4a','assets/music/QuestionEnters.ogg']);
+    game.load.audio('endGame',['assets/music/EndOFGame.m4a','assets/music/EndOFGame.ogg']);
+    game.load.audio('drums',['assets/music/DrumsAndWhoo.m4a','assets/music/DrumsAndWhoo.ogg']);
+    game.load.audio('correct',['assets/music/CorrectAns.m4a','assets/music/CorrectAns.ogg']);
+    game.load.audio('correct2',['assets/music/CorrectAns2.m4a','assets/music/CorrectAns2.ogg']);
+    game.load.audio('applause',['assets/music/playerWins.m4a','assets/music/PlayerWins.ogg']);
+
+    game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
 
     var numOppImages = 11;
     game.global.oppImageKeys = [];
@@ -44,7 +51,7 @@ var preloadState = {
     game.stage.addChild(game.global.logoText);
 
     game.global.music = game.add.audio('menu');
-
+    game.sound.volume = .5;
     //TODO: dynamic font sizes for responsiveness?
 		game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center', wordWrap: true, wordWrapWidth: game.width * .75};
 		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: 193};
@@ -174,33 +181,38 @@ var preloadState = {
     game.global.volumeUp = function(){
       if(game.paused && game.global.inputInside(this)){
         console.log('clicked vol up');
-        if(game.global.music.volume < 0.9){
-          game.global.music.volume += 0.1;
-          game.global.volText.kill();
-          game.global.muteText.kill();
-          game.global.makeVolText();
-        }
+        if(game.sound.mute == true){}
+        else{
+          if(game.sound.volume < 0.9){
+            game.sound.volume += 0.1;
+            game.global.volText.kill();
+            game.global.muteText.kill();
+            game.global.makeVolText();
+          }
+        }  
       }
     };
 
     game.global.volumeDown = function(){
       if(game.paused && game.global.inputInside(this)){
-        if(game.global.music.volume > 0.1){
-          game.global.music.volume -= 0.1;
-          game.global.volText.kill();
-          game.global.muteText.kill();
-          game.global.makeVolText();
+        if(game.sound.mute == true){}
+        else{
+          if(game.sound.volume > 0.1){
+            game.sound.volume -= 0.1;
+            game.global.volText.kill();
+            game.global.muteText.kill();
+            game.global.makeVolText();
+          }
         }
       }
     };
 
-    game.global.mute = function(){
+    game.global.muteSound = function(){
       if(game.paused && game.global.inputInside(this)){
-        if(game.global.music.volume > 0){
-          game.global.origVolume = game.global.music.volume;
-          game.global.music.volume = 0;
-        } else {
-          game.global.music.volume = game.global.origVolume;
+        if(game.sound.mute){
+          game.sound.mute = false;
+        }else{
+          game.sound.mute = true;
         }
         game.global.volText.kill();
         game.global.muteText.kill();
@@ -210,11 +222,11 @@ var preloadState = {
 
     game.global.pauseMenu = function(){
       game.input.onDown.add(game.global.unpause, game.global.unpauseButton);
-
+      var ismuted = game.sound.mute;
       this.visible = false;
       game.global.unpauseButton.visible = true;
       game.paused = true;
-
+      game.sound.mute = ismuted;
       game.global.pauseUI = game.add.group();
 
       var pauseBG = game.add.graphics(0, 0);
@@ -228,7 +240,7 @@ var preloadState = {
       game.global.pauseUI.add(game.global.pausedText);
 
       game.global.makeVolText();
-      game.input.onDown.add(game.global.mute, game.global.muteText);
+      game.input.onDown.add(game.global.muteSound, game.global.muteText);
 
       var volBtnUp = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x + game.global.volText.bubblewidth + 10, game.global.volText.y, game.world.width * .8, '^', false, true, game.global.volumeUp));
       game.global.pauseUI.add(volBtnUp);
@@ -246,11 +258,11 @@ var preloadState = {
     };
 
     game.global.makeVolText = function(){
-      game.global.volText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.pausedText.y + game.global.pausedText.height*2, game.world.width * .8, 'Volume: ' +  Math.round( game.global.music.volume * 10), false, false));
+      game.global.volText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.pausedText.y + game.global.pausedText.height*2, game.world.width * .8, 'Volume: ' +  Math.round( game.sound.volume * 10), false, false));
       game.global.volText.x -= Math.floor(game.global.volText.bubblewidth/2);
       game.global.pauseUI.add(game.global.volText);
 
-      var t = game.global.music.volume > 0 ? 'Mute' : 'Unmute';
+      var t = game.sound.mute ? 'unmute' : 'Mute';
       game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y + game.global.volText.height*2, game.world.width * .8, t, false, false));
       game.global.muteText.x -= Math.floor(game.global.muteText.bubblewidth/2);
 
