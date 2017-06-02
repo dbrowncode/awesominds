@@ -1,8 +1,13 @@
 var playState = {
+  
+  /*
+   *sets up number of questions/game 
+   *sets up the game NPC's and assigns win % to each
+   *
+  */
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
-    // set the number of questions per game; will use all questions if there are less than the desired number
     game.global.numQuestions = Math.min(2, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.totalStats = {
@@ -15,21 +20,17 @@ var playState = {
     game.global.music = game.add.audio('play');
     game.global.music.loop = true;
     game.global.music.play();
-
+    //Host
     game.global.jinny = game.add.sprite(0,0, 'jinny');
     game.global.jinny.scale.setTo(.1,.1);
-    //set up game characters
 
-    //create array of chances
-    //shuffle for replayability.
-    //assign win % to NPC
+    //NPC and player
     var winChances = [20, 40, 60, 75];
     winChances = game.global.shuffleArray(winChances);
 
     game.global.chars = [];
     game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys);
-
-
+    //char[0] is currently player character
     for(var i = 0; i < 4; i++){
       game.global.chars[i] = {};
       game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110, game.global.oppImageKeys[i]);
@@ -59,6 +60,7 @@ var playState = {
   resize: function(width, height){
     //TODO: redraw things on window resize; think about resizing text and elements
   },
+
 /*
  * Clear any question that is already up
  * checks if player is on a streak and adjusts ai, maxes out at 80% mins at 25%

@@ -16,12 +16,12 @@ var optionState = {
 	    volumeUpText.events.onInputOut.add(this.out, this);
 	    volumeUpText.events.onInputDown.add(this.VolumeUp,{state: 'menu', text: menuVolume});
     
-        var volumeDownText = game.add.text(game.world.centerX - 60,220,'DOWN', {font: '32px Arial', fill: '#ffffff', align: "center"});
-        volumeDownText.anchor.set(0.5);
+      var volumeDownText = game.add.text(game.world.centerX - 60,220,'DOWN', {font: '32px Arial', fill: '#ffffff', align: "center"});
+      volumeDownText.anchor.set(0.5);
 	    volumeDownText.inputEnabled = true;
 	    volumeDownText.events.onInputOver.add(this.over, this);
 	    volumeDownText.events.onInputOut.add(this.out, this);
-        volumeDownText.events.onInputDown.add(this.VolumeDown,{state:'menu', text: menuVolume});
+      volumeDownText.events.onInputDown.add(this.VolumeDown,{state:'menu', text: menuVolume});
         
        
 	    var gameText = game.add.text(game.world.centerX, 300,'Game Volume', {font: '32px Arial', fill: '#ffffff', align: "center"});
@@ -34,14 +34,13 @@ var optionState = {
 	    vUpText.events.onInputOut.add(this.out, this);
     	vUpText.events.onInputDown.add(this.VolumeUp,{state: 'play', text: playVolume});
     
-        var vDownText = game.add.text(game.world.centerX - 60,350,'DOWN', {font: '32px Arial', fill: '#ffffff', align: "center"});
-        vDownText.anchor.set(0.5);
-        vDownText.inputEnabled = true;
-        vDownText.events.onInputOver.add(this.over, this);
-        vDownText.events.onInputOut.add(this.out, this);
-        vDownText.events.onInputDown.add(this.VolumeDown,{state: 'play',text: playVolume});
+      var vDownText = game.add.text(game.world.centerX - 60,350,'DOWN', {font: '32px Arial', fill: '#ffffff', align: "center"});
+      vDownText.anchor.set(0.5);
+      vDownText.inputEnabled = true;
+      vDownText.events.onInputOver.add(this.over, this);
+      vDownText.events.onInputOut.add(this.out, this);
+      vDownText.events.onInputDown.add(this.VolumeDown,{state: 'play',text: playVolume});
 
-	
 	    var backText = game.add.text(game.world.centerX,450,'back', {font: '32px Arial', fill: '#ffffff', align: "center"});
 	    backText.anchor.set(0.5);
 	    backText.inputEnabled = true;
@@ -57,6 +56,7 @@ var optionState = {
 	out: function(item){
 		item.fill = '#ffffff';
 	},
+  /*
     VolumeDown: function(){
        if(game.global.music[this.state].volume >= .1){
          game.global.music[this.state].volume -= 0.1;
@@ -77,6 +77,7 @@ var optionState = {
      }
      
     },
+    */
     Back: function(){
         game.state.start('menu');
     },

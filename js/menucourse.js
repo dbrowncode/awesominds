@@ -1,6 +1,5 @@
 var menuCourseState = {
   create: function(){
-    game.global.music.stop();
     game.global.music = game.add.audio('menu');
     game.global.music.volume = 0.5;
     game.global.music.loop = true;

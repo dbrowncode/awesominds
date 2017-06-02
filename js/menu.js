@@ -3,7 +3,6 @@ var menuState = {
     var menuItems = [
       { name: 'Start Game', onClick: menuState.playGame },
       { name: 'Add Questions', onClick: menuState.addQuestions },
-      { name: 'Options', onClick: menuState.Options}
     ];
     var prevHeights = 0;
     for (var i = 0; i < menuItems.length; i++) {
@@ -24,7 +23,4 @@ var menuState = {
     //TODO: figure out why this stops being a function after it has been clicked once??
     $('#uploadModal').modal();
 	},
-  Options: function(){
-    game.state.start('options');
-  }
 };
