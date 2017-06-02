@@ -1,4 +1,4 @@
-var dpr = Math.floor(window.devicePixelRatio)
+var dpr = Math.floor(window.devicePixelRatio);
 var game = new Phaser.Game(window.innerWidth * dpr, window.innerHeight * dpr, Phaser.AUTO, 'gameDiv', null, true, true);
 game.global = {}; // create global object we can add properties to and access from any state
 
