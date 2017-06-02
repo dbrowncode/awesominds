@@ -28,8 +28,10 @@ var playState = {
 
     game.global.chars = [];
     game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys);
+
+
     for(var i = 0; i < 4; i++){
-    	game.global.chars[i] = {};
+      game.global.chars[i] = {};
       game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110, game.global.oppImageKeys[i]);
       game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
       game.global.chars[i].score = 0;
@@ -57,32 +59,42 @@ var playState = {
   resize: function(width, height){
     //TODO: redraw things on window resize; think about resizing text and elements
   },
-
-  showQuestion: function(question){
-    //first clear any question that is already up
+/*
+ * Clear any question that is already up
+ * checks if player is on a streak and adjusts ai, maxes out at 80% mins at 25%
+ * sets timer to 2 second delay before showing options
+ * creates new question
+ * scores AI for new question
+ */
+ showQuestion: function(question){
     if (game.global.questionShown){
       playState.removeQuestion();
     }
     game.global.questionUI = game.add.group();
     game.global.questionShown = false;
 
-    //adjust ai by %5 up/down if on a streak
+    //AI win %
     if(game.global.winStreak % 4 == 0){
       for(i = 1; i < 4; i++){
-        game.global.chars[i].chance += 5;
+        if(game.global.chars[i].chance >= 80){
+          game.global.chars[i].chance = 80;
+        }
+        else{game.global.chars[i].chance += 5;}
       }
     }else if(game.global.loseStreak % 4 == 0){
       for(i = 1; i < 4; i++){
-        game.global.chars[i].chance -= 5;
+        if(game.global.chars[i].chance <= 25){
+          game.global.chars[i].chance = 25; 
+        }
+        else{game.global.chars[i].chance -= 5;}
       }
-    }
-
-    //create a timer to delay showing the answer options by 2 seconds
+    }    
+    //timer
     game.global.timer = game.time.create(false);
     game.global.timer.add(2000, showChoices, this);
     game.global.timer.start();
 
-    //then make the new question
+    //new question
     game.global.questionNumText = game.add.text(0, 5, 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, game.global.rightSideFont);
     game.global.questionNumText.setTextBounds(0, 5, game.width-10, game.height-10);
     game.global.questionUI.add(game.global.questionNumText);
@@ -91,12 +103,12 @@ var playState = {
     //game.global.bubble.y += Math.floor(game.global.bubble.bubbleheight);
     game.global.questionUI.add(game.global.bubble);
 
+    //animation
     game.add.tween(game.global.bubble).to({x: game.world.x + game.global.jinny.width}, 500, Phaser.Easing.Default, true, 250);
     game.global.buttons = [];
-
-    //check if ai knows the answer.
+ 
+    //ai
     game.global.winThreshold = Math.floor(Math.random() * 100) + 1;
-    //check if ai got it right
     console.log('ai wins if over ' + game.global.winThreshold);
     for(i = 1; i < 4; i++){
       game.global.chars[i].correct = (game.global.winThreshold <= game.global.chars[i].chance);

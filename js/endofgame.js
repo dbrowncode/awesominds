@@ -17,6 +17,7 @@ var endOfGameState = {
     };
 
     game.global.chooseCourseClick = function(){
+      game.global.music['play'].stop();  
       game.state.start('menuCourse');
     };
 
