@@ -17,7 +17,7 @@ var preloadState = {
     game.load.image('check', 'assets/check.png');
     game.load.image('arrow', 'assets/arrow.png');
     game.load.image('x', 'assets/x.png');
-    
+
     game.load.audio('play',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
     game.load.audio('menu',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
   	game.load.audio('wrong1',['assets/music/WrongAns1.m4a','assets/music/WrongAns1.ogg']);
@@ -180,40 +180,35 @@ var preloadState = {
 
     game.global.volumeUp = function(){
       if(game.paused && game.global.inputInside(this)){
-        console.log('clicked vol up');
-        if(game.sound.mute == true){}
-        else{
-          if(game.sound.volume < 0.9){
-            game.sound.volume += 0.1;
-            game.global.volText.kill();
-            game.global.muteText.kill();
-            game.global.makeVolText();
+        if(game.sound.volume < 0.9){
+          if(game.sound.mute){
+            game.global.muteSound.call(this);
           }
-        }  
+          game.sound.volume += 0.1;
+          game.global.volText.kill();
+          game.global.muteText.kill();
+          game.global.makeVolText();
+        }
       }
     };
 
     game.global.volumeDown = function(){
       if(game.paused && game.global.inputInside(this)){
-        if(game.sound.mute == true){}
-        else{
-          if(game.sound.volume > 0.1){
-            game.sound.volume -= 0.1;
-            game.global.volText.kill();
-            game.global.muteText.kill();
-            game.global.makeVolText();
+        if(game.sound.volume > 0.1){
+          if(game.sound.mute){
+            game.global.muteSound.call(this);
           }
+          game.sound.volume -= 0.1;
+          game.global.volText.kill();
+          game.global.muteText.kill();
+          game.global.makeVolText();
         }
       }
     };
 
     game.global.muteSound = function(){
       if(game.paused && game.global.inputInside(this)){
-        if(game.sound.mute){
-          game.sound.mute = false;
-        }else{
-          game.sound.mute = true;
-        }
+        game.sound.mute = !game.sound.mute;
         game.global.volText.kill();
         game.global.muteText.kill();
         game.global.makeVolText();
@@ -242,11 +237,11 @@ var preloadState = {
       game.global.makeVolText();
       game.input.onDown.add(game.global.muteSound, game.global.muteText);
 
-      var volBtnUp = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x + game.global.volText.bubblewidth + 10, game.global.volText.y, game.world.width * .8, '^', false, true, game.global.volumeUp));
+      var volBtnUp = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x + game.global.volText.bubblewidth + 10, game.global.volText.y, game.world.width * .8, '+', false, true, game.global.volumeUp));
       game.global.pauseUI.add(volBtnUp);
       game.input.onDown.add(game.global.volumeUp, volBtnUp);
 
-      var volBtnDown = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x, game.global.volText.y, game.world.width * .8, 'v', false, true, game.global.volumeDown));
+      var volBtnDown = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x, game.global.volText.y, game.world.width * .8, '-', false, true, game.global.volumeDown));
       volBtnDown.x -= volBtnDown.bubblewidth + 10;
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
@@ -254,7 +249,7 @@ var preloadState = {
 
     //function to check if a click occurs inside a display object such as speechbubbles
     game.global.inputInside = function(item){
-      return (game.input.x > item.x && game.input.x < item.right && game.input.y > item.y && game.input.y < item.bottom);
+      return (game.input.x > item.x && game.input.x < item.x + item.bubblewidth && game.input.y > item.y && game.input.y < item.y + item.bubbleheight);
     };
 
     game.global.makeVolText = function(){
@@ -262,7 +257,7 @@ var preloadState = {
       game.global.volText.x -= Math.floor(game.global.volText.bubblewidth/2);
       game.global.pauseUI.add(game.global.volText);
 
-      var t = game.sound.mute ? 'unmute' : 'Mute';
+      var t = game.sound.mute ? 'Unmute' : 'Mute';
       game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y + game.global.volText.height*2, game.world.width * .8, t, false, false));
       game.global.muteText.x -= Math.floor(game.global.muteText.bubblewidth/2);
 
@@ -270,7 +265,6 @@ var preloadState = {
     };
 
     game.global.unpause = function(){
-      //console.log(this);
       if(game.paused && game.global.inputInside(this)){
         this.visible = false;
         game.global.pauseButton.visible = true;
