@@ -21,8 +21,8 @@ var preloadState = {
     //game.load.image('mute','assets/mute.png');
     //game.load.image('volume','assets/volume.png');
     game.load.image('x', 'assets/x.png');
-    game.load.audio('mush',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
-    game.load.audio('crystal',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
+    game.load.audio('play',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
+    game.load.audio('menu',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
   	game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
 
     var numOppImages = 11;
@@ -31,8 +31,6 @@ var preloadState = {
       game.load.image('opp' + i, 'assets/opp/opp' +  i + '.png');
       game.global.oppImageKeys[i-1] = 'opp' + i;
     }
-
-  	game.global.music = [];
 
     game.global.borderFrameSize = 9 * dpr;
     game.load.spritesheet('bubble-border','assets/bubbleborder' + dpr + '.png', game.global.borderFrameSize, game.global.borderFrameSize);
@@ -44,10 +42,8 @@ var preloadState = {
     game.global.logoText = game.add.bitmapText(game.world.centerX, 0, '8bitoperator', 'Awesominds', 22 * dpr);
     game.global.logoText.x -= game.global.logoText.width/2;
     game.stage.addChild(game.global.logoText);
-    game.global.music['menu'] = game.add.audio('crystal');
-    game.global.music['play'] = game.add.audio('mush');
-    game.global.music['menu'].volume = 0 //0.5;
-    game.global.music['play'].volume = 0 //0.5;
+
+    game.global.music = game.add.audio('menu');
 
     //TODO: dynamic font sizes for responsiveness?
 		game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center', wordWrap: true, wordWrapWidth: game.width * .75};
@@ -147,7 +143,7 @@ var preloadState = {
 
         this.events.onInputOver.add(this.over, this);
         this.events.onInputOut.add(this.out, this);
-        this.events.onInputDown.add(this.click, this);
+        this.events.onInputUp.add(this.click, this);
       }
     };
 
@@ -175,6 +171,112 @@ var preloadState = {
       bitmapText.updateText();
     };
 
+    game.global.volumeUp = function(){
+      if(game.paused && game.global.inputInside(this)){
+        console.log('clicked vol up');
+        if(game.global.music.volume < 0.9){
+          game.global.music.volume += 0.1;
+          game.global.volText.kill();
+          game.global.muteText.kill();
+          game.global.makeVolText();
+        }
+      }
+    };
+
+    game.global.volumeDown = function(){
+      if(game.paused && game.global.inputInside(this)){
+        if(game.global.music.volume > 0.1){
+          game.global.music.volume -= 0.1;
+          game.global.volText.kill();
+          game.global.muteText.kill();
+          game.global.makeVolText();
+        }
+      }
+    };
+
+    game.global.mute = function(){
+      if(game.paused && game.global.inputInside(this)){
+        if(game.global.music.volume > 0){
+          game.global.origVolume = game.global.music.volume;
+          game.global.music.volume = 0;
+        } else {
+          game.global.music.volume = game.global.origVolume;
+        }
+        game.global.volText.kill();
+        game.global.muteText.kill();
+        game.global.makeVolText();
+      }
+    };
+
+    game.global.pauseMenu = function(){
+      game.input.onDown.add(game.global.unpause, game.global.unpauseButton);
+
+      this.visible = false;
+      game.global.unpauseButton.visible = true;
+      game.paused = true;
+
+      game.global.pauseUI = game.add.group();
+
+      var pauseBG = game.add.graphics(0, 0);
+      pauseBG.lineStyle(2, 0x000000, 1);
+      pauseBG.beginFill(0x078EB7, 1);
+      pauseBG.drawRoundedRect(game.world.x + 10, game.global.logoText.y + game.global.logoText.height*2, game.world.width - 20, game.world.height - (game.global.logoText.y + game.global.logoText.height*2) - 10, 10);
+      game.global.pauseUI.add(pauseBG);
+
+      game.global.pausedText = game.add.bitmapText(game.world.centerX, game.global.logoText.y + game.global.logoText.height*2, '8bitoperator', 'Paused', 22 * dpr);
+      game.global.pausedText.x -= game.global.pausedText.width/2;
+      game.global.pauseUI.add(game.global.pausedText);
+
+      game.global.makeVolText();
+      game.input.onDown.add(game.global.mute, game.global.muteText);
+
+      var volBtnUp = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x + game.global.volText.bubblewidth + 10, game.global.volText.y, game.world.width * .8, '^', false, true, game.global.volumeUp));
+      game.global.pauseUI.add(volBtnUp);
+      game.input.onDown.add(game.global.volumeUp, volBtnUp);
+
+      var volBtnDown = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x, game.global.volText.y, game.world.width * .8, 'v', false, true, game.global.volumeDown));
+      volBtnDown.x -= volBtnDown.bubblewidth + 10;
+      game.global.pauseUI.add(volBtnDown);
+      game.input.onDown.add(game.global.volumeDown, volBtnDown);
+    };
+
+    //function to check if a click occurs inside a display object such as speechbubbles
+    game.global.inputInside = function(item){
+      return (game.input.x > item.x && game.input.x < item.right && game.input.y > item.y && game.input.y < item.bottom);
+    };
+
+    game.global.makeVolText = function(){
+      game.global.volText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.pausedText.y + game.global.pausedText.height*2, game.world.width * .8, 'Volume: ' +  Math.round( game.global.music.volume * 10), false, false));
+      game.global.volText.x -= Math.floor(game.global.volText.bubblewidth/2);
+      game.global.pauseUI.add(game.global.volText);
+
+      var t = game.global.music.volume > 0 ? 'Mute' : 'Unmute';
+      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y + game.global.volText.height*2, game.world.width * .8, t, false, false));
+      game.global.muteText.x -= Math.floor(game.global.muteText.bubblewidth/2);
+
+      game.global.pauseUI.add(game.global.muteText);
+    };
+
+    game.global.unpause = function(){
+      //console.log(this);
+      if(game.paused && game.global.inputInside(this)){
+        this.visible = false;
+        game.global.pauseButton.visible = true;
+        game.global.pauseUI.destroy();
+        game.input.onDown.removeAll();
+        game.paused = false;
+      }
+    };
+
+    game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.world.width - 40, game.global.logoText.y, 30, '||', false, true, game.global.pauseMenu));
+    game.stage.addChild(game.global.pauseButton);
+
+    game.global.unpauseButton = game.world.add(new game.global.SpeechBubble(game, game.global.pauseButton.x, game.global.pauseButton.y, 30, '|>', false, true, game.global.unpause));
+    game.global.unpauseButton.visible = false;
+    game.stage.addChild(game.global.unpauseButton);
+
+    game.global.origVolume = 0.5;
+
 		game.state.start('menuCourse');
-	},
+	}
 };

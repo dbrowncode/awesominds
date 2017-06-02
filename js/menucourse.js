@@ -1,6 +1,10 @@
 var menuCourseState = {
   create: function(){
-    game.global.music['menu'].play();
+    game.global.music.stop();
+    game.global.music = game.add.audio('menu');
+    game.global.music.volume = 0.5;
+    game.global.music.loop = true;
+    game.global.music.play();
     console.log('state: menuCourse');
 
     var text = game.add.bitmapText(game.world.centerX + 1000, game.global.logoText.y + game.global.logoText.height*2, '8bitoperator', 'Select a Course', 22 * dpr);

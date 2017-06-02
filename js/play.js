@@ -10,8 +10,12 @@ var playState = {
       numWrong: 0,
       score: 0
     };
-    game.global.music['menu'].pause();
-    game.global.music['play'].play();
+
+    game.global.music.stop();
+    game.global.music = game.add.audio('play');
+    game.global.music.loop = true;
+    game.global.music.play();
+
     game.global.jinny = game.add.sprite(0,0, 'jinny');
     game.global.jinny.scale.setTo(.1,.1);
     //set up game characters
