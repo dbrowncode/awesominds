@@ -53,7 +53,7 @@ var preloadState = {
     game.stage.addChild(game.global.logoText);
 
 
-    game.global.wrongsounds.push(game.add.audio('wrong1'),game.add.audio('wrong2').game.add.audio('wrong3'));
+    game.global.wrongsounds.push(game.add.audio('wrong1'),game.add.audio('wrong2'),game.add.audio('wrong3'));
     game.global.rightsounds.push(game.add.audio('correct'),game.add.audio('correct2'));
     game.global.music = game.add.audio('menu');
     game.sound.volume = .5;
@@ -183,6 +183,8 @@ var preloadState = {
       bitmapText.updateText();
     };
 
+    // raise volume for all sound
+    //TODO: separate volume for music/fx?
     game.global.volumeUp = function(){
       if(game.paused && game.global.inputInside(this)){
         if(game.sound.volume < 0.9){
@@ -197,6 +199,8 @@ var preloadState = {
       }
     };
 
+    // lower volume for all sound
+    //TODO: separate volume for music/fx?
     game.global.volumeDown = function(){
       if(game.paused && game.global.inputInside(this)){
         if(game.sound.volume > 0.1){
@@ -211,6 +215,8 @@ var preloadState = {
       }
     };
 
+    // mute or unmute all sound
+    //TODO: separate mutes for music/fx?
     game.global.muteSound = function(){
       if(game.paused && game.global.inputInside(this)){
         game.sound.mute = !game.sound.mute;
@@ -252,7 +258,8 @@ var preloadState = {
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
     };
 
-    //function to check if a click occurs inside a display object such as speechbubbles
+    //function to check if a click occurs inside a SpeechBubble
+    //necessary for any input while the game is paused
     game.global.inputInside = function(item){
       return (game.input.x > item.x && game.input.x < item.x + item.bubblewidth && game.input.y > item.y && game.input.y < item.y + item.bubbleheight);
     };

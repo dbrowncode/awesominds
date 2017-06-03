@@ -1,20 +1,21 @@
 var playState = {
-  
+
   /*
-   *sets up number of questions/game 
+   *sets up number of questions/game
    *sets up the game NPC's and assigns win % to each
    *
    */
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
-    game.global.numQuestions = Math.min(2, game.global.questions.length);
+    game.global.numQuestions = Math.min(15, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.totalStats = {
       numRight: 0,
       numWrong: 0,
       score: 0
     };
+    game.global.answerBubbles = game.add.group();
 
     game.global.music.stop();
     game.global.music = game.add.audio('play');
@@ -23,6 +24,13 @@ var playState = {
     //Host
     game.global.jinny = game.add.sprite(0,0, 'jinny');
     game.global.jinny.scale.setTo(.1,.1);
+    game.global.hostComments = {
+      //TODO: add other categories of comments and content; possibly load from json or db
+      right : ['Good job!', 'Yup!', 'You got it!', 'Nice!', 'Well done!'],
+      wrong : ['Nope!', 'Not quite!', "That's not it!", "That's wrong!"]
+    };
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Welcome to Awesominds!', true, false));
+    console.log(game.global.jinnySpeech);
 
     //NPC and player
     var winChances = [20, 40, 60, 75];
@@ -36,10 +44,10 @@ var playState = {
       game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110, game.global.oppImageKeys[i]);
       game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
       game.global.chars[i].score = 0;
-      game.global.chars[i].scoreText = game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY, game.global.chars[i].score, game.global.mainFont);
+      game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', game.global.chars[i].score, 11 * dpr);
+      game.global.chars[i].scoreText.tint = 0x000000;
+      //game.add.text((((game.width/4)*(i+1)-game.width/4)+game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY, game.global.chars[i].score, game.global.mainFont);
      	if(i!=0){
-    		//placeholder text to make kill not break game.
-    		game.global.chars[i].answer = game.add.text(0,0,'');
     		game.global.chars[i].chance = winChances[i];
         game.global.chars[i].correct = false;
         console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
@@ -86,29 +94,30 @@ var playState = {
     }else if(game.global.loseStreak % 4 == 0){
       for(i = 1; i < 4; i++){
         if(game.global.chars[i].chance <= 25){
-          game.global.chars[i].chance = 25; 
+          game.global.chars[i].chance = 25;
         }
         else{game.global.chars[i].chance -= 5;}
       }
-    }    
+    }
     //timer
     game.global.timer = game.time.create(false);
     game.global.timer.add(2000, showChoices, this);
     game.global.timer.start();
 
     //new question
-    game.global.questionNumText = game.add.text(0, 5, 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, game.global.rightSideFont);
-    game.global.questionNumText.setTextBounds(0, 5, game.width-10, game.height-10);
+    game.global.questionNumText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, 11 * dpr);
+    game.global.questionNumText.x -= game.global.questionNumText.width;
+    game.global.questionNumText.tint = 0x000000;
     game.global.questionUI.add(game.global.questionNumText);
 
-    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), question.question, true, false));
+    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight*2, game.world.width - (game.global.jinny.width*2), question.question, false, false));
     //game.global.bubble.y += Math.floor(game.global.bubble.bubbleheight);
     game.global.questionUI.add(game.global.bubble);
 
     //animation
-    game.add.tween(game.global.bubble).to({x: game.world.x + game.global.jinny.width}, 500, Phaser.Easing.Default, true, 250);
+    game.add.tween(game.global.bubble).to({x: Math.floor(game.world.centerX - game.global.bubble.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250);
     game.global.buttons = [];
- 
+
     //ai
     game.global.winThreshold = Math.floor(Math.random() * 100) + 1;
     console.log('ai wins if over ' + game.global.winThreshold);
@@ -148,9 +157,9 @@ var playState = {
 
       function showAnswers() {
         if((!game.global.answersShown) && game.global.questionShown){
-          for(i=1;i<4;i++){
+          for(i=1;i<game.global.chars.length;i++){
             if(game.global.chars[i].correct){
-              game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, game.global.questions[game.global.questionsAnswered].answer, game.global.mainFont);
+              game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), Math.floor(game.global.chars[i].sprite.width), game.global.questions[game.global.questionsAnswered].answer, true, false));
             }else{
               choice = availChoices[Math.floor(Math.random() * availChoices.length)];
               answer = game.global.questions[game.global.questionsAnswered].answer;
@@ -164,9 +173,9 @@ var playState = {
                 choice = availChoices[Math.floor(Math.random() * availChoices.length)];
                 console.log('ai choosing answer' + choice);
               }
-              game.global.chars[i].answer = game.add.text((game.global.chars[i].sprite.x + game.global.chars[i].sprite.width), game.global.chars[i].sprite.centerY - 20, choice, game.global.mainFont);
-              game.global.questionUI.add(game.global.chars[i].answer);
+              game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), Math.floor(game.global.chars[i].sprite.width), choice, true, false));
             }
+            game.global.answerBubbles.add(game.global.chars[i].answerBubble);
           }
           game.global.answersShown = true;
         }
@@ -180,7 +189,6 @@ var playState = {
     game.canvas.style.cursor = "default";
     //disable each button
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
-    console.log(this);
     //bring in a symbol of right or wrong
     //TODO: better positioning/sizing on mobile
     game.global.symbol = game.add.sprite(game.world.x - game.world.width, this.centerY, this.data.correct ? 'check' : 'x');
@@ -188,14 +196,17 @@ var playState = {
     game.global.symbol.anchor.setTo(0.5,0.5);
     game.global.questionUI.add(game.global.symbol);
     game.add.tween(game.global.symbol).to({x: this.x}, 200, Phaser.Easing.Default, true, 250);
+    var sounds = this.data.correct ? game.global.rightsounds : game.global.wrongsounds;
+    //play sound
+    sounds[0].play();
+
+    var speech = this.data.correct ? 'right' : 'wrong';
+    game.global.jinnySpeech.bitmapText.text = game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)];
 
     //if answered wrong, highlight the right answer
     if(!this.data.correct){
-      
       game.global.choiceBubbles.forEach( function(item){
         if(item.data.correct){
-          //play wrong sound
-          game.global.wrongsounds[ Math.floor((Math.random() * game.global.wrongsounds.length))].play();
           var arrow = game.add.sprite(game.world.x - game.world.width, item.centerY, 'arrow');
           arrow.height = arrow.width = game.global.borderFrameSize * 3;
           arrow.anchor.setTo(0.5,0.5);
@@ -203,9 +214,6 @@ var playState = {
           game.add.tween(arrow).to({x: item.x}, 200, Phaser.Easing.Default, true, 250);
         }
       });
-    }else{
-      //play correct sounds
-      game.global.rightsounds[Math.floor(Math.random() * game.global.rightsounds.length)].play();
     }
 
     //increment number of answered questions
@@ -268,19 +276,36 @@ var playState = {
       game.global.loseStreak += 1;
       game.global.winStreak = 1;
     }
+    // update player's score on their spot in the chars array for easier animation etc
+    game.global.chars[0].score = game.global.totalStats.score;
   },
 
   animateOut : function(){
     game.add.tween(game.global.questionUI).to({x: game.world.x - game.world.width}, 500, Phaser.Easing.Default, true, 250);
     playState.updateScores(this.data.correct);
-    //remove answers from screen
-    game.global.answersShown = false;
-    for(i = 1; i < 4; i++){
-       game.global.chars[i].answer.kill();
+
+    //make progress bars and animate them
+    for (var i = 0; i < game.global.chars.length; i++) {
+      if(game.global.questionsAnswered <= 1){
+        game.global.chars[i].gfx = game.add.graphics(0,0);
+        game.global.chars[i].gfx.visible = false;
+        game.global.chars[i].gfx.beginFill(0x02C487, 1);
+        game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
+        game.global.chars[i].barSprite = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].gfx.generateTexture());
+        game.global.chars[i].barSprite.anchor.y = 1;
+      }
+      game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].score, 1)}, 500, Phaser.Easing.Default, true, 250);
     }
 
     game.global.timer.stop();
-    game.global.timer.add(3000, playState.nextQuestion, playState);
+    removeAnswers = function(){
+      //remove answers from screen
+      game.global.answersShown = false;
+      game.global.answerBubbles.destroy();
+      game.global.answerBubbles = game.add.group();
+    };
+    game.global.timer.add(750, removeAnswers, playState);
+    game.global.timer.add(1500, playState.nextQuestion, playState);
     game.global.timer.start();
   },
 
@@ -288,6 +313,7 @@ var playState = {
     playState.removeQuestion();
     //show the next question if there is one
     if (game.global.questionsAnswered < game.global.numQuestions){
+      game.global.jinnySpeech.bitmapText.text = 'Next question...';
       this.showQuestion(game.global.questions[game.global.questionsAnswered]);
     } else {
       //if no questions left in the game, game is over
