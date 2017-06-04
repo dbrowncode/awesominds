@@ -26,8 +26,9 @@ var playState = {
     game.global.jinny.scale.setTo(.1,.1);
     game.global.hostComments = {
       //TODO: add other categories of comments and content; possibly load from json or db
-      right : ['Good job!', 'Yup!', 'You got it!', 'Nice!', 'Well done!'],
-      wrong : ['Nope!', 'Not quite!', "That's not it!", "That's wrong!"]
+      right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
+      wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"],
+      endRound : ["You have an"," awesomind!"," very good mind"," good mind", " okay mind"]  
     };
     game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Welcome to Awesominds!', true, false));
     console.log(game.global.jinnySpeech);
@@ -201,7 +202,11 @@ var playState = {
     sounds[0].play();
 
     var speech = this.data.correct ? 'right' : 'wrong';
-    game.global.jinnySpeech.bitmapText.text = game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)];
+
+    //TODO this kind of workds but seems nuclear, though in some ways it kind of makes sense to destroy it.
+    game.global.jinnySpeech.destroy();
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
+
 
     //if answered wrong, highlight the right answer
     if(!this.data.correct){

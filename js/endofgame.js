@@ -3,7 +3,20 @@ var endOfGameState = {
     console.log('state: endofgame');
     game.global.jinny = game.add.sprite(0,0, 'jinny');
     game.global.jinny.scale.setTo(.1,.1);
-
+    
+    //She aint pretty she just looks that way.
+    var mindState = ["awesomind!","very good mind","good mind", "okay mind"]; 
+    var score = Math.floor(((game.global.totalStats.score) / (game.global.numQuestions * 25)) * 100);
+    if(score == 100){
+     game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have an " + mindState[0], true, false));
+    }else if(score >= 75){
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have an " + mindState[1], true, false));
+    }else if(score >= 60){
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have an " + mindState[2], true, false));
+    }else{
+     game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have an " + mindState[3], true, false));
+    }
+    
     for(var i = 0; i < 4; i++){
     	game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110, game.global.oppImageKeys[i]);
     	game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
