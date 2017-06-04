@@ -1,5 +1,6 @@
 var menuState = {
 	create: function() {
+    var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuState.backButton));
     var menuItems = [
       { name: 'Start Game', onClick: menuState.playGame },
       { name: 'Add Questions', onClick: menuState.addQuestions },
@@ -23,4 +24,7 @@ var menuState = {
     //TODO: figure out why this stops being a function after it has been clicked once??
     $('#uploadModal').modal();
 	},
+  backButton: function(){
+    endOfGameState.chooseCourseClick.call(this);
+  }
 };

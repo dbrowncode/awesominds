@@ -7,6 +7,8 @@ var menuChapterState = {
     text.smoothed = false;
     game.add.tween(text).to({x: game.world.centerX - (text.width/2)}, 100, Phaser.Easing.Default, true, 250);
 
+    var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuChapterState.backButton));
+
     var chapters = [];
     $(function (){
       $.ajax({
@@ -33,5 +35,8 @@ var menuChapterState = {
     game.global.selectedChapter = this.data.chapter.chapter;
     console.log('selected chapter id: ' + game.global.selectedChapter);
     game.state.start('load');
+  },
+  backButton: function(){
+    game.state.start('menu');
   }
 }

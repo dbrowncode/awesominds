@@ -43,8 +43,11 @@ var endOfGameState = {
     var playAgainBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Play Again', false, true, endOfGameState.playAgainClick));
     game.add.tween(playAgainBtn).to({x: game.world.width - (playAgainBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
 
-    var chooseCourseBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, playAgainBtn.y + playAgainBtn.height + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Quit', false, true, endOfGameState.chooseCourseClick));
+    var chooseCourseBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, playAgainBtn.y + playAgainBtn.height + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Courses', false, true, endOfGameState.chooseCourseClick));
     game.add.tween(chooseCourseBtn).to({x: game.world.width - (chooseCourseBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
+
+    var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, chooseCourseBtn.y + chooseCourseBtn.height + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Log Out', false, true, endOfGameState.logOutClick));
+    game.add.tween(logOutBtn).to({x: game.world.width - (logOutBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
   },
 
   playAgainClick: function(){
@@ -54,5 +57,9 @@ var endOfGameState = {
   chooseCourseClick: function(){
     game.global.music.stop();
     game.state.start('menuCourse');
+  },
+
+  logOutClick: function(){
+    window.location.href = "logout.php";
   }
 };
