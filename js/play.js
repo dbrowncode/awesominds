@@ -8,7 +8,7 @@ var playState = {
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
-    game.global.numQuestions = Math.min(15, game.global.questions.length);
+    game.global.numQuestions = Math.min(1, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.totalStats = {
       numRight: 0,
@@ -28,7 +28,7 @@ var playState = {
       //TODO: add other categories of comments and content; possibly load from json or db
       right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
       wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"],
-      endRound : ["You have an"," awesomind!"," very good mind"," good mind", " okay mind"]  
+      endRound : ["You have an"," awesomind!"," very good mind"," good mind", " okay mind"]
     };
     game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Welcome to Awesominds!', true, false));
     console.log(game.global.jinnySpeech);
@@ -322,7 +322,7 @@ var playState = {
       this.showQuestion(game.global.questions[game.global.questionsAnswered]);
     } else {
       //if no questions left in the game, game is over
-      game.state.start('endOfGame');
+      game.state.start('endOfGame', false, false);
     }
   },
 

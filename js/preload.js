@@ -34,7 +34,7 @@ var preloadState = {
 
     game.global.wrongsounds = [];
     game.global.rightsounds = [];
-    var numOppImages = 11;
+    var numOppImages = 16;
     game.global.oppImageKeys = [];
     for (var i = 1; i <= numOppImages; i++) {
       game.load.image('opp' + i, 'assets/opp/opp' +  i + '.png');

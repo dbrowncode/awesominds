@@ -24,7 +24,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 }
 ?>
 <body>
-  <div class="form">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+	jQuery(document).ready(function($){
+	     $("#random").click(function(){
+	     var myArray = ['Johnny Depp','Edward Scissorhand','Arnold Schwarzenegger','Jim Carrey','Emma Watson','Daniel Radcliffe','Leonardo DiCaprio','Tom Cruise','Brad Pitt','Charles Chaplin','Morgan Freeman','Tom Hanks','Hugh Jackman','Matt Damon','Sylvester Stallone','Will Smith','Clint Eastwood','Cameron Diaz','George Clooney','Steven Spielberg','Harrison Ford','Robert De Niro','Al Pacino','Robert Downey','Russell Crowe','Liam Neeson','Kate Winslet','Mark Wahlberg','Natalie Portman','Pierce Brosnan','Sean Connery','Orlando Bloom','Dwayne','Jackie Chan','Anglina Jolie','Kevin Sp Nicholson'];
+	     var number= myArray[Math.floor(Math.random() * myArray.length)];
+	     document.getElementById('number').value = number;
+
+	});
+
+	});
+
+</script>
+<div class="form">
 
       <ul class="tab-group">
         <li class="tab"><a href="#signup">Sign Up</a></li>
@@ -36,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
          <div id="login">
           <h1>Welcome Back!</h1>
 
-          <form action="loginform.php" method="post" autocomplete="off">
+          <form action="index.php" method="post" autocomplete="off">
 
             <div class="field-wrap">
             <label>
@@ -63,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
         <div id="signup">
           <h1>Sign Up to Play Game</h1>
 
-          <form action="loginform.php" method="post" autocomplete="off">
+          <form action="index.php" method="post" autocomplete="off">
 
           <div class="top-row">
             <div class="field-wrap">
@@ -81,7 +94,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
             </div>
           </div>
 
-          <div class="field-wrap">
+	    <div class="field-wrap">
+              <label>
+                <span class="req"></span>
+              </label>
+              <input type="text"required autocomplete="off" name='fakename' id="number" placeholder="Generate FakeName" />
+          </div>
+
+            <div class="field-wrap">
             <label>
               Email Address<span class="req">*</span>
             </label>
@@ -103,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
           </div>
 
           <button type="submit" class="button button-block" name="register" />Register</button>
+         <div style="position:relative; left:0px; top:-340px; height:50px; width:50px;"> <button class="fakename" type="button" name="buttonpassvalue" id="random">Generate</button></div>
 
           </form>
 
