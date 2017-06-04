@@ -1,8 +1,6 @@
 <title>Sign-Up/Login Form</title>
 <?php
   /* Main page with two forms: sign up and log in */
-  require '../../db.php';
-  session_start();
   include 'css/css.html';
 ?>
 </head>
@@ -94,12 +92,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
             </div>
           </div>
 
-	    <div class="field-wrap">
+	         <div class="field-wrap">
               <label>
                 <span class="req"></span>
               </label>
-              <input type="text"required autocomplete="off" name='fakename' id="number" placeholder="Generate FakeName" />
+              <input type="text"required autocomplete="off" name='fakename' id="number" placeholder="Generate Display Name" readonly />
+              <button class="fakename" type="button" name="buttonpassvalue" id="random">Generate</button>
           </div>
+
+          <div class="field-wrap avatars">
+            <label>Choose Avatar</label>
+            <input type="button" value="+" class="imgbtnplus">
+            <?php
+              $numImages = 16;
+              for ($i=0; $i < $numImages; $i++) {
+                echo '<img class="avatar-img" src="assets/opp/sm/opp' . ($i+1) . '.png"/>';
+              }
+             ?>
+            <input type="button" value="-" class="imgbtnminus">
+            <input type="hidden" name="avatarnum" value="1" />
+
+            <script>
+              $("img").hide();
+              var val = 0;
+              $('img:eq(' + val + ')').show();
+
+              $('.imgbtnplus').click(function() {
+                if (val < $(".avatars img").length -1) {
+                  $('img:eq(' + val + ')').hide();
+                  val++;
+                  $('img:eq(' + val + ')').show();
+                  $('input[name="avatarnum"]').val(val+1);
+                }
+              });
+
+              $('.imgbtnminus').click(function() {
+                if (val > 0) {
+                  $('img:eq(' + val + ')').hide();
+                  val--;
+                  $('img:eq(' + val + ')').show();
+                  $('input[name="avatarnum"]').val(val+1);
+                }
+              });
+            </script>
+
+         </div>
 
             <div class="field-wrap">
             <label>
@@ -123,7 +160,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
           </div>
 
           <button type="submit" class="button button-block" name="register" />Register</button>
-         <div style="position:relative; left:0px; top:-340px; height:50px; width:50px;"> <button class="fakename" type="button" name="buttonpassvalue" id="random">Generate</button></div>
 
           </form>
 

@@ -1,0 +1,1 @@
+INSERT INTO `awesominds`.`course` (courseid, name) VALUES(150, "Psychology 150");

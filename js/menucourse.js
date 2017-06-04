@@ -35,6 +35,17 @@ var menuCourseState = {
   courseBtnClick: function(){
     game.global.selectedCourse = this.data.course.courseid;
     console.log('selected course id: ' + game.global.selectedCourse);
-    game.state.start('menu');
+    $(function (){
+      $.ajax({
+        type: 'POST',
+        url: 'setcourse.php',
+        data: { course: game.global.selectedCourse },
+        success: function(data){
+          //setcourse.php returns the session again with the course added
+          game.global.session = $.parseJSON(data);
+          game.state.start('menu');
+        }
+      });
+    });
   }
 }

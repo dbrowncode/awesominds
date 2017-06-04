@@ -1,3 +1,10 @@
+<?php
+  session_start();
+  if(!$_SESSION['logged_in']){
+    header("location: index.php");
+  }
+?>
+
 <title>Awesominds</title>
 <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
 <script type="text/javascript" src="js/phaser.min.js"></script>

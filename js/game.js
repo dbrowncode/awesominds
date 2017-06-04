@@ -12,5 +12,12 @@ game.state.add('load', loadState);
 game.state.add('play', playState);
 game.state.add('endOfGame', endOfGameState);
 
-// call first state
-game.state.start('preload');
+$(function (){
+  $.ajax({
+    url: 'getsession.php',
+    success: function(data){
+      game.global.session = $.parseJSON(data);
+      game.state.start('preload');
+    }
+  });
+});

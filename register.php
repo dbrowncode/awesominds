@@ -9,6 +9,7 @@ $_SESSION['c_number'] = $_POST['cnumber'];
 $_SESSION['first_name'] = $_POST['firstname'];
 $_SESSION['last_name'] = $_POST['lastname'];
 $_SESSION['play_name'] = $_POST['fakename'];
+$_SESSION['avatarnum'] = $_POST['avatarnum'];
 
 // Escape all $_POST variables to protect against SQL injections
 $first_name = $mysqli->escape_string($_POST['firstname']);
@@ -18,6 +19,7 @@ $c_number = $mysqli->escape_string($_POST['cnumber']);
 $email = $mysqli->escape_string($_POST['email']);
 $password = $mysqli->escape_string(password_hash($_POST['password'], PASSWORD_BCRYPT));
 $hash = $mysqli->escape_string( md5( rand(0,1000) ) );
+$avatarnum = $_POST['avatarnum'];
 
 // Check if user with that email already exists
 $result = $mysqli->query("SELECT * FROM users WHERE email='$email'") or die($mysqli->error());
@@ -32,8 +34,8 @@ if ( $result->num_rows > 0 ) {
 else { // Email doesn't already exist in a database, proceed...
 
     // active is 0 by DEFAULT (no need to include it here)
-    $sql = "INSERT INTO users (first_name, last_name, play_name, c_number, email, password, hash) "
-            . "VALUES ('$first_name','$last_name', '$play_name', '$c_number', '$email','$password', '$hash')";
+    $sql = "INSERT INTO users (first_name, last_name, play_name, c_number, email, password, hash, avatarnum) "
+            . "VALUES ('$first_name','$last_name', '$play_name', '$c_number', '$email','$password', '$hash', '$avatarnum')";
 
     // Add user to the database
     if ( $mysqli->query($sql) ){

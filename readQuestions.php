@@ -4,25 +4,27 @@
 	//parameters: file to be parsed <might want to add courseid too, dpeneding on how that's being entered>
     function tmpToDB($temp_file,$dbcon){
       //TODO get from actual source
-      $courseid = 150; 
+      //must call session_start() before you can access $_SESSION
+      session_start();
+      $courseid = $_SESSION["course"];
       $questionBank = array();
       $arrayFilled = array();
-		  $index = 0;		
+		  $index = 0;
 		  $questionFile = fopen($temp_file, "r") or die("file not found");
-		  //iterate over question document, check if it is a question or an answer. add to appropriate array.	
+		  //iterate over question document, check if it is a question or an answer. add to appropriate array.
       while(!feof($questionFile)){
         $line = fgets($questionFile);
         //this conversion seems to deal with some windows screwdigglies
         $line =iconv("Windows-1252","UTF-8//IGNORE",$line);
         $line = trim($line);
-          
+
         //chapter number and name
-        if(preg_match("/CHAPTER \d+|CHAPTER \d+:/i",$line,$match)){   
+        if(preg_match("/CHAPTER \d+|CHAPTER \d+:/i",$line,$match)){
           $lineArray =  explode(" ", $line);
           $insertChapter = str_replace(":",'',$lineArray[1]);
           $chapterName = preg_replace("/CHAPTER \d+|CHAPTER \d+:/i","",$line);
 	  		}
-		
+
         //question text
         if(preg_match("/^\d+\)/",$line)){
           $question =  preg_replace("/^\d+\) |^\d+\)/","",$line);
