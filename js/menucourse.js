@@ -34,6 +34,7 @@ var menuCourseState = {
   },
   courseBtnClick: function(){
     game.global.selectedCourse = this.data.course.courseid;
+    game.global.selectedCourseName = this.data.course.name;
     console.log('selected course id: ' + game.global.selectedCourse);
     $(function (){
       $.ajax({

@@ -34,11 +34,15 @@ var preloadState = {
 
     game.global.wrongsounds = [];
     game.global.rightsounds = [];
-    var numOppImages = 16;
+
+    //set this to the number of avatar images -1 (exclude player avatar)
+    var numOppImages = 15;
     game.global.oppImageKeys = [];
     for (var i = 1; i <= numOppImages; i++) {
       game.load.image('opp' + i, 'assets/opp/opp' +  i + '.png');
-      game.global.oppImageKeys[i-1] = 'opp' + i;
+      if(i != game.global.session['avatarnum']){
+        game.global.oppImageKeys.push('opp' + i);
+      }
     }
 
     game.global.borderFrameSize = 9 * dpr;

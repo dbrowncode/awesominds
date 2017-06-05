@@ -30,8 +30,15 @@ var playState = {
       wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"],
       endRound : ["You have an"," awesomind!"," very good mind"," good mind", " okay mind"]
     };
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Welcome to Awesominds!', true, false));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Welcome to Awesominds, ' + game.global.session['play_name'] + '!', true, false));
     console.log(game.global.jinnySpeech);
+
+    var chapterText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Chapter ' + game.global.selectedChapter, 11 * dpr);
+    chapterText.x -= chapterText.width + game.global.borderFrameSize;
+    chapterText.tint = 0x000000;
+
+    var courseText = game.add.bitmapText(game.global.jinny.width, game.world.y, '8bitoperator', game.global.selectedCourseName, 11 * dpr);
+    courseText.tint = 0x000000;
 
     //NPC and player
     var winChances = [20, 40, 60, 75];
@@ -42,7 +49,7 @@ var playState = {
     //char[0] is currently player character
     for(var i = 0; i < 4; i++){
       game.global.chars[i] = {};
-      game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110, game.global.oppImageKeys[i]);
+      game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110, (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i]);
       game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
       game.global.chars[i].score = 0;
       game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', game.global.chars[i].score, 11 * dpr);
@@ -52,8 +59,11 @@ var playState = {
     		game.global.chars[i].chance = winChances[i];
         game.global.chars[i].correct = false;
         console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
-    	}
+      }
     }
+    game.global.chars[0].name = game.add.bitmapText(game.global.chars[0].scoreText.x, game.global.chars[0].scoreText.top, '8bitoperator', 'You', 11 * dpr);
+    game.global.chars[0].name.tint = 0x000000;
+    game.global.chars[0].name.y -= game.global.chars[0].name.height * 2;
 
     this.showQuestion(game.global.questions[game.global.questionsAnswered]);
   },
@@ -107,7 +117,8 @@ var playState = {
 
     //new question
     game.global.questionNumText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, 11 * dpr);
-    game.global.questionNumText.x -= game.global.questionNumText.width;
+    game.global.questionNumText.x -= game.global.questionNumText.width + game.global.borderFrameSize;
+    game.global.questionNumText.y += game.global.questionNumText.height;
     game.global.questionNumText.tint = 0x000000;
     game.global.questionUI.add(game.global.questionNumText);
 

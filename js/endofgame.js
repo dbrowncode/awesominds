@@ -1,6 +1,55 @@
 var endOfGameState = {
   create: function(){
     console.log('state: endofgame');
+    $(function (){
+      $.ajax({
+        url: 'getscore.php',
+        data: 'courseid=' + game.global.selectedCourse + '&chapter=' + game.global.selectedChapter,
+        success: function(data){
+          game.global.scoreData = $.parseJSON(data);
+          //if no data is returned, set up new data and insert it
+          if(game.global.scoreData == null){
+            console.log('scoreData == null, inserting');
+            game.global.scoreData = {
+              chapter: game.global.selectedChapter,
+              courseid: game.global.selectedCourse,
+              high_score: game.global.totalStats.score,
+              total_score: game.global.totalStats.score
+            };
+
+            $(function (){
+              $.ajax({
+                type: 'POST',
+                url: 'insertscore.php',
+                data: game.global.scoreData,
+                success: function(data){
+                  console.log(data);
+                }
+              });
+            });
+
+          }else{
+            //if we got data, it's in game.global.scoreData and can be updated
+            game.global.scoreData["total_score"] = parseInt(game.global.scoreData["total_score"]) + game.global.totalStats.score;
+            game.global.scoreData["high_score"] = Math.max(parseInt(game.global.scoreData["high_score"]), game.global.totalStats.score);
+            console.log(game.global.scoreData);
+            $(function (){
+              $.ajax({
+                type: 'POST',
+                url: 'updatescore.php',
+                data: game.global.scoreData,
+                success: function(data){
+                  console.log(data);
+                }
+              });
+            });
+          }
+
+        }
+      });
+    });
+
+
 
     //She aint pretty she just looks that way.
     var mindStates = [

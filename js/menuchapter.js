@@ -9,6 +9,9 @@ var menuChapterState = {
 
     var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuChapterState.backButton));
 
+    var courseText = game.add.bitmapText(back.bubblewidth + game.global.borderFrameSize*2, game.world.y, '8bitoperator', game.global.selectedCourseName, 11 * dpr);
+    courseText.tint = 0x000000;
+
     var chapters = [];
     $(function (){
       $.ajax({
