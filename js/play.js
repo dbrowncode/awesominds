@@ -50,7 +50,7 @@ var playState = {
     for(var i = 0; i < 4; i++){
       game.global.chars[i] = {};
       game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1)-game.width/4)) ,game.height - 110, (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i]);
-      game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
+      game.global.chars[i].sprite.scale.setTo(1/4,1/4);
       game.global.chars[i].score = 0;
       game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', game.global.chars[i].score, 11 * dpr);
       game.global.chars[i].scoreText.tint = 0x000000;
