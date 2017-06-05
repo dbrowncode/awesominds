@@ -60,7 +60,7 @@ var preloadState = {
     game.global.wrongsounds.push(game.add.audio('wrong1'),game.add.audio('wrong2'),game.add.audio('wrong3'));
     game.global.rightsounds.push(game.add.audio('correct'),game.add.audio('correct2'));
     game.global.music = game.add.audio('menu');
-    game.sound.volume = .5;
+    game.sound.volume = 0;
     //TODO: dynamic font sizes for responsiveness?
 		game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center', wordWrap: true, wordWrapWidth: game.width * .75};
 		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: 193};
