@@ -8,7 +8,7 @@ var playState = {
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
-    game.global.numQuestions = Math.min(20, game.global.questions.length);
+    game.global.numQuestions = Math.min(1, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.totalStats = {
       numRight: 0,
