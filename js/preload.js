@@ -34,11 +34,14 @@ var preloadState = {
 
     game.global.wrongsounds = [];
     game.global.rightsounds = [];
+
     var numOppImages = 16;
     game.global.oppImageKeys = [];
     for (var i = 1; i <= numOppImages; i++) {
       game.load.image('opp' + i, 'assets/opp/opp' +  i + '.png');
-      game.global.oppImageKeys[i-1] = 'opp' + i;
+      if(i != game.global.session['avatarnum']){
+        game.global.oppImageKeys.push('opp' + i);
+      }
     }
 
     game.global.borderFrameSize = 9 * dpr;
@@ -226,6 +229,12 @@ var preloadState = {
       }
     };
 
+    game.global.btnOver = function(){
+      if(game.paused && game.global.inputInside(this)){
+        this.over.call(this);
+      }
+    };
+
     game.global.pauseMenu = function(){
       game.input.onDown.add(game.global.unpause, game.global.unpauseButton);
       var ismuted = game.sound.mute;
@@ -256,12 +265,22 @@ var preloadState = {
       volBtnDown.x -= volBtnDown.bubblewidth + 10;
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
+
+      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.muteText.y + game.global.muteText.height + game.global.borderFrameSize, game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
+      courseSelectBtn.x -= Math.floor(courseSelectBtn.bubblewidth/2);
+      game.global.pauseUI.add(courseSelectBtn);
+      game.input.onDown.add(game.global.quitToCourseSelect, courseSelectBtn);
+
+      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, courseSelectBtn.y + courseSelectBtn.height + game.global.borderFrameSize, game.world.width * .8, 'Log Out', false, true, game.global.quitToCourseSelect));
+      logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
+      game.global.pauseUI.add(logOutBtn);
+      game.input.onDown.add(game.global.logOut, logOutBtn);
     };
 
     //function to check if a click occurs inside a SpeechBubble
     //necessary for any input while the game is paused
     game.global.inputInside = function(item){
-      return (game.input.x > item.x && game.input.x < item.x + item.bubblewidth && game.input.y > item.y && game.input.y < item.y + item.bubbleheight);
+      return (game.input.x > item.x && game.input.x < item.x + item.bubblewidth + game.global.borderFrameSize && game.input.y > item.y && game.input.y < item.y + item.bubbleheight + game.global.borderFrameSize);
     };
 
     game.global.makeVolText = function(){
@@ -270,20 +289,85 @@ var preloadState = {
       game.global.pauseUI.add(game.global.volText);
 
       var t = game.sound.mute ? 'Unmute' : 'Mute';
-      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y + game.global.volText.height*2, game.world.width * .8, t, false, false));
+      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y + game.global.volText.height + game.global.borderFrameSize, game.world.width * .8, t, false, false));
       game.global.muteText.x -= Math.floor(game.global.muteText.bubblewidth/2);
-
       game.global.pauseUI.add(game.global.muteText);
     };
 
     game.global.unpause = function(){
       if(game.paused && game.global.inputInside(this)){
-        this.visible = false;
+        game.global.unpauseButton.visible = false;
         game.global.pauseButton.visible = true;
         game.global.pauseUI.destroy();
         game.input.onDown.removeAll();
         game.paused = false;
       }
+    };
+
+    game.global.quitToCourseSelect = function(){
+      if(game.paused && game.global.inputInside(this)){
+        this.data.func = function(){
+          game.global.unpauseButton.visible = false;
+          game.global.pauseButton.visible = true;
+          game.global.pauseUI.destroy();
+          game.input.onDown.removeAll();
+          game.paused = false;
+          endOfGameState.chooseCourseClick.call(this);
+        }
+        game.global.areYouSure(this);
+      }
+    };
+
+    game.global.logOut = function(){
+      if(game.paused && game.global.inputInside(this)){
+        this.data.func = function(){
+          window.location.href = "logout.php";
+        }
+        game.global.areYouSure(this);
+      }
+    };
+
+    game.global.areYouSure = function(btn){
+      var sureUI = game.add.group();
+      var sureGfx = game.add.graphics(0, 0);
+      sureGfx.lineStyle(2, 0x000000, 1);
+      sureGfx.beginFill(0x078EB7, 1);
+      sureGfx.drawRoundedRect(game.world.x + 10, game.global.logoText.y + game.global.logoText.height*2, game.world.width - 20, game.world.height - (game.global.logoText.y + game.global.logoText.height*2) - 10, 10);
+      sureUI.add(sureGfx);
+
+      var txt = game.add.bitmapText(game.world.centerX, game.global.logoText.y + game.global.logoText.height*2, '8bitoperator', btn.bitmapText.text, 22 * dpr);
+      txt.x -= txt.width/2;
+      sureUI.add(txt);
+
+      var txt2 = game.add.bitmapText(game.world.centerX, txt.y + txt.height, '8bitoperator', 'Are you sure?', 11 * dpr);
+      txt2.x -= txt2.width/2;
+      sureUI.add(txt2);
+
+      var btnResult = function(btn){
+        if(game.paused && game.global.inputInside(this)){
+          var v = this.data.value;
+          var b = this.data.btn;
+          sureUI.destroy();
+          if(v){
+            console.log(b.data);
+            b.data.func.call(this.data.btn);
+          }
+        }
+      };
+
+      var yesBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, txt2.y + txt2.height + game.global.borderFrameSize, game.world.width * .8, 'Yes', false, true, btnResult));
+      yesBtn.data.value = true;
+      yesBtn.data.btn = btn;
+      //console.log(yesBtn.data);
+      yesBtn.x -= yesBtn.bubblewidth;
+      sureUI.add(yesBtn);
+      game.input.onDown.add(btnResult, yesBtn);
+
+      var noBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, yesBtn.y, game.world.width * .8, 'No', false, true, btnResult));
+      noBtn.data.value = false;
+      noBtn.x += noBtn.bubblewidth;
+      sureUI.add(noBtn);
+      game.input.onDown.add(btnResult, noBtn);
     };
 
     game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.world.width - 40, game.global.logoText.y, 30, '||', false, true, game.global.pauseMenu));

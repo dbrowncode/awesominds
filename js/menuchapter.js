@@ -7,6 +7,11 @@ var menuChapterState = {
     text.smoothed = false;
     game.add.tween(text).to({x: game.world.centerX - (text.width/2)}, 100, Phaser.Easing.Default, true, 250);
 
+    var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuChapterState.backButton));
+
+    var courseText = game.add.bitmapText(back.bubblewidth + game.global.borderFrameSize*2, game.world.y, '8bitoperator', game.global.selectedCourseName, 11 * dpr);
+    courseText.tint = 0x000000;
+
     var chapters = [];
     $(function (){
       $.ajax({
@@ -33,5 +38,8 @@ var menuChapterState = {
     game.global.selectedChapter = this.data.chapter.chapter;
     console.log('selected chapter id: ' + game.global.selectedChapter);
     game.state.start('load');
+  },
+  backButton: function(){
+    game.state.start('menu');
   }
 }

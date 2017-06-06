@@ -15,16 +15,18 @@ else { // User exists
 
     if ( password_verify($_POST['password'], $user['password']) ) {
 
-	$_SESSION['c_number'] = $user['c_number'];
+	      $_SESSION['c_number'] = $user['c_number'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['first_name'] = $user['first_name'];
         $_SESSION['last_name'] = $user['last_name'];
+        $_SESSION['play_name'] = $user['play_name'];
+        $_SESSION['avatarnum'] = $user['avatarnum'];
         $_SESSION['active'] = $user['active'];
 
         // This is how we'll know the user is logged in
         $_SESSION['logged_in'] = true;
 
-        header("location: questiongame.php");
+        header("location: index.php");
     }
     else {
         $_SESSION['message'] = "You have entered wrong password, try again!";
