@@ -1,5 +1,7 @@
 var menuCourseState = {
-  create: function(){
+
+    create: function(){
+
     game.global.music = game.add.audio('menu');
     game.global.music.volume = 0.5;
     game.global.music.loop = true;
@@ -18,20 +20,22 @@ var menuCourseState = {
         success: function(data){
           console.log(data);
           courses = $.parseJSON(data);
-          var prevHeights = 0;
+          var prevHeights = 10;
           for (var i = 0; i < courses.length; i++) {
             var b = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, text.y + text.height*2, game.world.width * .8, courses[i].name, false, true, menuCourseState.courseBtnClick));
             b.y += prevHeights;
-            prevHeights += b.bubbleheight;
+            prevHeights += b.bubbleheight + 10;
             b.data.course = courses[i];
 
             //animate button coming in
-            game.add.tween(b).to({x: Math.floor(game.world.centerX - b.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
+            game.add.tween(b).to({x: Math.floor(game.world.centerX - b.bubblewidth/2)}, 200, Phaser.Easing.Default, true, 250 * i);
           }
         }
       });
     });
+  game.global.pauseButton.visible = true;
   },
+ 
   courseBtnClick: function(){
     game.global.selectedCourse = this.data.course.courseid;
     game.global.selectedCourseName = this.data.course.name;
@@ -49,4 +53,4 @@ var menuCourseState = {
       });
     });
   }
-}
+ }

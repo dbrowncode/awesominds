@@ -7,16 +7,7 @@ var loadState = {
     game.global.letters = ['A', 'B', 'C', 'D'];
     game.global.questionShown = false;
 
-    //Temporary math fixers
-    game.global.answersShown = false;
-    game.global.numCor = 0;
-    game.global.numWro = 0;
-    game.global.lXOffset = 16;
-    game.global.rXOffset = 16;
-    game.global.winStreak = 1;
-    game.global.loseStreak = 1;      
-
-    // get a chapter of questions from the database and load them into the questions array
+        // get a chapter of questions from the database and load them into the questions array
     $(function (){
       $.ajax({
         type: 'GET',
