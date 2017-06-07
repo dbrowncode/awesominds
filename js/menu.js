@@ -20,7 +20,7 @@ var menuState = {
     }
 	},
 	playGame: function(){
-		game.state.start('menuChapter');
+		game.state.start('pregame');
 	},
 	addQuestions: function(){
 		console.log("add questions button pressed");
