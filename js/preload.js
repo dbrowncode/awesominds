@@ -398,7 +398,8 @@ var preloadState = {
     this.loader = game.add.graphics(0,0);
     this.loader.beginFill(0x02c487,1);
     this.loader.anchor.set(.5);
-
+    this.loadText = game.add.text(game.world.centerX, game.height - game.height/3, this.progress + '%');
+    this.loadText.fontSize = 15;
   },
   startGame: function(){
     	game.state.start('menuCourse');
@@ -406,8 +407,9 @@ var preloadState = {
   },
   //Mock loading bar. It's a masterpiece.
   update: function(){
-    if(this.progress <= 100){
+    if(this.progress <= 99){
     this.progress+=1;
+    this.loadText.setText(this.progress + '%');
     this.loader.drawRect(game.width/2 - 100,game.height - game.height/3, this.progress*2, 20);
     }else{
      this.startGame();
