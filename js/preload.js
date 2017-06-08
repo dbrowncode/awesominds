@@ -7,20 +7,20 @@ var preloadState = {
     game.scale.windowConstraints.bottom = "visual";
     game.stage.disableVisibilityChange = true;
 
-  	game.load.image('sky', 'assets/sky.png');
-  	game.load.image('jinny', 'assets/animal.png');
-  	game.load.image('cat', 'assets/cat.png');
-  	game.load.image('beaver', 'assets/beaver.png');
-  	game.load.image('rabbit', 'assets/rabbit.png');
-  	game.load.image('right', 'assets/right.png');
-  	game.load.image('wrong', 'assets/wrong.png');
+    game.load.image('sky', 'assets/sky.png');
+    game.load.image('jinny', 'assets/animal.png');
+    game.load.image('cat', 'assets/cat.png');
+    game.load.image('beaver', 'assets/beaver.png');
+    game.load.image('rabbit', 'assets/rabbit.png');
+    game.load.image('right', 'assets/right.png');
+    game.load.image('wrong', 'assets/wrong.png');
     game.load.image('check', 'assets/check.png');
     game.load.image('arrow', 'assets/arrow.png');
     game.load.image('x', 'assets/x.png');
 
     game.load.audio('play',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
     game.load.audio('menu',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
-  	game.load.audio('wrong1',['assets/music/WrongAns1.m4a','assets/music/WrongAns1.ogg']);
+    game.load.audio('wrong1',['assets/music/WrongAns1.m4a','assets/music/WrongAns1.ogg']);
     game.load.audio('wrong2',['assets/music/WrongAns2.m4a','assets/music/WrongAns2.ogg']);
     game.load.audio('wrong3',['assets/music/WrongAns3.m4a','assets/music/WrongAns3.ogg']);
     game.load.audio('question',['assets/music/QuestionEnters.m4a','assets/music/QuestionEnters.ogg']);
@@ -31,7 +31,8 @@ var preloadState = {
     game.load.audio('applause',['assets/music/playerWins.m4a','assets/music/PlayerWins.ogg']);
 
     game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
-
+    game.load.start();
+    
     game.global.wrongsounds = [];
     game.global.rightsounds = [];
 
@@ -51,6 +52,7 @@ var preloadState = {
   },
 
 	create: function() {
+
     game.global.logoText = game.add.bitmapText(game.world.centerX, 0, '8bitoperator', 'Awesominds', 22 * dpr);
     game.global.logoText.x -= game.global.logoText.width/2;
     game.stage.addChild(game.global.logoText);
@@ -382,9 +384,7 @@ var preloadState = {
     //PROTOTYPE SPLASHSCREEN
     //TODO make it better
     //maybe add loading bar??
-    delay = game.time.create(false)
-    delay.add(3000,this.startGame, this);
-    logo = game.add.sprite(game.world.centerX - 100, game.world.centerY -game.cache.getImage('check').height/2, 'check');
+    logo = game.add.sprite(game.world.centerX/2+game.world.centerX/4, game.world.centerY -game.cache.getImage('check').height/2, 'check');
     logo.scale.setTo(.5,.5);  
     text = game.add.text(game.world.centerX, game.world.centerY, ' AWESOMINDS ');
     text.anchor.set(0.5);
@@ -393,13 +393,24 @@ var preloadState = {
     text.fontSize = 70;
     text.fontWeight = 'bold';
     text.fill = '#ec008c';
-    text.setShadow(0,0, 'rgba(0,0,0,0.5)',0);
-    delay.start();    
+    text.setShadow(-5,5, 'rgba(0,0,0,0.5)',0);
+    this.progress = 0;
+    this.loader = game.add.graphics(0,0);
+    this.loader.beginFill(0x02c487,1);
+    this.loader.anchor.set(.5);
 
-
-		},
+  },
   startGame: function(){
     	game.state.start('menuCourse');
  
+  },
+  //Mock loading bar. It's a masterpiece.
+  update: function(){
+    if(this.progress <= 100){
+    this.progress+=1;
+    this.loader.drawRect(game.width/2 - 100,game.height - game.height/3, this.progress*2, 20);
+    }else{
+     this.startGame();
+    }
   }
 };
