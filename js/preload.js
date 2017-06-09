@@ -34,9 +34,8 @@ var preloadState = {
 
     game.global.wrongsounds = [];
     game.global.rightsounds = [];
-    
-    //set this to the number of avatar images -1 (exclude player avatar)
-    var numOppImages = 15;
+
+    var numOppImages = 16;
     game.global.oppImageKeys = [];
     for (var i = 1; i <= numOppImages; i++) {
       game.load.image('opp' + i, 'assets/opp/opp' +  i + '.png');

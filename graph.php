@@ -1,4 +1,5 @@
 <?php // content="text/plain; charset=utf-8"
+// note: Yum install gd gd-devel php-gd
 require_once ('jpgraph/src/jpgraph.php');
 require_once ('jpgraph/src/jpgraph_line.php');
 
