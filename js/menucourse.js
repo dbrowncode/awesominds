@@ -20,11 +20,11 @@ var menuCourseState = {
         success: function(data){
           console.log(data);
           courses = $.parseJSON(data);
-          var prevHeights = 10;
+          var prevHeights = 10 * dpr;
           for (var i = 0; i < courses.length; i++) {
             var b = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, text.y + text.height*2, game.world.width * .8, courses[i].name, false, true, menuCourseState.courseBtnClick));
             b.y += prevHeights;
-            prevHeights += b.bubbleheight + 10;
+            prevHeights += b.bubbleheight + 10 *dpr;
             b.data.course = courses[i];
 
             //animate button coming in
