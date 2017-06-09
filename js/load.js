@@ -4,10 +4,7 @@ var loadState = {
   },
 
   create: function() {
-    game.global.letters = ['A', 'B', 'C', 'D'];
-    game.global.questionShown = false;
-
-        // get a chapter of questions from the database and load them into the questions array
+    // get a chapter of questions from the database and load them into the questions array
     $(function (){
       $.ajax({
         type: 'GET',

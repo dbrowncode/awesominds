@@ -10,7 +10,6 @@ var menuCourseState = {
 
     var text = game.add.bitmapText(game.world.centerX + 1000, game.global.logoText.y + game.global.logoText.height*2, '8bitoperator', 'Select a Course', 22 * dpr);
     text.x -= text.width/2;
-    text.smoothed = false;
     game.add.tween(text).to({x: game.world.centerX - (text.width/2)}, 100, Phaser.Easing.Default, true, 250);
 
     var courses = [];
@@ -35,7 +34,7 @@ var menuCourseState = {
     });
   game.global.pauseButton.visible = true;
   },
- 
+
   courseBtnClick: function(){
     game.global.selectedCourse = this.data.course.courseid;
     game.global.selectedCourseName = this.data.course.name;
