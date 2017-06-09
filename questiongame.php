@@ -19,6 +19,7 @@
 <script type="text/javascript" src="js/endofgame.js"></script>
 <script type="text/javascript" src="js/preload.js"></script>
 <script type="text/javascript" src="js/options.js"></script>
+<script type="text/javascript" src="js/pregame.js"></script>
 <script type="text/javascript" src="js/game.js"></script>
 
 <style type="text/css">

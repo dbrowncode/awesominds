@@ -7,15 +7,16 @@
 
 <div class="formWrap">
   
-  <form action="createCourse.php" method="post" id="createCourse">
+  <form action="createCourse.php" method="post" id="createCourseForm">
     <!-- could use js to restrict input type here -->
     <table>
-      <tr><td>Course ID:</td><td><input type="text" name="courseID" id="courseID" placeholder="PSYC150"></td></tr>
-      <tr><td>Course Name:</td><td><input type="text" name="courseName" id="courseName" placeholder="PSYCHOLOGY 150"></td</tr>
+      <tr><td>Course ID:</td><td><input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150"></td></tr>
+      <tr><td>Course Name:</td><td><input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></td</tr>
     </table>
     <input type="submit" value="Create Course" name"createC">
    </form>
    <div id="confirm"></div>
+
    <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
     Select file to upload:
     <input type="file" name="fileToUpload" id="fileToUpload">
@@ -26,8 +27,24 @@
 
 <!--jquery goes here-->
 <script>
+var create_output           = '#confirm';
+var createForm              = $('#createCourseForm'); 
+createForm.submit(function (e) {
+  e.preventDefault();
+  $.ajax({
+    type: createForm.attr('method'),
+    url: createForm.attr('action'),
+    data: createForm.serialize(),
+    success: function(data) {
+     $(create_output).html(data);  
+      console.log(data);  
+    },
+  error: function(data) {
+    console.log(data);
+  },
+ });
+});
 </script>
-
 
 <script>
 //configuration
