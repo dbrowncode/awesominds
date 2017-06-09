@@ -8,7 +8,7 @@ var playState = {
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
-    game.global.numQuestions = Math.min(1, game.global.questions.length);
+    game.global.numQuestions = Math.min(3, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.totalStats = {
       numRight: 0,
@@ -350,13 +350,18 @@ var playState = {
    */
   nextQuestion : function(){
     playState.removeQuestion();
+    enter = game.add.audio('question');
     if (game.global.questionsAnswered < game.global.numQuestions){
-    game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Next question...",true));
+      enter.volume = 0.5;
+      enter.play();  
+      game.global.jinnySpeech.destroy();
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Next question...",true));
  
      // game.global.jinnySpeech.bitmapText.text = 'Next question...';
       this.showQuestion(game.global.questions[game.global.questionsAnswered]);
     } else {
+      endGame = game.add.audio('endGame');
+      endGame.play();
       game.state.start('endOfGame', false, false);
     }
   },

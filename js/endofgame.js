@@ -54,9 +54,9 @@ var endOfGameState = {
     //She aint pretty she just looks that way.
     var mindStates = [
       { min: 90, max: 100, mind: "n awesomind", label: "Awesome!"},
-      { min: 70, max: 89, mind: " very good mind", label: "Great"},
+      { min: 70, max: 89, mind: " great mind", label: "Great"},
       { min: 50, max: 69, mind: " good mind", label: "Good"},
-      { min: 0, max: 49, mind: "n okay mind", label: "Meh"}
+      { min: 0, max: 49, mind: " meh mind", label: "Meh"}
     ];
     var score = Math.floor(((game.global.totalStats.score) / (game.global.numQuestions * 25)) * 100);
     var lineGfx = game.add.graphics(0,0);

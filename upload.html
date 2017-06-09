@@ -6,13 +6,28 @@
 <body>
 
 <div class="formWrap">
-  <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
+  
+  <form action="createCourse.php" method="post" id="createCourse">
+    <!-- could use js to restrict input type here -->
+    <table>
+      <tr><td>Course ID:</td><td><input type="text" name="courseID" id="courseID" placeholder="PSYC150"></td></tr>
+      <tr><td>Course Name:</td><td><input type="text" name="courseName" id="courseName" placeholder="PSYCHOLOGY 150"></td</tr>
+    </table>
+    <input type="submit" value="Create Course" name"createC">
+   </form>
+   <div id="confirm"></div>
+   <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
     Select file to upload:
     <input type="file" name="fileToUpload" id="fileToUpload">
-    <input type="submit" value="Upload file" name="submit">
+    <br><input type="submit" value="Upload file" name="submit">
   </form>
   <div id="output"></div>
 </div>
+
+<!--jquery goes here-->
+<script>
+</script>
+
 
 <script>
 //configuration

@@ -378,7 +378,28 @@ var preloadState = {
     game.global.unpauseButton = game.world.add(new game.global.SpeechBubble(game, game.global.pauseButton.x, game.global.pauseButton.y, 30, '|>', false, true, game.global.unpause));
     game.global.unpauseButton.visible = false;
     game.stage.addChild(game.global.unpauseButton);
+    
+    //PROTOTYPE SPLASHSCREEN
+    //TODO make it better
+    //maybe add loading bar??
+    delay = game.time.create(false)
+    delay.add(3000,this.startGame, this);
+    logo = game.add.sprite(game.world.centerX - 100, game.world.centerY -game.cache.getImage('check').height/2, 'check');
+    logo.scale.setTo(.5,.5);  
+    text = game.add.text(game.world.centerX, game.world.centerY, ' AWESOMINDS ');
+    text.anchor.set(0.5);
+    text.align='center';
+    text.font = 'Arial Black';
+    text.fontSize = 70;
+    text.fontWeight = 'bold';
+    text.fill = '#ec008c';
+    text.setShadow(0,0, 'rgba(0,0,0,0.5)',0);
+    delay.start();    
 
-		game.state.start('menuCourse');
-	}
+
+		},
+  startGame: function(){
+    	game.state.start('menuCourse');
+ 
+  }
 };

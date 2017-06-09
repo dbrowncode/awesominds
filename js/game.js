@@ -11,6 +11,7 @@ game.state.add('menuChapter', menuChapterState);
 game.state.add('load', loadState);
 game.state.add('play', playState);
 game.state.add('endOfGame', endOfGameState);
+game.state.add('pregame',preGameState);
 
 $(function (){
   $.ajax({
