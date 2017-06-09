@@ -1,6 +1,14 @@
 var endOfGameState = {
   create: function(){
     console.log('state: endofgame');
+
+    //create ui group to destroy when switching back to play state
+    this.endGameUI = game.add.group();
+    for (var i = 0; i < game.global.chars.length; i++) {
+      this.endGameUI.add(game.global.chars[i].gfx);
+      this.endGameUI.add(game.global.chars[i].barSprite);
+    }
+
     $(function (){
       $.ajax({
         url: 'getscore.php',
@@ -60,6 +68,7 @@ var endOfGameState = {
     ];
     var score = Math.floor(((game.global.totalStats.score) / (game.global.numQuestions * 25)) * 100);
     var lineGfx = game.add.graphics(0,0);
+    this.endGameUI.add(lineGfx);
     lineGfx.lineStyle(1, 0x333333, 1);
 
     game.global.mapNum = function (num, in_min, in_max, out_min, out_max) {
@@ -70,12 +79,14 @@ var endOfGameState = {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
         game.global.jinnySpeech.destroy();
         game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have a" + mindStates[i].mind + "!", true, false));
+        this.endGameUI.add(game.global.jinnySpeech);
       }
       var y = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
       lineGfx.moveTo(0, y);
       lineGfx.lineTo(game.world.width, y);
       var label = game.add.bitmapText(game.world.centerX, y, '8bitoperator', mindStates[i].label, 22 * dpr);
       label.x -= label.width/2;
+      this.endGameUI.add(label);
     }
 
     for (var i = 0; i < game.global.chars.length; i++) {
@@ -86,21 +97,26 @@ var endOfGameState = {
       var y = game.global.mapNum(s, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
       scorePercentLabel = game.add.bitmapText(game.global.chars[i].sprite.centerX, game.global.chars[i].sprite.top, '8bitoperator', s + '%', 11 * dpr);
       scorePercentLabel.tint = 0x000044;
+      this.endGameUI.add(scorePercentLabel);
       game.add.tween(scorePercentLabel).to({y: y}, 500, Phaser.Easing.Default, true, 250);
     }
-    console.log(game.global.jinnySpeech.y);
+
     var playAgainBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Play Again', false, true, endOfGameState.playAgainClick));
     game.add.tween(playAgainBtn).to({x: game.world.width - (playAgainBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
+    this.endGameUI.add(playAgainBtn);
 
     var chooseCourseBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y*2, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Courses', false, true, endOfGameState.chooseCourseClick));
     game.add.tween(chooseCourseBtn).to({x: game.world.width - (chooseCourseBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
+    this.endGameUI.add(chooseCourseBtn);
 
     var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000,  game.global.jinnySpeech.y*3/*chooseCourseBtn.y + chooseCourseBtn.height + game.global.borderFrameSize*/, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Log Out', false, true, endOfGameState.logOutClick));
     game.add.tween(logOutBtn).to({x: game.world.width - (logOutBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
+    this.endGameUI.add(logOutBtn);
   },
 
   playAgainClick: function(){
-    game.state.start('play');
+    endOfGameState.endGameUI.destroy();
+    game.state.start('play', false, false);
   },
 
   chooseCourseClick: function(){

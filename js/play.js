@@ -8,13 +8,17 @@ var playState = {
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
-    game.global.numQuestions = Math.min(3, game.global.questions.length);
+    game.global.numQuestions = Math.min(1, game.global.questions.length);
     game.global.questionsAnswered = 0;
+    game.global.questionShown = false;
     game.global.totalStats = {
       numRight: 0,
       numWrong: 0,
       score: 0
     };
+    for (var i = 0; i < game.global.chars.length; i++) {
+      game.global.chars[i].score = 0;
+    }
     game.global.answerBubbles = game.add.group();
 
     game.global.music.stop();
@@ -22,25 +26,25 @@ var playState = {
     game.global.music.loop = true;
     game.global.music.play();
 
-//Temporary math fixers
+    //Temporary math fixers
     game.global.answersShown = false;
     game.global.numCor = 0;
     game.global.numWro = 0;
     game.global.lXOffset = 16;
     game.global.rXOffset = 16;
     game.global.winStreak = 1;
-    game.global.loseStreak = 1;      
+    game.global.loseStreak = 1;
 
     //Host
-    game.global.jinny = game.add.sprite(0,0, 'jinny');
-    game.global.jinny.scale.setTo(.1,.1);
+    //game.global.jinny = game.add.sprite(0,0, 'jinny');
+    //game.global.jinny.scale.setTo(.1,.1);
     game.global.hostComments = {
       //TODO: add other categories of comments and content; possibly load from json or db
       right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
       wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
     };
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Welcome to Awesominds, ' + game.global.session['play_name'] + '!', true, false));
-    console.log(game.global.jinnySpeech);
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Here comes your first question...', true, false));
+    //console.log(game.global.jinnySpeech);
 
     var chapterText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Chapter ' + game.global.selectedChapter, 11 * dpr);
     chapterText.x -= chapterText.width + game.global.borderFrameSize;
@@ -48,40 +52,45 @@ var playState = {
 
     var courseText = game.add.bitmapText(game.global.jinny.width, game.world.y, '8bitoperator', game.global.selectedCourseName, 11 * dpr);
     courseText.tint = 0x000000;
-    
-    
-    /*
-     * NPC and player
-     * player = char[0]
-     *
-     */
-    var winChances = [20, 40, 60, 75];
-    winChances = game.global.shuffleArray(winChances);
-    game.global.chars = [];
-    game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys); 
-    
-    //Dirty fix for opponents being on screen for smaller devices
-    game.global.imagecheck = game.add.sprite((game.width + game.width) ,(game.height + game.height), game.global.oppImageKeys[1]);
-    game.global.imagecheck.scale.setTo(dpr/4,dpr/4);
 
-    for(var i = 0; i < 4; i++){
-      var image = game.global.imagecheck;
-      
-      game.global.chars[i] = {};
-      game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1) -game.width/4)+(game.width/20)) ,(game.height - image.height), (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i]);
-      game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
-      game.global.chars[i].score = 0;
-      game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', game.global.chars[i].score, 11 * dpr);
-      game.global.chars[i].scoreText.tint = 0x000000;
-     	if(i!=0){
-    		game.global.chars[i].chance = winChances[i];
-        game.global.chars[i].correct = false;
-        //DEBUG: console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
-      }
+    //animate avatars to the bottom
+    var image = game.global.imagecheck;
+    for (var i = 0; i < game.global.chars.length; i++) {
+      game.add.tween(game.global.chars[i].sprite).to({x: (((game.width/4)*(i+1) -game.width/4)+(game.width/20)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
     }
-    game.global.chars[0].name = game.add.bitmapText(game.global.chars[0].scoreText.x, game.global.chars[0].scoreText.top, '8bitoperator', 'You', 11 * dpr);
-    game.global.chars[0].name.tint = 0x000000;
-    game.global.chars[0].name.y -= game.global.chars[0].name.height * 2;
+    console.log(game.global.chars[1].scoreText);
+
+
+    // /*
+    //  * NPC and player
+    //  * player = char[0]
+    //  *
+    //  */
+    // var winChances = [20, 40, 60, 75];
+    // winChances = game.global.shuffleArray(winChances);
+    // game.global.chars = [];
+    // game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys);
+    //
+    // //Dirty fix for opponents being on screen for smaller devices
+    // game.global.imagecheck = game.add.sprite((game.width + game.width) ,(game.height + game.height), game.global.oppImageKeys[1]);
+    // game.global.imagecheck.scale.setTo(dpr/4,dpr/4);
+    //
+    // for(var i = 0; i < 4; i++){
+    //   var image = game.global.imagecheck;
+    //
+    //   game.global.chars[i] = {};
+    //   game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1) -game.width/4)+(game.width/20)) ,(game.height - image.height), (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i]);
+    //   game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
+    //   game.global.chars[i].score = 0;
+    //   game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', game.global.chars[i].score, 11 * dpr);
+    //   game.global.chars[i].scoreText.tint = 0x000000;
+    //  	if(i!=0){
+    // 		game.global.chars[i].chance = winChances[i];
+    //     game.global.chars[i].correct = false;
+    //     //DEBUG: console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
+    //   }
+    // }
+
 
     this.showQuestion(game.global.questions[game.global.questionsAnswered]);
   },
@@ -90,8 +99,12 @@ var playState = {
    *updates ai and characters score on screen
    */
   update: function(){
-    for (var i = 1; i < game.global.chars.length; i++) {
+    for (var i = 0; i < game.global.chars.length; i++) {
       game.global.chars[i].scoreText.text = game.global.chars[i].score;
+      game.global.chars[i].scoreText.x = Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize);
+      game.global.chars[i].scoreText.y = Math.floor(game.global.chars[i].sprite.centerY + (11*dpr));
+      game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.centerX - game.global.chars[i].name.width/2);
+      game.global.chars[i].name.y = Math.floor(game.world.height - game.global.chars[i].name.height*2);
     }
     game.global.chars[0].scoreText.text = game.global.totalStats.score;
   },
@@ -223,7 +236,7 @@ var playState = {
     game.global.symbol.height = game.global.symbol.width = game.global.borderFrameSize * 3;
     game.global.symbol.anchor.setTo(0.5,0.5);
     game.global.questionUI.add(game.global.symbol);
-    game.add.tween(game.global.symbol).to({x: this.x}, 200, Phaser.Easing.Default, true, 250);
+    game.add.tween(game.global.symbol).to({x: this.x, y: this.y + game.global.symbol.height/2}, 200, Phaser.Easing.Default, true, 250);
     var sounds = this.data.correct ? game.global.rightsounds : game.global.wrongsounds;
     //play sound
     sounds[0].play();
@@ -243,7 +256,7 @@ var playState = {
           arrow.height = arrow.width = game.global.borderFrameSize * 3;
           arrow.anchor.setTo(0.5,0.5);
           game.global.questionUI.add(arrow);
-          game.add.tween(arrow).to({x: item.x}, 200, Phaser.Easing.Default, true, 250);
+          game.add.tween(arrow).to({x: item.x, y: item.y + arrow.height/2}, 200, Phaser.Easing.Default, true, 250);
         }
       });
     }
@@ -261,7 +274,7 @@ var playState = {
    * create right and wrong answer ticks
    * TODO: determine score gain/loss amount based on time/other mechanics
    */
- 
+
   updateScores : function(answerCorrect){
     for(i = 1 ; i < 4; i++){
       if(game.global.chars[i].correct){
@@ -273,22 +286,22 @@ var playState = {
      correct = game.add.sprite((game.global.lXOffset),((game.height - 200) - (50 * game.global.numCor)) ,'right');
      correct.scale.setTo(.1,.1);
      game.global.totalStats.numRight++;
-     
+
      if(game.global.numCor == 5){
        game.global.numCor = 1;
      }
-     
+
      if(!game.global.answersShown){
        game.global.totalStats.score += 25;
      }else{
        game.global.totalStats.score += 10;
      }
-     
+
      if(game.global.totalStats.numRight !=0 && (game.global.totalStats.numRight % 5 == 0)){
        game.global.lXOffset +=6;
        game.global.numCor = -1;
      }
-     game.global.numCor++; 
+     game.global.numCor++;
      game.global.loseStreak = 1;
      game.global.winStreak += 1;
     }else{
@@ -296,12 +309,12 @@ var playState = {
       wrong.scale.setTo(.1,.1);
       game.global.totalStats.numWrong++;
       game.global.totalStats.score += 2;
-            
+
       if(game.global.totalStats.numWrong !=0 && game.global.totalStats.numWrong % 5 == 0){
         game.global.rXOffset += 6;
         game.global.numWro = -1;
       }
-      game.global.numWro++;  
+      game.global.numWro++;
       game.global.loseStreak += 1;
       game.global.winStreak = 1;
     }
@@ -329,7 +342,7 @@ var playState = {
     }
 
     game.global.timer.stop();
-    
+
     /*
      * remove answers from screen
      */
@@ -345,18 +358,18 @@ var playState = {
 
   /*
    * Reveal next question
-   * if max number of questions reached 
-   * switch state to endOfGame state 
+   * if max number of questions reached
+   * switch state to endOfGame state
    */
   nextQuestion : function(){
     playState.removeQuestion();
     enter = game.add.audio('question');
     if (game.global.questionsAnswered < game.global.numQuestions){
       enter.volume = 0.5;
-      enter.play();  
+      enter.play();
       game.global.jinnySpeech.destroy();
       game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Next question...",true));
- 
+
      // game.global.jinnySpeech.bitmapText.text = 'Next question...';
       this.showQuestion(game.global.questions[game.global.questionsAnswered]);
     } else {

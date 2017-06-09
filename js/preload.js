@@ -52,6 +52,8 @@ var preloadState = {
 
 	create: function() {
     game.global.logoText = game.add.bitmapText(game.world.centerX, 0, '8bitoperator', 'Awesominds', 22 * dpr);
+    //turn off antialiasing for the logo; this seems to turn it off for all bitmap text after
+    game.global.logoText.smoothed = false;
     game.global.logoText.x -= game.global.logoText.width/2;
     game.stage.addChild(game.global.logoText);
 
@@ -287,7 +289,7 @@ var preloadState = {
       logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
       game.global.pauseUI.add(logOutBtn);
       game.input.onDown.add(game.global.logOut, logOutBtn);
-     
+
     };
 
     //function to check if a click occurs inside a SpeechBubble
@@ -296,7 +298,7 @@ var preloadState = {
       return (game.input.x > item.x && game.input.x < item.x + item.bubblewidth + game.global.borderFrameSize && game.input.y > item.y && game.input.y < item.y + item.bubbleheight + game.global.borderFrameSize);
     };
 
-        game.global.unpause = function(){
+    game.global.unpause = function(){
       if(game.paused && game.global.inputInside(this)){
         game.global.unpauseButton.visible = false;
         game.global.pauseButton.visible = true;
@@ -371,21 +373,22 @@ var preloadState = {
       sureUI.add(noBtn);
       game.input.onDown.add(btnResult, noBtn);
     };
-    game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width -40, 0, 30, '||', false, true, game.global.pauseMenu));
+    game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width, 0, game.width, '||', false, true, game.global.pauseMenu));
+    game.global.pauseButton.x -= game.global.pauseButton.bubblewidth + game.global.borderFrameSize;
     game.stage.addChild(game.global.pauseButton);
     game.global.pauseButton.visible = false;
 
-    game.global.unpauseButton = game.world.add(new game.global.SpeechBubble(game, game.global.pauseButton.x, game.global.pauseButton.y, 30, '|>', false, true, game.global.unpause));
+    game.global.unpauseButton = game.world.add(new game.global.SpeechBubble(game, game.global.pauseButton.x, game.global.pauseButton.y, game.width, '|>', false, true, game.global.unpause));
     game.global.unpauseButton.visible = false;
     game.stage.addChild(game.global.unpauseButton);
-    
+
     //PROTOTYPE SPLASHSCREEN
     //TODO make it better
     //maybe add loading bar??
     delay = game.time.create(false)
     delay.add(3000,this.startGame, this);
     logo = game.add.sprite(game.world.centerX - 100, game.world.centerY -game.cache.getImage('check').height/2, 'check');
-    logo.scale.setTo(.5,.5);  
+    logo.scale.setTo(.5,.5);
     text = game.add.text(game.world.centerX, game.world.centerY, ' AWESOMINDS ');
     text.anchor.set(0.5);
     text.align='center';
@@ -394,12 +397,12 @@ var preloadState = {
     text.fontWeight = 'bold';
     text.fill = '#ec008c';
     text.setShadow(0,0, 'rgba(0,0,0,0.5)',0);
-    delay.start();    
+    delay.start();
 
 
 		},
   startGame: function(){
     	game.state.start('menuCourse');
- 
+
   }
 };
