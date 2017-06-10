@@ -30,9 +30,9 @@ var preloadState = {
     game.load.audio('correct2',['assets/music/CorrectAns2.m4a','assets/music/CorrectAns2.ogg']);
     game.load.audio('applause',['assets/music/playerWins.m4a','assets/music/PlayerWins.ogg']);
 
-    game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
+    game.load.spritesheet('jin', 'assets/jin.png', 264, 364);
     game.load.start();
-    
+
     game.global.wrongsounds = [];
     game.global.rightsounds = [];
 
@@ -388,7 +388,7 @@ var preloadState = {
     //TODO make it better
     //maybe add loading bar??
     logo = game.add.sprite(game.world.centerX/2+game.world.centerX/4, game.world.centerY -game.cache.getImage('check').height/2, 'check');
-    logo.scale.setTo(.5,.5);  
+    logo.scale.setTo(.5,.5);
     text = game.add.text(game.world.centerX, game.world.centerY, ' AWESOMINDS ');
     text.anchor.set(0.5);
     text.align='center';
@@ -406,7 +406,7 @@ var preloadState = {
   },
   startGame: function(){
     	game.state.start('menuCourse');
- 
+
   },
   //Mock loading bar. It's a masterpiece.
   update: function(){

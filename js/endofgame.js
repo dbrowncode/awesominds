@@ -75,10 +75,14 @@ var endOfGameState = {
       return Math.floor((num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
     }
 
+    if(score > mindStates[0].min){
+      //if awesomind, be happy
+      game.global.jinny.frame = 2;
+    }
     for (var i = 0; i < mindStates.length; i++) {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have a" + mindStates[i].mind + "!", true, false));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have a" + mindStates[i].mind + "!", true, false));
         this.endGameUI.add(game.global.jinnySpeech);
       }
       var y = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
@@ -116,6 +120,8 @@ var endOfGameState = {
 
   playAgainClick: function(){
     endOfGameState.endGameUI.destroy();
+    game.global.isRehash = false;
+    game.global.rehashQuestions = [];
     game.state.start('play', false, false);
   },
 
