@@ -8,7 +8,7 @@ var playState = {
   create: function(){
     console.log('state: play');
     game.global.questions = game.global.shuffleArray(game.global.questions);
-    game.global.numQuestions = Math.min(1, game.global.questions.length);
+    game.global.numQuestions = Math.min(3, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.questionShown = false;
     game.global.totalStats = {
@@ -25,6 +25,8 @@ var playState = {
     game.global.music = game.add.audio('play');
     game.global.music.loop = true;
     game.global.music.play();
+    this.enterSound = game.add.audio('question');
+    this.enterSound.volume = 0.2;
 
     //Temporary math fixers
     game.global.answersShown = false;
@@ -36,15 +38,13 @@ var playState = {
     game.global.loseStreak = 1;
 
     //Host
-    //game.global.jinny = game.add.sprite(0,0, 'jinny');
-    //game.global.jinny.scale.setTo(.1,.1);
+    game.global.jinny.frame = 0;
     game.global.hostComments = {
       //TODO: add other categories of comments and content; possibly load from json or db
       right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
       wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
     };
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Here comes your first question...', true, false));
-    //console.log(game.global.jinnySpeech);
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Here comes your first question...', true, false));
 
     var chapterText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Chapter ' + game.global.selectedChapter, 11 * dpr);
     chapterText.x -= chapterText.width + game.global.borderFrameSize;
@@ -58,40 +58,8 @@ var playState = {
     for (var i = 0; i < game.global.chars.length; i++) {
       game.add.tween(game.global.chars[i].sprite).to({x: (((game.width/4)*(i+1) -game.width/4)+(game.width/20)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
     }
-    console.log(game.global.chars[1].scoreText);
 
-
-    // /*
-    //  * NPC and player
-    //  * player = char[0]
-    //  *
-    //  */
-    // var winChances = [20, 40, 60, 75];
-    // winChances = game.global.shuffleArray(winChances);
-    // game.global.chars = [];
-    // game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys);
-    //
-    // //Dirty fix for opponents being on screen for smaller devices
-    // game.global.imagecheck = game.add.sprite((game.width + game.width) ,(game.height + game.height), game.global.oppImageKeys[1]);
-    // game.global.imagecheck.scale.setTo(dpr/4,dpr/4);
-    //
-    // for(var i = 0; i < 4; i++){
-    //   var image = game.global.imagecheck;
-    //
-    //   game.global.chars[i] = {};
-    //   game.global.chars[i].sprite = game.add.sprite((((game.width/4)*(i+1) -game.width/4)+(game.width/20)) ,(game.height - image.height), (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i]);
-    //   game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
-    //   game.global.chars[i].score = 0;
-    //   game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', game.global.chars[i].score, 11 * dpr);
-    //   game.global.chars[i].scoreText.tint = 0x000000;
-    //  	if(i!=0){
-    // 		game.global.chars[i].chance = winChances[i];
-    //     game.global.chars[i].correct = false;
-    //     //DEBUG: console.log('win chance for ' + i + ' = ' + game.global.chars[i].chance);
-    //   }
-    // }
-
-
+    //show the first question
     this.showQuestion(game.global.questions[game.global.questionsAnswered]);
   },
 
@@ -153,10 +121,13 @@ var playState = {
     game.global.questionUI.add(game.global.questionNumText);
 
     game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight*2, game.world.width - (game.global.jinny.width*2), question.question, false, false));
+
     game.global.questionUI.add(game.global.bubble);
 
     //animation
     game.add.tween(game.global.bubble).to({x: Math.floor(game.world.centerX - game.global.bubble.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250);
+    //playState.enterSound.volume = 0.5;
+    playState.enterSound.play();
     game.global.buttons = [];
 
     //ai
@@ -241,11 +212,12 @@ var playState = {
     //play sound
     sounds[0].play();
 
+    //set host's attitude based on right or wrong answer
     var speech = this.data.correct ? 'right' : 'wrong';
+    game.global.jinny.frame = this.data.correct ? 2 : 1;
 
-    //TODO this kind of workds but seems nuclear, though in some ways it kind of makes sense to destroy it.
     game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
 
 
     //if answered wrong, highlight the right answer
@@ -363,14 +335,12 @@ var playState = {
    */
   nextQuestion : function(){
     playState.removeQuestion();
-    enter = game.add.audio('question');
+    //set jin's face to default state
+    game.global.jinny.frame = 0;
     if (game.global.questionsAnswered < game.global.numQuestions){
-      enter.volume = 0.5;
-      enter.play();
       game.global.jinnySpeech.destroy();
-      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right, game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Next question...",true));
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Next question...",true));
 
-     // game.global.jinnySpeech.bitmapText.text = 'Next question...';
       this.showQuestion(game.global.questions[game.global.questionsAnswered]);
     } else {
       endGame = game.add.audio('endGame');

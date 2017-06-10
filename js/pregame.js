@@ -3,8 +3,8 @@ var preGameState = {
   create: function(){
     console.log("state: pregame");
     //Host
-    game.global.jinny = game.add.sprite(0,0, 'jinny');
-    game.global.jinny.scale.setTo(.1,.1);
+    game.global.jinny = game.add.sprite(0,0, 'jin', 0);
+    game.global.jinny.scale.setTo(dpr/4, dpr/4);
     this.pregameUI = game.add.group();
 
     var instructLines = [
@@ -15,7 +15,7 @@ var preGameState = {
     ];
 
     var prevHeights = 0;
-    var speechX = Math.floor(game.global.jinny.right);
+    var speechX = Math.floor(game.global.jinny.right + (game.global.borderFrameSize * 2));
     var speechY = Math.floor(game.world.y + game.global.logoText.height*2);
     var speechWidth = Math.floor(game.world.width - (game.global.jinny.width*2));
     var sbtweens = [];
