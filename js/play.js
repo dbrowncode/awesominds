@@ -7,19 +7,23 @@ var playState = {
    */
   create: function(){
     console.log('state: play');
-    game.global.questions = game.global.shuffleArray(game.global.questions);
+
+    game.global.questions = game.global.isRehash ? game.global.rehashQuestions : game.global.shuffleArray(game.global.questions);
+    console.log('rehash: ' + game.global.isRehash);
     game.global.numQuestions = Math.min(3, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.questionShown = false;
-    game.global.totalStats = {
-      numRight: 0,
-      numWrong: 0,
-      score: 0
-    };
-    for (var i = 0; i < game.global.chars.length; i++) {
-      game.global.chars[i].score = 0;
+    if(!game.global.isRehash){
+      game.global.totalStats = {
+        numRight: 0,
+        numWrong: 0,
+        score: 0
+      };
+      for (var i = 0; i < game.global.chars.length; i++) {
+        game.global.chars[i].score = 0;
+      }
+      game.global.answerBubbles = game.add.group();
     }
-    game.global.answerBubbles = game.add.group();
 
     game.global.music.stop();
     game.global.music = game.add.audio('play');
@@ -114,7 +118,8 @@ var playState = {
     game.global.timer.start();
 
     //new question
-    game.global.questionNumText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, 11 * dpr);
+    var prefix = game.global.isRehash ? 'REHASH ' : '';
+    game.global.questionNumText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', prefix + 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, 11 * dpr);
     game.global.questionNumText.x -= game.global.questionNumText.width + game.global.borderFrameSize;
     game.global.questionNumText.y += game.global.questionNumText.height;
     game.global.questionNumText.tint = 0x000000;
@@ -154,6 +159,7 @@ var playState = {
           letter: c,
           text: c + '. ' + question.choices[c],
           correct: (c == question.answer[0]),
+          fullQuestion: question
         };
         game.global.choiceBubbles.add(cb);
         availChoices[i] = c;
@@ -168,7 +174,7 @@ var playState = {
       game.global.timer.start();
 
       function showAnswers() {
-        if((!game.global.answersShown) && game.global.questionShown){
+        if((!game.global.answersShown) && game.global.questionShown && !game.global.isRehash){
           for(i=1;i<game.global.chars.length;i++){
             if(game.global.chars[i].correct){
               game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), Math.floor(game.global.chars[i].sprite.width), game.global.questions[game.global.questionsAnswered].answer, true, false));
@@ -222,6 +228,8 @@ var playState = {
 
     //if answered wrong, highlight the right answer
     if(!this.data.correct){
+      //also add wrongly answered question to the rehash round
+      game.global.rehashQuestions.push(this.data.fullQuestion);
       game.global.choiceBubbles.forEach( function(item){
         if(item.data.correct){
           var arrow = game.add.sprite(game.world.x - game.world.width, item.centerY, 'arrow');
@@ -249,7 +257,7 @@ var playState = {
 
   updateScores : function(answerCorrect){
     for(i = 1 ; i < 4; i++){
-      if(game.global.chars[i].correct){
+      if(game.global.chars[i].correct && !game.global.isRehash){
         game.global.chars[i].score += 25;
       }
     }
@@ -263,10 +271,15 @@ var playState = {
        game.global.numCor = 1;
      }
 
-     if(!game.global.answersShown){
-       game.global.totalStats.score += 25;
+     //update player score
+     if(game.global.isRehash){
+       game.global.totalStats.score += 5;
      }else{
-       game.global.totalStats.score += 10;
+       if(!game.global.answersShown){
+         game.global.totalStats.score += 25;
+       }else{
+         game.global.totalStats.score += 10;
+       }
      }
 
      if(game.global.totalStats.numRight !=0 && (game.global.totalStats.numRight % 5 == 0)){
@@ -280,7 +293,9 @@ var playState = {
       wrong = game.add.sprite((game.width - game.global.rXOffset),((game.height - 200) - (50 * game.global.numWro)) , 'wrong');
       wrong.scale.setTo(.1,.1);
       game.global.totalStats.numWrong++;
-      game.global.totalStats.score += 2;
+      if(!game.global.isRehash) {
+        game.global.totalStats.score += 2;
+      }
 
       if(game.global.totalStats.numWrong !=0 && game.global.totalStats.numWrong % 5 == 0){
         game.global.rXOffset += 6;
@@ -338,11 +353,17 @@ var playState = {
     //set jin's face to default state
     game.global.jinny.frame = 0;
     if (game.global.questionsAnswered < game.global.numQuestions){
+      //still questions left, show the next one
       game.global.jinnySpeech.destroy();
       game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Next question...",true));
 
       this.showQuestion(game.global.questions[game.global.questionsAnswered]);
+    } else if (game.global.rehashQuestions.length > 0 && !game.global.isRehash) {
+      //if out of questions and any were answered wrong, and this isn't a rehash round, go to rehash round
+      game.global.isRehash = true;
+      game.state.start('play', false, false);
     } else {
+      //out of questions, and everything was right OR this was a rehash round? end the game
       endGame = game.add.audio('endGame');
       endGame.play();
       game.state.start('endOfGame', false, false);

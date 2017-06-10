@@ -120,6 +120,8 @@ var endOfGameState = {
 
   playAgainClick: function(){
     endOfGameState.endGameUI.destroy();
+    game.global.isRehash = false;
+    game.global.rehashQuestions = [];
     game.state.start('play', false, false);
   },
 

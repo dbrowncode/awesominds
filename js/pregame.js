@@ -95,6 +95,8 @@ var preGameState = {
         console.log('chapter ' + game.global.selectedChapter + '; ' + game.global.questions.length + ' questions loaded');
         //once the questions are successfully loaded, move to the play state
         preGameState.pregameUI.destroy();
+        game.global.isRehash = false;
+        game.global.rehashQuestions = [];
         game.state.start('play', false, false);
       }
     });
