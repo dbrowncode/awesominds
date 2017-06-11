@@ -79,6 +79,13 @@ var playState = {
       game.global.chars[i].name.y = Math.floor(game.world.height - game.global.chars[i].name.height*2);
     }
     game.global.chars[0].scoreText.text = game.global.totalStats.score;
+
+    if(this.timerOn){
+      if(this.timeElapsed >= this.totalTime){
+        //TODO: call 'time is up' function, clean up question and move on with no score
+        this.timeUp();
+      }
+    }
   },
 
 
@@ -112,7 +119,7 @@ var playState = {
         else{game.global.chars[i].chance -= 5;}
       }
     }
-    //timer
+    //timer - the phaser way
     game.global.timer = game.time.create(false);
     game.global.timer.add(2000, showChoices, this);
     game.global.timer.start();
@@ -126,8 +133,15 @@ var playState = {
     game.global.questionUI.add(game.global.questionNumText);
 
     game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight*2, game.world.width - (game.global.jinny.width*2), question.question, false, false));
-
     game.global.questionUI.add(game.global.bubble);
+
+    //timer - better/more universal way?
+    this.startTime = new Date();
+    this.totalTime = 20;
+    this.timeElapsed = 0;
+    this.createTimer();
+    this.gameTimer = game.time.events.loop(100, function(){ playState.updateTimer() });
+    this.timerOn = true;
 
     //animation
     game.add.tween(game.global.bubble).to({x: Math.floor(game.world.centerX - game.global.bubble.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250);
@@ -246,7 +260,7 @@ var playState = {
     console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
     game.global.timer.stop();
-    game.global.timer.add(1000, playState.animateOut, this);
+    game.global.timer.add(1000, playState.animateOut, this, false);
     game.global.timer.start();
   },
 
@@ -255,7 +269,7 @@ var playState = {
    * TODO: determine score gain/loss amount based on time/other mechanics
    */
 
-  updateScores : function(answerCorrect){
+  updateScores : function(answerCorrect, didntAnswer){
     for(i = 1 ; i < 4; i++){
       if(game.global.chars[i].correct && !game.global.isRehash){
         game.global.chars[i].score += 25;
@@ -292,8 +306,9 @@ var playState = {
      game.global.numCor++;
      game.global.loseStreak = 1;
      game.global.winStreak += 1;
-    }else{
-      if(!game.global.isRehash){
+   } else {
+      game.global.totalStats.numWrong++;
+      if(!game.global.isRehash && !didntAnswer) {
         wrong = game.add.sprite((game.width - game.global.rXOffset),((game.height - 200) - (50 * game.global.numWro)) , 'wrong');
         wrong.scale.setTo(.1,.1);
         this.ticks.add(wrong);
@@ -312,9 +327,10 @@ var playState = {
     game.global.chars[0].score = game.global.totalStats.score;
   },
 
-  animateOut : function(){
+  animateOut : function(didntAnswer){
+    console.log('in animateOut: didntAnswer = ' + didntAnswer);
     game.add.tween(game.global.questionUI).to({x: game.world.x - game.world.width}, 500, Phaser.Easing.Default, true, 250);
-    playState.updateScores(this.data.correct);
+    playState.updateScores(this.data.correct, didntAnswer);
 
     /*
      * create horizontal progress bars for each player
@@ -381,5 +397,41 @@ var playState = {
   removeQuestion : function(){
     game.global.questionUI.destroy();
     game.global.questionShown = false;
+  },
+
+  createTimer : function(){
+    this.timeLabel = game.add.bitmapText(game.global.bubble.centerX, game.global.bubble.y + game.global.bubble.bubbleheight, '8bitoperator', '00:00', 11 * dpr);
+    this.timeLabel.tint = 0x000000;
+    game.global.questionUI.add(this.timeLabel);
+  },
+
+  updateTimer : function(){
+    if(this.timerOn){
+      var currentTime = new Date();
+      var timeDiff = this.startTime.getTime() - currentTime.getTime();
+      //time elapsed in seconds
+      this.timeElapsed = Math.abs(timeDiff / 1000);
+      this.timeRemaining = this.totalTime - this.timeElapsed;
+      this.minutes = Math.floor(this.timeRemaining/60);
+      this.seconds = Math.floor(this.timeRemaining) - (60 * this.minutes);
+      // display minutes, add 0 if under 10
+      var result = (this.minutes < 10) ? "0" + this.minutes : this.minutes;
+      // add seconds
+      result += (this.seconds < 10) ? ":0" + this.seconds : ":" + this.seconds;
+      // update text; use 'result' if you want minutes:seconds
+      this.timeLabel.text = this.seconds;
+      this.timeLabel.x = Math.floor(game.global.bubble.centerX - this.timeLabel.width/2);
+      this.timeLabel.y = Math.floor(game.global.bubble.centerY + game.global.bubble.bubbleheight);
+    }
+  },
+
+  timeUp : function(){
+    game.global.jinnySpeech.destroy();
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Time's up!", true, false));
+    game.global.questionsAnswered++;
+    var dummy = {data: {correct: false}};
+    this.timerOn = false;
+    this.timeLabel.destroy();
+    this.animateOut.call(dummy, true);
   }
 };
