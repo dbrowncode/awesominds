@@ -150,7 +150,7 @@ var playState = {
       //array to store available letter choices for ai to choose from for this question
       var availChoices = [];
       for (var c in question.choices) {
-        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, Math.floor(game.world.width - (game.global.jinny.width*2)), c + '. ' + question.choices[c], false, true, playState.btnClick, true));
+        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, Math.floor(game.world.width - (game.global.jinny.width*2)), question.choices[c], false, true, playState.btnClick, true, c));
         //cb.y += Math.floor(cb.bubbleheight + prevHeights);
         cb.y += Math.floor(prevHeights);
         prevHeights += cb.bubbleheight + 10 *dpr;
