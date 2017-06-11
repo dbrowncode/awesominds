@@ -7,9 +7,9 @@ var playState = {
    */
   create: function(){
     console.log('state: play');
-
     game.global.questions = game.global.isRehash ? game.global.rehashQuestions : game.global.shuffleArray(game.global.questions);
     console.log('rehash: ' + game.global.isRehash);
+    this.ticks = game.add.group();
     game.global.numQuestions = Math.min(3, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.questionShown = false;
@@ -263,8 +263,11 @@ var playState = {
     }
 
     if(answerCorrect){
-     correct = game.add.sprite((game.global.lXOffset),((game.height - 200) - (50 * game.global.numCor)) ,'right');
-     correct.scale.setTo(.1,.1);
+     if(!game.global.isRehash){
+       correct = game.add.sprite((game.global.lXOffset),((game.height - 200) - (50 * game.global.numCor)) ,'right');
+       correct.scale.setTo(.1,.1);
+       this.ticks.add(correct);
+     }
      game.global.totalStats.numRight++;
 
      if(game.global.numCor == 5){
@@ -290,13 +293,14 @@ var playState = {
      game.global.loseStreak = 1;
      game.global.winStreak += 1;
     }else{
-      wrong = game.add.sprite((game.width - game.global.rXOffset),((game.height - 200) - (50 * game.global.numWro)) , 'wrong');
-      wrong.scale.setTo(.1,.1);
-      game.global.totalStats.numWrong++;
-      if(!game.global.isRehash) {
+      if(!game.global.isRehash){
+        wrong = game.add.sprite((game.width - game.global.rXOffset),((game.height - 200) - (50 * game.global.numWro)) , 'wrong');
+        wrong.scale.setTo(.1,.1);
+        this.ticks.add(wrong);
         game.global.totalStats.score += 2;
       }
-
+      game.global.totalStats.numWrong++;
+        
       if(game.global.totalStats.numWrong !=0 && game.global.totalStats.numWrong % 5 == 0){
         game.global.rXOffset += 6;
         game.global.numWro = -1;
@@ -361,9 +365,13 @@ var playState = {
     } else if (game.global.rehashQuestions.length > 0 && !game.global.isRehash) {
       //if out of questions and any were answered wrong, and this isn't a rehash round, go to rehash round
       game.global.isRehash = true;
+      game.global.jinnySpeech.destroy();
+      this.ticks.destroy();
       game.state.start('play', false, false);
     } else {
       //out of questions, and everything was right OR this was a rehash round? end the game
+      game.global.jinnySpeech.destroy();
+      console.log("ticks " + game.global.ticks);
       endGame = game.add.audio('endGame');
       endGame.play();
       game.state.start('endOfGame', false, false);

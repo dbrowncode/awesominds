@@ -44,6 +44,8 @@ var preloadState = {
         game.global.oppImageKeys.push('opp' + i);
       }
     }
+    //prevents game breaking when zoomed below 100%
+    if(dpr<=0){ dpr = 1};
 
     game.global.borderFrameSize = 9 * dpr;
     game.load.spritesheet('bubble-border','assets/bubbleborder' + dpr + '.png', game.global.borderFrameSize, game.global.borderFrameSize);
@@ -52,7 +54,6 @@ var preloadState = {
   },
 
 	create: function() {
-
     game.global.logoText = game.add.bitmapText(game.world.centerX, 0, '8bitoperator', 'Awesominds', 22 * dpr);
     //turn off antialiasing for the logo; this seems to turn it off for all bitmap text after
     game.global.logoText.smoothed = false;
@@ -87,7 +88,12 @@ var preloadState = {
       var height = game.global.borderFrameSize * 2;
 
       // Set up our text and run our custom wrapping routine on it
-      this.bitmapText = game.make.bitmapText(x + game.global.borderFrameSize + 3, y + 5, '8bitoperator', text, 11 * dpr);
+      //game.make.bitmapText(x + game.global.borderFrameSize + 3, y + 5, '8bitoperator', text, 11 *dpr);
+
+      this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, text);
+      this.bitmapText.font = 'Varela';
+      this.bitmapText.fontSize = 25;
+      
       game.global.SpeechBubble.wrapBitmapText(this.bitmapText, width);
 
       // Calculate the width and height needed for the edges

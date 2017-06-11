@@ -8,7 +8,6 @@ var endOfGameState = {
       this.endGameUI.add(game.global.chars[i].gfx);
       this.endGameUI.add(game.global.chars[i].barSprite);
     }
-
     $(function (){
       $.ajax({
         url: 'getscore.php',
@@ -85,21 +84,27 @@ var endOfGameState = {
         game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have a" + mindStates[i].mind + "!", true, false));
         this.endGameUI.add(game.global.jinnySpeech);
       }
-      var y = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
-      lineGfx.moveTo(0, y);
-      lineGfx.lineTo(game.world.width, y);
-      var label = game.add.bitmapText(game.world.centerX, y, '8bitoperator', mindStates[i].label, 22 * dpr);
+      //TODO mathemagic needs to happen here to make the bars show up in the right areas
+      
+      var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
+      lineGfx.moveTo(0, lineYposition);
+      lineGfx.lineTo(game.world.width, lineYposition);
+      var label = game.add.bitmapText(game.world.centerX, lineYposition, '8bitoperator', mindStates[i].label, 22 * dpr);
       label.x -= label.width/2;
       this.endGameUI.add(label);
     }
 
     for (var i = 0; i < game.global.chars.length; i++) {
-      var h = game.global.mapNum(game.global.chars[i].score, 0, game.global.numQuestions * 25, 0, game.world.height - game.global.jinny.height - game.global.chars[0].sprite.height);
-      game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(h, 1)}, 500, Phaser.Easing.Default, true, 250);
+      var topBar = game.global.chars[i].score
+      if(topBar > game.global.numQuestions * 25){
+        topBar = game.global.numQuestions * 25;
+      } 
+      var barHeight = game.global.mapNum(topBar, 0, game.global.numQuestions * 25, 0, game.world.height - game.global.jinny.height - game.global.chars[0].sprite.height);
+      game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(barHeight, 1)}, 500, Phaser.Easing.Default, true, 250);
 
-      var s = Math.floor(((game.global.chars[i].score) / (game.global.numQuestions * 25)) * 100);
-      var y = game.global.mapNum(s, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
-      scorePercentLabel = game.add.bitmapText(game.global.chars[i].sprite.centerX, game.global.chars[i].sprite.top, '8bitoperator', s + '%', 11 * dpr);
+      var scorePercent = Math.floor(((topBar) / (game.global.numQuestions * 25)) * 100);
+      var y = game.global.mapNum(scorePercent, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
+      scorePercentLabel = game.add.bitmapText(game.global.chars[i].sprite.centerX, game.global.chars[i].sprite.top, '8bitoperator', scorePercent + '%', 11 * dpr);
       scorePercentLabel.tint = 0x000044;
       this.endGameUI.add(scorePercentLabel);
       game.add.tween(scorePercentLabel).to({y: y}, 500, Phaser.Easing.Default, true, 250);
