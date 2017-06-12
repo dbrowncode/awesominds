@@ -113,7 +113,6 @@ var preloadState = {
        var b = this.bitmapText.getLocalBounds();
         console.log(b);
         this.bitmapText.text = choice + '. ' + this.bitmapText.text;
-        this.bitmapText.wordWrap = false;
         b = this.bitmapText.getLocalBounds();
         console.log('b2');
         console.log(b);
@@ -121,15 +120,14 @@ var preloadState = {
         console.log('b3') 
         var b = this.bitmapText.getLocalBounds();
         console.log(b);
-         console.log("0: " +this.bitmapText.width);
-          this.bitmapText.wordWrapWidth = lineLength;
-           var b = this.bitmapText.getLocalBounds();
-          console.log('b4');
-          console.log(b);
-          this.bitmapText.wordWrapWidth = true;
-          this.bitmapText.wordWrapWidth = lineLength;
+        console.log("0: " +this.bitmapText.width);
+        this.bitmapText.wordWrapWidth = lineLength;
+        var b = this.bitmapText.getLocalBounds();
+        console.log('b4');
+        console.log(b);
+        this.bitmapText.wordWrapWidth = lineLength;
 
-          while(this.bitmapText.width < this.bitmapText.wordWrapWidth){
+        while(this.bitmapText.width < this.bitmapText.wordWrapWidth){
             console.log("01: " +this.bitmapText.width);
             this.bitmapText.width += .1;
             this.bitmapText.text += '\xa0';
@@ -139,11 +137,17 @@ var preloadState = {
               console.log("equalizing");
             }
          */
-            console.log("02: " +this.bitmapText.width);
-          }
-                   console.log('1: ' +this.bitmapText.width);
-          console.log('2: ' +lineLength);
-          console.log('3: ' +width);
+        console.log("02: " +this.bitmapText.width);
+        }
+        console.log('1: ' +this.bitmapText.width);
+        console.log('2: ' +lineLength);
+        console.log('3: ' +width);
+      }
+      if(this.bitmapText.width >= this.bitmapText.wordWrapWidth && isAnswerText){
+        //this is based on character size, better to create a single character at whatever font and use it's width so if you change font size this number changes as well.
+        //this does not solve the problem of long words making disjointed bubble sizes.
+        this.bitmapText.wordWrapWidth += 17;
+        this.bitmapText.wordWrap = true;
       }
       if(!isAnswerText){
         this.bitmapText.wordWrapWidth = lineLength;
