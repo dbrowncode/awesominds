@@ -1,5 +1,8 @@
 var preloadState = {
   preload: function() {
+    //game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+    
+
 	  console.log('state: preload');
     game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     game.scale.pageAlignHorizontally = true;
@@ -80,7 +83,7 @@ var preloadState = {
       return array;
     };
 
-    game.global.SpeechBubble = function(game, x, y, width, text, withTail, asButton, clickFunction, isAnswerText) {
+    game.global.SpeechBubble = function(game, x, y, width, text, withTail, asButton, clickFunction, isAnswerText, choice) {
       
       //define the max widths for nomral text vs question text
       if(isAnswerText){
@@ -99,32 +102,29 @@ var preloadState = {
       // Set up our text and run our custom wrapping routine on it
       //game.make.bitmapText(x + game.global.borderFrameSize + 3, y + 5, '8bitoperator', text, 11 *dpr);
       this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, text);
-      this.bitmapText.font = 'Varela';
+      this.bitmapText.font = 'roboto_monoregular';
       this.bitmapText.fontSize = 25;
       this.bitmapText.wordWrap = true;
 
       //defines max width for answer boxes to ensure uniform width 
       if(isAnswerText){
-          console.log("answer width " + this.bitmapText.width);
-          console.log(this.bitmapText.width);
-          console.log('adding space');      
+          console.log("0: " +this.bitmapText.width);
           this.bitmapText.wordWrapWidth = lineLength;
-          var i = 1;
           while(this.bitmapText.width < this.bitmapText.wordWrapWidth){
+            console.log("01: " +this.bitmapText.width);
             this.bitmapText.width += .1;
-            this.bitmapText.text += ' ';
-            i += 1;
+            this.bitmapText.text += '\xa0';
+            if(this.bitmapText.width > this.bitmapText.wordWrapWidth){
+              this.bitmapText.width = this.bitmapText.wordWrapWidth;
+              console.log("equalizing");
+            }
+            console.log("02: " +this.bitmapText.width);
           }
-          console.log("space added");
-          console.log("answer width " + this.bitmapText.width);
-          console.log(this.bitmapText.width);
-
+          this.bitmapText.text = choice + '.' + this.bitmapText.text;
+          console.log('1: ' +this.bitmapText.width);
+          console.log('2: ' +lineLength);
+          console.log('3: ' +width);
       }
-                 //if(isAnswerText){
-      //  if(this.bitmapText.text.length > lineLength){
-      //    
-      //  }
-     // }
       if(!isAnswerText){
         this.bitmapText.wordWrapWidth = lineLength;
       }
@@ -140,8 +140,9 @@ var preloadState = {
     	  width = bounds.width + 18;
     	}
       if (bounds.height + 14 > height) {
-        height = bounds.height + 14;
+        height = bounds.height + 5;
       }
+      this.bitmapText.text = this.bitmapText.text.trim();
       console.log("width " + width);
       console.log("height " + height);
       // Create all of our corners and edges

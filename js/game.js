@@ -2,6 +2,16 @@ var dpr = Math.floor(window.devicePixelRatio);
 var game = new Phaser.Game(window.innerWidth * dpr, window.innerHeight * dpr, Phaser.AUTO, 'gameDiv', null, true, true);
 game.global = {}; // create global object we can add properties to and access from any state
 
+WebFontConfig = {
+
+  active: function(){game.time.events.add(Phaser.Timer.SECOND, createText,this);},
+  google: {
+    families: ['Roboto'] 
+  }
+
+}
+
+
 // add game states
 game.state.add('preload', preloadState);
 game.state.add('menuCourse', menuCourseState);
