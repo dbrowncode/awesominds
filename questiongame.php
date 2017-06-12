@@ -6,6 +6,8 @@
 ?>
 
 <title>Awesominds</title>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
 <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
 <script type="text/javascript" src="js/phaser.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -23,6 +25,14 @@
 <script type="text/javascript" src="js/game.js"></script>
 
 <style type="text/css">
+  @font-face {
+    font-family: 'roboto_monoregular';
+    src: url('assets/roboto/robotomono-regular-webfont.woff2') format('woff2'),
+         url('assets/roboto/robotomono-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
   body {
     margin: 0;
   }
@@ -47,6 +57,7 @@
   </style>
 </head>
 <body>
+<div style="font-family:roboto_monoregular;position:absolute; left:-100000px">Font Loaded</div>
 <div id="wrapper">
   <!-- button in game will use this link open the upload modal -->
   <a href="upload.html" rel="modal" id="uploadModal"></a>

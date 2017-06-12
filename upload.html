@@ -5,25 +5,38 @@
 </head>
 <body>
 
-<div class="formWrap">
-  
-  <form action="createCourse.php" method="post" id="createCourseForm">
-    <!-- could use js to restrict input type here -->
-    <table>
-      <tr><td>Course ID:</td><td><input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150"></td></tr>
-      <tr><td>Course Name:</td><td><input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></td</tr>
-    </table>
-    <input type="submit" value="Create Course" name"createC">
-   </form>
-   <div id="confirm"></div>
+  <div class="formWrap">
+    <div class="createClass">
+      <form action="createCourse.php" method="post" id="createCourseForm">
+        <!-- could use js to restrict input type here -->
+        <table>
+          <tr><td>Course ID:</td><td><input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150"></td></tr>
+          <tr><td>Course Name:</td><td><input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></td</tr>
+        </table>
+        <input type="submit" value="Create Course" name"createC">
+      </form>
+      <div id="confirm"></div>
+    </div>
+    <div class='upload'>
+      <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
+        Select file to upload:
+        <input type="file" name="fileToUpload" id="fileToUpload">
+        <br><input type="submit" value="Upload file" name="submit">
+      </form>
+      <div id="output"></div>
+    </div>
+    <div class = 'permission'>
+      <p>Grant permissions to another instructor to allow creation of courses and upload  of question files. </p>
+      <form action="upload2.php" method="post" id='permissions'>
+        <table>
+          <tr><td>Instructor C number:</td><td><input type="text" name="instructorC" id="instructorC" required ="true" placeholder="CXXXXXXX"></td></tr>
+        </table>
+        <input type = "submit" value="Give Upload rights" name'grantPermission'>
+      </form>
+    </div>
+  </div>
 
-   <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
-    Select file to upload:
-    <input type="file" name="fileToUpload" id="fileToUpload">
-    <br><input type="submit" value="Upload file" name="submit">
-  </form>
-  <div id="output"></div>
-</div>
+
 
 <!--jquery goes here-->
 <script>
