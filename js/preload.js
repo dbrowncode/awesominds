@@ -104,6 +104,7 @@ var preloadState = {
       this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, text);
       this.bitmapText.font = 'roboto_monoregular';
       this.bitmapText.fontSize = 20 *dpr;
+      this.bitmapText.align = 'center';
       this.bitmapText.wordWrap = true;
       //defines max width for answer boxes to ensure uniform width 
       if(isAnswerText){
@@ -350,12 +351,12 @@ var preloadState = {
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
 
-      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2, game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
+      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
       courseSelectBtn.x -= Math.floor(courseSelectBtn.bubblewidth/2);
       game.global.pauseUI.add(courseSelectBtn);
       game.input.onDown.add(game.global.quitToCourseSelect, courseSelectBtn);
 
-      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Log Out', false, true, game.global.quitToCourseSelect));
+      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 3, game.world.width * .8, 'Log Out', false, true, game.global.quitToCourseSelect));
       logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
       game.global.pauseUI.add(logOutBtn);
       game.input.onDown.add(game.global.logOut, logOutBtn);
