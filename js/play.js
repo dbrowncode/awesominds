@@ -387,7 +387,7 @@ var playState = {
     } else {
       //out of questions, and everything was right OR this was a rehash round? end the game
       game.global.jinnySpeech.destroy();
-      console.log("ticks " + game.global.ticks);
+      this.ticks.destroy();
       endGame = game.add.audio('endGame');
       endGame.play();
       game.state.start('endOfGame', false, false);

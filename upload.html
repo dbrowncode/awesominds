@@ -5,25 +5,48 @@
 </head>
 <body>
 
-<div class="formWrap">
-  
-  <form action="createCourse.php" method="post" id="createCourseForm">
-    <!-- could use js to restrict input type here -->
-    <table>
-      <tr><td>Course ID:</td><td><input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150"></td></tr>
-      <tr><td>Course Name:</td><td><input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></td</tr>
-    </table>
-    <input type="submit" value="Create Course" name"createC">
-   </form>
-   <div id="confirm"></div>
+  <div class="formWrap">
+    <div class="createClass">
+      <form action="createCourse.php" method="post" id="createCourseForm">
+        <!-- could use js to restrict input type here -->
+        <table>
+          <p>Create a new course based on the alphanumeric course key and name.</p>
+          <tr><td>Course ID:</td><td><input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150"></td></tr>
+          <tr><td>Course Name:</td><td><input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></td</tr>
+        </table>
+        <input type="submit" value="Create Course" name"createC">
+      </form>
+      <div id="confirm"></div>
+    <div>
+      <br>
+    <div class='upload'>
+      <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
+        <table>
+          <p>Select a .doc or .txt file of questions to upload</p>
+          <tr><td><input type="file" name="fileToUpload" id="fileToUpload"></td>
+          <td><select>
+                <option value ="PSYC150">PSYC150</option>
+                <option value ="JAVA151">JAVA151</option>
+                </select>
+           </td></tr>
+          <tr><td><input type="submit" value="Upload file" name="submit"></td></tr>
+        </table>
+      </form>
+      <div id="output"></div>
+    </div>
+    <br>
+    <div class = 'permission'>
+      <form action="upload2.php" method="post" id='permissions'>
+        <table>
+          <p>Grant permissions to another instructor to allow creation of courses and upload  of question files.</p>
+          <tr><td>Instructor C number:</td><td><input type="text" name="instructorC" id="instructorC" required ="true" placeholder="CXXXXXXX"></td></tr>
+        </table>
+        <input type = "submit" value="Give Upload rights" name'grantPermission'>
+      </form>
+    </div>
+  </div>
 
-   <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
-    Select file to upload:
-    <input type="file" name="fileToUpload" id="fileToUpload">
-    <br><input type="submit" value="Upload file" name="submit">
-  </form>
-  <div id="output"></div>
-</div>
+
 
 <!--jquery goes here-->
 <script>

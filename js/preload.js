@@ -69,7 +69,7 @@ var preloadState = {
     game.global.music = game.add.audio('menu');
     game.sound.volume = 0;
     //TODO: dynamic font sizes for responsiveness?
-		game.global.mainFont = { font: 'Arial', fontSize: '18px', fill: '#000', align: 'center', wordWrap: true, wordWrapWidth: game.width * .75};
+		game.global.mainFont = { font: 'roboto_monoregular', fontSize: '25', wordWrap: true};
 		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: 193};
     game.global.rightSideFont = { font: 'Arial', fontSize: '16px', fill: '#000', align: 'right', boundsAlignH: 'right', boundsAlignV: 'top'};
 
@@ -103,27 +103,52 @@ var preloadState = {
       //game.make.bitmapText(x + game.global.borderFrameSize + 3, y + 5, '8bitoperator', text, 11 *dpr);
       this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, text);
       this.bitmapText.font = 'roboto_monoregular';
-      this.bitmapText.fontSize = 25;
+      this.bitmapText.fontSize = 20 *dpr;
+      this.bitmapText.align = 'center';
       this.bitmapText.wordWrap = true;
-
       //defines max width for answer boxes to ensure uniform width 
       if(isAnswerText){
-          console.log("0: " +this.bitmapText.width);
-          this.bitmapText.wordWrapWidth = lineLength;
-          while(this.bitmapText.width < this.bitmapText.wordWrapWidth){
+        this.bitmapText.wordWrap = false;
+        choice.font = 'roboto_monoregular';
+        choice.fontSize = 20 *dpr;
+       var b = this.bitmapText.getLocalBounds();
+        console.log(b);
+        this.bitmapText.text = choice + '. ' + this.bitmapText.text;
+        b = this.bitmapText.getLocalBounds();
+        console.log('b2');
+        console.log(b);
+        this.bitmapText.text=this.bitmapText.text.trim();
+        console.log('b3') 
+        var b = this.bitmapText.getLocalBounds();
+        console.log(b);
+        console.log("0: " +this.bitmapText.width);
+        this.bitmapText.wordWrapWidth = lineLength;
+        var b = this.bitmapText.getLocalBounds();
+        console.log('b4');
+        console.log(b);
+        this.bitmapText.wordWrapWidth = lineLength;
+
+        while(this.bitmapText.width < this.bitmapText.wordWrapWidth){
             console.log("01: " +this.bitmapText.width);
             this.bitmapText.width += .1;
             this.bitmapText.text += '\xa0';
-            if(this.bitmapText.width > this.bitmapText.wordWrapWidth){
+            /*if(this.bitmapText.width > this.bitmapText.wordWrapWidth){
               this.bitmapText.width = this.bitmapText.wordWrapWidth;
+              break;
               console.log("equalizing");
             }
-            console.log("02: " +this.bitmapText.width);
-          }
-          this.bitmapText.text = choice + '.' + this.bitmapText.text;
-          console.log('1: ' +this.bitmapText.width);
-          console.log('2: ' +lineLength);
-          console.log('3: ' +width);
+         */
+        console.log("02: " +this.bitmapText.width);
+        }
+        console.log('1: ' +this.bitmapText.width);
+        console.log('2: ' +lineLength);
+        console.log('3: ' +width);
+      }
+      if(this.bitmapText.width >= this.bitmapText.wordWrapWidth && isAnswerText){
+        //this is based on character size, better to create a single character at whatever font and use it's width so if you change font size this number changes as well.
+        //this does not solve the problem of long words making disjointed bubble sizes.
+        this.bitmapText.wordWrapWidth += 17;
+        this.bitmapText.wordWrap = true;
       }
       if(!isAnswerText){
         this.bitmapText.wordWrapWidth = lineLength;
@@ -326,12 +351,12 @@ var preloadState = {
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
 
-      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2, game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
+      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
       courseSelectBtn.x -= Math.floor(courseSelectBtn.bubblewidth/2);
       game.global.pauseUI.add(courseSelectBtn);
       game.input.onDown.add(game.global.quitToCourseSelect, courseSelectBtn);
 
-      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Log Out', false, true, game.global.quitToCourseSelect));
+      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 3, game.world.width * .8, 'Log Out', false, true, game.global.quitToCourseSelect));
       logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
       game.global.pauseUI.add(logOutBtn);
       game.input.onDown.add(game.global.logOut, logOutBtn);
