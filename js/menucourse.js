@@ -47,7 +47,7 @@ var menuCourseState = {
         success: function(data){
           //setcourse.php returns the session again with the course added
           game.global.session = $.parseJSON(data);
-          game.state.start('menu');
+          game.state.start('menuChapter');
         }
       });
     });

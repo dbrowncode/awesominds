@@ -1,8 +1,6 @@
 var preloadState = {
   preload: function() {
-    //game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-    
-
+    game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	  console.log('state: preload');
     game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     game.scale.pageAlignHorizontally = true;
@@ -10,14 +8,9 @@ var preloadState = {
     game.scale.windowConstraints.bottom = "visual";
     game.stage.disableVisibilityChange = true;
 
-    game.load.image('sky', 'assets/sky.png');
-    game.load.image('jinny', 'assets/animal.png');
-    game.load.image('cat', 'assets/cat.png');
-    game.load.image('beaver', 'assets/beaver.png');
-    game.load.image('rabbit', 'assets/rabbit.png');
     game.load.image('right', 'assets/right.png');
     game.load.image('wrong', 'assets/wrong.png');
-    game.load.image('check', 'assets/check.png');
+    game.load.image('check', 'assets/check2.png');
     game.load.image('arrow', 'assets/arrow.png');
     game.load.image('x', 'assets/x.png');
 
@@ -63,15 +56,12 @@ var preloadState = {
     game.global.logoText.x -= game.global.logoText.width/2;
     game.stage.addChild(game.global.logoText);
 
-
     game.global.wrongsounds.push(game.add.audio('wrong1'),game.add.audio('wrong2'),game.add.audio('wrong3'));
     game.global.rightsounds.push(game.add.audio('correct'),game.add.audio('correct2'));
     game.global.music = game.add.audio('menu');
     game.sound.volume = 0;
-    //TODO: dynamic font sizes for responsiveness?
-		game.global.mainFont = { font: 'roboto_monoregular', fontSize: '25', wordWrap: true};
-		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: 193};
-    game.global.rightSideFont = { font: 'Arial', fontSize: '16px', fill: '#000', align: 'right', boundsAlignH: 'right', boundsAlignV: 'top'};
+    //can use any font that was listed in the WebFontConfig in game.js
+		game.global.mainFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left'};
 
     game.global.shuffleArray = function(array) {
       for (var i = array.length - 1; i > 0; i--) {
@@ -84,92 +74,43 @@ var preloadState = {
     };
 
     game.global.SpeechBubble = function(game, x, y, width, text, withTail, asButton, clickFunction, isAnswerText, choice) {
-      
-      //define the max widths for nomral text vs question text
-      if(isAnswerText){
-        var lineLength = game.width/2;
-      }else{
-        var lineLength = game.width/1.5;
-      }
-      
-      
       Phaser.Sprite.call(this, game, x, y);
 
       // Some sensible minimum defaults
       width = width || game.global.borderFrameSize * 3;
-      var height = game.global.borderFrameSize * 2;
+      var height = game.global.mainFont.fontSize + game.global.borderFrameSize;
 
       // Set up our text and run our custom wrapping routine on it
-      //game.make.bitmapText(x + game.global.borderFrameSize + 3, y + 5, '8bitoperator', text, 11 *dpr);
-      this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, text);
-      this.bitmapText.font = 'roboto_monoregular';
-      this.bitmapText.fontSize = 20 *dpr;
-      this.bitmapText.align = 'center';
-      this.bitmapText.wordWrap = true;
-      //defines max width for answer boxes to ensure uniform width 
-      if(isAnswerText){
-        this.bitmapText.wordWrap = false;
-        choice.font = 'roboto_monoregular';
-        choice.fontSize = 20 *dpr;
-       var b = this.bitmapText.getLocalBounds();
-        console.log(b);
-        this.bitmapText.text = choice + '. ' + this.bitmapText.text;
-        b = this.bitmapText.getLocalBounds();
-        console.log('b2');
-        console.log(b);
-        this.bitmapText.text=this.bitmapText.text.trim();
-        console.log('b3') 
-        var b = this.bitmapText.getLocalBounds();
-        console.log(b);
-        console.log("0: " +this.bitmapText.width);
-        this.bitmapText.wordWrapWidth = lineLength;
-        var b = this.bitmapText.getLocalBounds();
-        console.log('b4');
-        console.log(b);
-        this.bitmapText.wordWrapWidth = lineLength;
-
-        while(this.bitmapText.width < this.bitmapText.wordWrapWidth){
-            console.log("01: " +this.bitmapText.width);
-            this.bitmapText.width += .1;
-            this.bitmapText.text += '\xa0';
-            /*if(this.bitmapText.width > this.bitmapText.wordWrapWidth){
-              this.bitmapText.width = this.bitmapText.wordWrapWidth;
-              break;
-              console.log("equalizing");
-            }
-         */
-        console.log("02: " +this.bitmapText.width);
+      var prefix = isAnswerText ? choice + '. ' : '';
+      this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, prefix + text, game.global.mainFont);
+      // set width for wrapping and let phaser figure out where it should wrap the lines
+      this.bitmapText.wordWrapWidth = width;
+      var prewrapped = this.bitmapText.precalculateWordWrap(prefix + text);
+      var wrapFixed = "";
+      for (var i = 0; i < prewrapped.length; i++) {
+        //phaser seems to sometimes add lines that are just a space; ignore them
+        if(prewrapped[i] != " "){
+          //add newline if more than 1 line
+          if(i>0){
+            wrapFixed += "\n";
+          }
+          //take out the space at the end of the line that phaser's word wrap seems to add
+          wrapFixed += prewrapped[i].slice(0,-1);
         }
-        console.log('1: ' +this.bitmapText.width);
-        console.log('2: ' +lineLength);
-        console.log('3: ' +width);
       }
-      if(this.bitmapText.width >= this.bitmapText.wordWrapWidth && isAnswerText){
-        //this is based on character size, better to create a single character at whatever font and use it's width so if you change font size this number changes as well.
-        //this does not solve the problem of long words making disjointed bubble sizes.
-        this.bitmapText.wordWrapWidth += 17;
-        this.bitmapText.wordWrap = true;
-      }
-      if(!isAnswerText){
-        this.bitmapText.wordWrapWidth = lineLength;
-      }
-      
-      game.global.SpeechBubble.wrapBitmapText(this.bitmapText, width);
+      //change text to the newly wrapped text
+      this.bitmapText.text = wrapFixed;
 
       // Calculate the width and height needed for the edges
-      var bounds = this.bitmapText.getLocalBounds();
-      console.log("resising " +bounds.width);
-      if (bounds.width + 18 > width) {
-        width = bounds.width + 18;
+      var bounds = this.bitmapText.getBounds();
+      // use set width for answer choices, and variable width based on the text size for everything else
+      if(isAnswerText){
+        bounds.width = width + game.global.mainFont.fontSize;
       }else{
-    	  width = bounds.width + 18;
-    	}
-      if (bounds.height + 14 > height) {
-        height = bounds.height + 5;
+        width = bounds.width + game.global.mainFont.fontSize;
       }
-      this.bitmapText.text = this.bitmapText.text.trim();
-      console.log("width " + width);
-      console.log("height " + height);
+      height = Math.max(height, bounds.height);
+
       // Create all of our corners and edges
       this.borders = [
         game.make.tileSprite(x + game.global.borderFrameSize, y + game.global.borderFrameSize, width - game.global.borderFrameSize, height - game.global.borderFrameSize, 'bubble-border', 4),
@@ -190,14 +131,13 @@ var preloadState = {
 
       if(withTail){
         // Add the tail
-        this.tail = this.addChild(game.make.image(x - game.cache.getImage("bubble-tail").width*.7, y + bounds.centerY, 'bubble-tail'));
+        var tail = game.cache.getImage("bubble-tail");
+        this.tail = this.addChild(game.make.image(Math.floor(this.x - tail.width*.7), Math.floor(y + tail.height/3), 'bubble-tail'));
         // this.tail.angle = 90;
       }
 
       // Add our text last so it's on top
       this.addChild(this.bitmapText);
-      this.bitmapText.tint = 0x000000;
-
       this.pivot.set(x, y);
 
       //make some properties public for positioning purposes
@@ -237,27 +177,6 @@ var preloadState = {
 
     game.global.SpeechBubble.prototype = Object.create(Phaser.Sprite.prototype);
     game.global.SpeechBubble.prototype.constructor = game.global.SpeechBubble;
-
-    game.global.SpeechBubble.wrapBitmapText = function (bitmapText, maxWidth) {
-      var words = bitmapText.text.split(' '), output = "", test = "";
-
-      for (var w = 0, len = words.length; w < len; w++) {
-        test += words[w] + " ";
-        bitmapText.text = test;
-        bitmapText.updateText();
-        if (bitmapText.textWidth > maxWidth) {
-          output += "\n" + words[w] + " ";
-        }
-        else {
-          output += words[w] + " ";
-        }
-        test = output;
-      }
-
-      output = output.replace(/(\s)$/gm, ""); // remove trailing spaces
-      bitmapText.text = output;
-      bitmapText.updateText();
-    };
 
     // raise volume for all sound
     //TODO: separate volume for music/fx?
@@ -474,8 +393,7 @@ var preloadState = {
     this.loadText.fontSize = 15;
   },
   startGame: function(){
-    	game.state.start('menuCourse');
-
+    game.state.start('menuCourse');
   },
   //Mock loading bar. It's a masterpiece.
   update: function(){

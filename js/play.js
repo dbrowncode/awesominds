@@ -191,7 +191,7 @@ var playState = {
         if((!game.global.answersShown) && game.global.questionShown && !game.global.isRehash){
           for(i=1;i<game.global.chars.length;i++){
             if(game.global.chars[i].correct){
-              game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), Math.floor(game.global.chars[i].sprite.width), game.global.questions[game.global.questionsAnswered].answer, true, false));
+              game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, game.global.questions[game.global.questionsAnswered].answer, true, false));
             }else{
               choice = availChoices[Math.floor(Math.random() * availChoices.length)];
               answer = game.global.questions[game.global.questionsAnswered].answer;
@@ -205,7 +205,7 @@ var playState = {
                 choice = availChoices[Math.floor(Math.random() * availChoices.length)];
                 console.log('ai choosing answer' + choice);
               }
-              game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), Math.floor(game.global.chars[i].sprite.width), choice, true, false));
+              game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, choice, true, false));
             }
             game.global.answerBubbles.add(game.global.chars[i].answerBubble);
           }
@@ -315,7 +315,7 @@ var playState = {
         game.global.totalStats.score += 2;
       }
       game.global.totalStats.numWrong++;
-        
+
       if(game.global.totalStats.numWrong !=0 && game.global.totalStats.numWrong % 5 == 0){
         game.global.rXOffset += 6;
         game.global.numWro = -1;

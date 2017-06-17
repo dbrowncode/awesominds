@@ -3,20 +3,15 @@ var game = new Phaser.Game(window.innerWidth * dpr, window.innerHeight * dpr, Ph
 game.global = {}; // create global object we can add properties to and access from any state
 
 WebFontConfig = {
-
-  active: function(){game.time.events.add(Phaser.Timer.SECOND, createText,this);},
   google: {
-    families: ['Roboto'] 
+    //add any google fonts here
+    families: ['Roboto', 'Varela Round']
   }
-
 }
-
 
 // add game states
 game.state.add('preload', preloadState);
 game.state.add('menuCourse', menuCourseState);
-game.state.add('menu', menuState);
-game.state.add('options',optionState);
 game.state.add('menuChapter', menuChapterState);
 game.state.add('load', loadState);
 game.state.add('play', playState);

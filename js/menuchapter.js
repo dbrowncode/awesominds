@@ -40,6 +40,6 @@ var menuChapterState = {
     game.state.start('pregame');
   },
   backButton: function(){
-    game.state.start('menu');
+    game.state.start('menuCourse');
   }
 }
