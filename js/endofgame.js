@@ -81,11 +81,11 @@ var endOfGameState = {
     for (var i = 0; i < mindStates.length; i++) {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2),  "You have a" + mindStates[i].mind + "!", true, false));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2),  "You have a" + mindStates[i].mind + "!", true, false));
         this.endGameUI.add(game.global.jinnySpeech);
       }
       //TODO mathemagic needs to happen here to make the bars show up in the right areas
-      
+
       var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
       lineGfx.moveTo(0, lineYposition);
       lineGfx.lineTo(game.world.width, lineYposition);
@@ -98,9 +98,11 @@ var endOfGameState = {
       var topBar = game.global.chars[i].score
       if(topBar > game.global.numQuestions * 25){
         topBar = game.global.numQuestions * 25;
-      } 
+      }
       var barHeight = game.global.mapNum(topBar, 0, game.global.numQuestions * 25, 0, game.world.height - game.global.jinny.height - game.global.chars[0].sprite.height);
       game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(barHeight, 1)}, 500, Phaser.Easing.Default, true, 250);
+      this.endGameUI.add(game.global.chars[i].barSprite);
+      this.endGameUI.add(game.global.chars[i].gfx);
 
       var scorePercent = Math.floor(((topBar) / (game.global.numQuestions * 25)) * 100);
       var y = game.global.mapNum(scorePercent, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
@@ -124,6 +126,7 @@ var endOfGameState = {
   },
 
   playAgainClick: function(){
+    game.global.progressBars.destroy();
     endOfGameState.endGameUI.destroy();
     game.global.isRehash = false;
     game.global.rehashQuestions = [];

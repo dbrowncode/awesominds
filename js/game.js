@@ -5,7 +5,7 @@ game.global = {}; // create global object we can add properties to and access fr
 WebFontConfig = {
   google: {
     //add any google fonts here
-    families: ['Roboto', 'Varela Round']
+    families: ['Roboto', 'Varela Round', 'Material Icons']
   }
 }
 

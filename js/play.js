@@ -7,7 +7,7 @@ var playState = {
    */
   create: function(){
     console.log('state: play');
-    game.global.questions = game.global.isRehash ? game.global.rehashQuestions : game.global.shuffleArray(game.global.questions);
+    game.global.questions = game.global.isRehash ? game.global.rehashQuestions : game.global.shuffleArray(game.global.origQuestions);
     console.log('rehash: ' + game.global.isRehash);
     this.ticks = game.add.group();
     game.global.numQuestions = Math.min(3, game.global.questions.length);
@@ -48,7 +48,7 @@ var playState = {
       right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
       wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
     };
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), 'Here comes your first question...', true, false));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), 'Here comes your first question...', true, false));
 
     var chapterText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Chapter ' + game.global.selectedChapter, 11 * dpr);
     chapterText.x -= chapterText.width + game.global.borderFrameSize;
@@ -182,38 +182,46 @@ var playState = {
       game.global.questionUI.add(game.global.choiceBubbles);
 
       game.global.questionShown = true;
+
+      //determine AI answers
+      for(i=1;i<game.global.chars.length;i++){
+        if(game.global.chars[i].correct){
+          game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, game.global.questions[game.global.questionsAnswered].answer, true, false));
+        }else{
+          choice = availChoices[Math.floor(Math.random() * availChoices.length)];
+          answer = game.global.questions[game.global.questionsAnswered].answer;
+          //strip any whitespace so comparisons will work
+          answer = answer.replace(/(^\s+|\s+$)/g,"");
+          choice = choice.replace(/(^\s+|\s+$)/g,"");
+
+          //randomize answer so it isn't the correct one.
+          while(choice == answer){
+            console.log('first conditional worked');
+            choice = availChoices[Math.floor(Math.random() * availChoices.length)];
+            console.log('ai choosing answer' + choice);
+          }
+          game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, choice, true, false));
+        }
+        //save width so we can set to 0 and tween to it later
+        game.global.answerBubbleWidth = game.global.chars[i].answerBubble.width;
+        game.global.chars[i].answerBubble.width = 0;
+        game.global.answerBubbles.add(game.global.chars[i].answerBubble);
+      }
+
       //add timer to delay until answers are shown.
       game.global.timer.stop();
-      game.global.timer.add(2000, showAnswers, this);
+      game.global.timer.add(2000, playState.showAnswers, this);
       game.global.timer.start();
-
-      function showAnswers() {
-        if((!game.global.answersShown) && game.global.questionShown && !game.global.isRehash){
-          for(i=1;i<game.global.chars.length;i++){
-            if(game.global.chars[i].correct){
-              game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, game.global.questions[game.global.questionsAnswered].answer, true, false));
-            }else{
-              choice = availChoices[Math.floor(Math.random() * availChoices.length)];
-              answer = game.global.questions[game.global.questionsAnswered].answer;
-              //strip any whitespace so comparisons will work
-              answer = answer.replace(/(^\s+|\s+$)/g,"");
-              choice = choice.replace(/(^\s+|\s+$)/g,"");
-
-              //randomize answer so it isn't the correct one.
-              while(choice == answer){
-                console.log('first conditional worked');
-                choice = availChoices[Math.floor(Math.random() * availChoices.length)];
-                console.log('ai choosing answer' + choice);
-              }
-              game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, choice, true, false));
-            }
-            game.global.answerBubbles.add(game.global.chars[i].answerBubble);
-          }
-          game.global.answersShown = true;
-        }
-      };
-
     };
+  },
+
+  showAnswers : function() {
+    if((!game.global.answersShown) && game.global.questionShown && !game.global.isRehash){
+      for(i=1;i<game.global.chars.length;i++){
+        game.add.tween(game.global.chars[i].answerBubble).to({width: game.global.answerBubbleWidth }, 100, Phaser.Easing.Default, true, 250 * i);
+      }
+      game.global.answersShown = true;
+    }
   },
 
   btnClick : function(){
@@ -237,7 +245,7 @@ var playState = {
     game.global.jinny.frame = this.data.correct ? 2 : 1;
 
     game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
 
 
     //if answered wrong, highlight the right answer
@@ -258,6 +266,9 @@ var playState = {
     //increment number of answered questions
     game.global.questionsAnswered++;
     console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
+
+    //show AI answers if not already shown
+    playState.showAnswers();
 
     game.global.timer.stop();
     game.global.timer.add(1000, playState.animateOut, this, false);
@@ -336,14 +347,18 @@ var playState = {
      * create horizontal progress bars for each player
      * and animate them
      */
+    game.global.progressBars = game.add.group();
     for (var i = 0; i < game.global.chars.length; i++) {
       if(game.global.questionsAnswered <= 1){
         game.global.chars[i].gfx = game.add.graphics(0,0);
         game.global.chars[i].gfx.visible = false;
         game.global.chars[i].gfx.beginFill(0x02C487, 1);
-        game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
+        game.global.progressBars.add(game.global.chars[i].gfx);
+        var rect = game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
+        game.global.progressBars.add(rect);
         game.global.chars[i].barSprite = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].gfx.generateTexture());
         game.global.chars[i].barSprite.anchor.y = 1;
+        game.global.progressBars.add(game.global.chars[i].barSprite);
       }
       game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].score, 1)}, 500, Phaser.Easing.Default, true, 250);
     }
@@ -375,7 +390,7 @@ var playState = {
     if (game.global.questionsAnswered < game.global.numQuestions){
       //still questions left, show the next one
       game.global.jinnySpeech.destroy();
-      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Next question...",true));
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Next question...",true));
 
       this.showQuestion(game.global.questions[game.global.questionsAnswered]);
     } else if (game.global.rehashQuestions.length > 0 && !game.global.isRehash) {
@@ -427,7 +442,7 @@ var playState = {
 
   timeUp : function(){
     game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.world.y + game.global.logoText.height*2, game.world.width - (game.global.jinny.width*2), "Time's up!", true, false));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Time's up!", true, false));
     game.global.questionsAnswered++;
     var dummy = {data: {correct: false}};
     this.timerOn = false;

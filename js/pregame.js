@@ -16,17 +16,16 @@ var preGameState = {
 
     var prevHeights = 0;
     var speechX = Math.floor(game.global.jinny.right + (game.global.borderFrameSize * 2));
-    var speechY = Math.floor(game.world.y + game.global.logoText.height*2);
     var speechWidth = Math.floor(game.world.width - (game.global.jinny.width*2));
     var sbtweens = [];
     var bubbles = [];
     for (var i = 0; i < instructLines.length; i++) {
-      bubbles[i] = game.world.add(new game.global.SpeechBubble(game, speechX, speechY + prevHeights, speechWidth, instructLines[i], true, false));
+      bubbles[i] = game.world.add(new game.global.SpeechBubble(game, speechX, game.global.logoText.bottom + prevHeights, speechWidth, instructLines[i], true, false));
       prevHeights += Math.floor(bubbles[i].bubbleheight + (10 * dpr));
       this.pregameUI.add(bubbles[i]);
       var w = bubbles[i].width;
       bubbles[i].width = 0;
-      sbtweens[i] = game.add.tween(bubbles[i]).to({width: w}, 500, Phaser.Easing.Default, false, (i==0) ? 0 : 2000);
+      sbtweens[i] = game.add.tween(bubbles[i]).to({width: w}, 500, Phaser.Easing.Default, false, (i==0) ? 0 : 1000);
       if(i>0){
         sbtweens[i-1].chain(sbtweens[i]);
       }
@@ -42,23 +41,24 @@ var preGameState = {
     game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys);
 
     //Dirty fix for opponents being on screen for smaller devices
-    game.global.imagecheck = game.add.sprite((game.width + game.width) ,(game.height + game.height), game.global.oppImageKeys[1]);
+    game.global.imagecheck = game.add.sprite((game.width + game.width) ,(game.height + game.height), game.global.oppImageKeys[1].imageKey);
     game.global.imagecheck.scale.setTo(dpr/4,dpr/4);
     var image = game.global.imagecheck;
 
     prevHeights += bubbles[bubbles.length - 1].bubbleheight + (10*dpr);
+
     for(var i = 0; i < 4; i++){
       game.global.chars[i] = {};
-      game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, prevHeights, (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i]);
+      game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, prevHeights, (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i].imageKey);
       game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
       game.global.chars[i].score = 0;
       game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', ' ', 11 * dpr);
       game.global.chars[i].scoreText.tint = 0x000000;
-      //TODO: get character names from array or something once they have names
       game.global.chars[i].name = game.add.bitmapText(0 - game.world.width, 0 - game.world.height, '8bitoperator', 'You', 11 * dpr);
       game.global.chars[i].name.tint = 0x000000;
       if(i!=0){
         prevHeights += Math.floor(image.height + (10 * dpr));
+        game.global.chars[i].name.text = game.global.oppImageKeys[i].name;
         game.global.chars[i].chance = winChances[i];
         game.global.chars[i].correct = false;
       }
@@ -89,10 +89,11 @@ var preGameState = {
       dataType: 'json',
       success: function(data){
         game.global.questions = [];
+        game.global.origQuestions = [];
         for (var i = 0; i < data.length; i++) {
-          game.global.questions[i] = $.parseJSON(data[i]["question"]);
+          game.global.origQuestions[i] = $.parseJSON(data[i]["question"]);
         }
-        console.log('chapter ' + game.global.selectedChapter + '; ' + game.global.questions.length + ' questions loaded');
+        console.log('chapter ' + game.global.selectedChapter + '; ' + game.global.origQuestions.length + ' questions loaded');
         //once the questions are successfully loaded, move to the play state
         preGameState.pregameUI.destroy();
         game.global.isRehash = false;

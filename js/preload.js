@@ -13,17 +13,15 @@ var preloadState = {
     game.load.image('check', 'assets/check2.png');
     game.load.image('arrow', 'assets/arrow.png');
     game.load.image('x', 'assets/x.png');
+    game.load.image('logo', 'assets/logo2.png')
 
     game.load.audio('play',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
     game.load.audio('menu',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
     game.load.audio('wrong1',['assets/music/WrongAns1.m4a','assets/music/WrongAns1.ogg']);
-    game.load.audio('wrong2',['assets/music/WrongAns2.m4a','assets/music/WrongAns2.ogg']);
-    game.load.audio('wrong3',['assets/music/WrongAns3.m4a','assets/music/WrongAns3.ogg']);
     game.load.audio('question',['assets/music/QuestionEnters.m4a','assets/music/QuestionEnters.ogg']);
     game.load.audio('endGame',['assets/music/EndOFGame.m4a','assets/music/EndOFGame.ogg']);
     game.load.audio('drums',['assets/music/DrumsAndWhoo.m4a','assets/music/DrumsAndWhoo.ogg']);
     game.load.audio('correct',['assets/music/CorrectAns.m4a','assets/music/CorrectAns.ogg']);
-    game.load.audio('correct2',['assets/music/CorrectAns2.m4a','assets/music/CorrectAns2.ogg']);
     game.load.audio('applause',['assets/music/playerWins.m4a','assets/music/PlayerWins.ogg']);
 
     game.load.spritesheet('jin', 'assets/jin.png', 264, 364);
@@ -34,10 +32,16 @@ var preloadState = {
 
     var numOppImages = 16;
     game.global.oppImageKeys = [];
+    //this sets the name for all the characters, in order of the image numbers (plus 'zero' just for index fixing)
+    var charNames = ['Zero', 'Jamar', 'Bruno', 'Edward', 'Sofia', 'Dahra', 'Manu', 'Jira', 'Chandi', 'Dimbo', 'Lamar', 'Seadog', 'Kit', 'Pablo', 'Fernanda', 'Mickey', 'Rose'];
     for (var i = 1; i <= numOppImages; i++) {
       game.load.image('opp' + i, 'assets/opp/opp' +  i + '.png');
       if(i != game.global.session['avatarnum']){
-        game.global.oppImageKeys.push('opp' + i);
+        var opp = {
+          imageKey: 'opp' + i,
+          name: charNames[i]
+        }
+        game.global.oppImageKeys.push(opp);
       }
     }
     //prevents game breaking when zoomed below 100%
@@ -50,18 +54,14 @@ var preloadState = {
   },
 
 	create: function() {
-    game.global.logoText = game.add.bitmapText(game.world.centerX, 0, '8bitoperator', 'Awesominds', 22 * dpr);
-    //turn off antialiasing for the logo; this seems to turn it off for all bitmap text after
-    game.global.logoText.smoothed = false;
-    game.global.logoText.x -= game.global.logoText.width/2;
-    game.stage.addChild(game.global.logoText);
+    //can use any font that was listed in the WebFontConfig in game.js
+    game.global.mainFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left'};
+    game.global.whiteFont = { font: 'Varela Round', fontSize: 24 * dpr, fill: 'white'};
 
-    game.global.wrongsounds.push(game.add.audio('wrong1'),game.add.audio('wrong2'),game.add.audio('wrong3'));
-    game.global.rightsounds.push(game.add.audio('correct'),game.add.audio('correct2'));
+    game.global.wrongsounds.push(game.add.audio('wrong1'));
+    game.global.rightsounds.push(game.add.audio('correct'));
     game.global.music = game.add.audio('menu');
     game.sound.volume = 0;
-    //can use any font that was listed in the WebFontConfig in game.js
-		game.global.mainFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left'};
 
     game.global.shuffleArray = function(array) {
       for (var i = array.length - 1; i > 0; i--) {
@@ -227,12 +227,12 @@ var preloadState = {
       }
     };
     game.global.makeVolText = function(){
-      game.global.volText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.pausedText.y + game.global.pausedText.height*2, game.world.width * .8, 'Volume: ' +  Math.round( game.sound.volume * 10), false, false));
+      game.global.volText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.pausedText.bottom, game.world.width * .8, 'Volume: ' +  Math.round( game.sound.volume * 10), false, false));
       game.global.volText.x -= Math.floor(game.global.volText.bubblewidth/2);
       game.global.pauseUI.add(game.global.volText);
 
       var t = game.sound.mute ? 'Unmute' : 'Mute';
-      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y *1.5, game.world.width * .8, t, false, false));
+      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y *1.5), game.world.width * .8, t, false, false));
       game.global.muteText.x -= Math.floor(game.global.muteText.bubblewidth/2);
       game.global.pauseUI.add(game.global.muteText);
     };
@@ -251,10 +251,10 @@ var preloadState = {
       var pauseBG = game.add.graphics(0, 0);
       pauseBG.lineStyle(2, 0x000000, 1);
       pauseBG.beginFill(0x078EB7, 1);
-      pauseBG.drawRoundedRect(game.world.x + 10, game.global.logoText.y + game.global.logoText.height*2, game.world.width - 20, game.world.height - (game.global.logoText.y + game.global.logoText.height*2) - 10, 10);
+      pauseBG.drawRoundedRect(game.world.x + 10, game.global.logoText.bottom, game.world.width - 20, game.world.height - (game.global.logoText.y + game.global.logoText.height*2) - 10, 10);
       game.global.pauseUI.add(pauseBG);
 
-      game.global.pausedText = game.add.bitmapText(game.world.centerX, game.global.logoText.y + game.global.logoText.height*2, '8bitoperator', 'Paused', 22 * dpr);
+      game.global.pausedText = game.add.text(game.world.centerX, game.global.logoText.bottom, 'Paused', game.global.whiteFont);
       game.global.pausedText.x -= game.global.pausedText.width/2;
       game.global.pauseUI.add(game.global.pausedText);
 
@@ -270,7 +270,7 @@ var preloadState = {
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
 
-      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
+      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y * 2.5), game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
       courseSelectBtn.x -= Math.floor(courseSelectBtn.bubblewidth/2);
       game.global.pauseUI.add(courseSelectBtn);
       game.input.onDown.add(game.global.quitToCourseSelect, courseSelectBtn);
@@ -363,34 +363,20 @@ var preloadState = {
       sureUI.add(noBtn);
       game.input.onDown.add(btnResult, noBtn);
     };
-    game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width, 0, game.width, '||', false, true, game.global.pauseMenu));
-    game.global.pauseButton.x -= game.global.pauseButton.bubblewidth + game.global.borderFrameSize;
-    game.stage.addChild(game.global.pauseButton);
-    game.global.pauseButton.visible = false;
-
-    game.global.unpauseButton = game.world.add(new game.global.SpeechBubble(game, game.global.pauseButton.x, game.global.pauseButton.y, game.width, '|>', false, true, game.global.unpause));
-    game.global.unpauseButton.visible = false;
-    game.stage.addChild(game.global.unpauseButton);
 
     //PROTOTYPE SPLASHSCREEN
     //TODO make it better
     //maybe add loading bar??
-    logo = game.add.sprite(game.world.centerX/2+game.world.centerX/4, game.world.centerY -game.cache.getImage('check').height/2, 'check');
-    logo.scale.setTo(.5,.5);
-    text = game.add.text(game.world.centerX, game.world.centerY, ' AWESOMINDS ');
-    text.anchor.set(0.5);
-    text.align='center';
-    text.font = 'Arial Black';
-    text.fontSize = 70;
-    text.fontWeight = 'bold';
-    text.fill = '#ec008c';
-    text.setShadow(-5,5, 'rgba(0,0,0,0.5)',0);
+    logo = game.add.sprite(0, 0, 'logo');
+    logo.scale.setTo(dpr/2, dpr/2);
+    logo.centerX = game.world.centerX;
+    logo.centerY = game.world.centerY;
     this.progress = 0;
     this.loader = game.add.graphics(0,0);
     this.loader.beginFill(0x02c487,1);
     this.loader.anchor.set(.5);
-    this.loadText = game.add.text(game.world.centerX, game.height - game.height/3, this.progress + '%');
-    this.loadText.fontSize = 15;
+    this.loadText = game.add.text(game.world.centerX, logo.bottom, this.progress + '%', game.global.mainFont);
+    this.loadText.centerX = game.world.centerX;
   },
   startGame: function(){
     game.state.start('menuCourse');
@@ -398,11 +384,12 @@ var preloadState = {
   //Mock loading bar. It's a masterpiece.
   update: function(){
     if(this.progress <= 99){
-    this.progress+=1;
-    this.loadText.setText(this.progress + '%');
-    this.loader.drawRect(game.width/2 - 100,game.height - game.height/3, this.progress*2, 20);
+      this.progress+=1;
+      this.loadText.setText(this.progress + '%');
+      this.loadText.centerX = game.world.centerX;
+      this.loader.drawRect(game.world.centerX - 100, logo.bottom, this.progress*2, 20);
     }else{
-     this.startGame();
+      this.startGame();
     }
   }
 };
