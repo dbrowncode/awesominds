@@ -251,10 +251,12 @@ var preloadState = {
       var pauseBG = game.add.graphics(0, 0);
       pauseBG.lineStyle(2, 0x000000, 1);
       pauseBG.beginFill(0x078EB7, 1);
-      pauseBG.drawRoundedRect(game.world.x + 10, game.global.logoText.bottom, game.world.width - 20, game.world.height - (game.global.logoText.y + game.global.logoText.height*2) - 10, 10);
+      pauseBG.drawRoundedRect(game.world.x + 10, game.global.logoText.bottom, game.world.width - 20, game.world.height - game.global.logoText.height - 10, 10);
       game.global.pauseUI.add(pauseBG);
 
       game.global.pausedText = game.add.text(game.world.centerX, game.global.logoText.bottom, 'Paused', game.global.whiteFont);
+      game.global.pausedText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+      game.global.pausedText.padding.x = 5;
       game.global.pausedText.x -= game.global.pausedText.width/2;
       game.global.pauseUI.add(game.global.pausedText);
 

@@ -10,7 +10,7 @@ var playState = {
     game.global.questions = game.global.isRehash ? game.global.rehashQuestions : game.global.shuffleArray(game.global.origQuestions);
     console.log('rehash: ' + game.global.isRehash);
     this.ticks = game.add.group();
-    game.global.numQuestions = Math.min(3, game.global.questions.length);
+    game.global.numQuestions = Math.min(1, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.questionShown = false;
     if(!game.global.isRehash){
@@ -60,7 +60,7 @@ var playState = {
     //animate avatars to the bottom
     var image = game.global.imagecheck;
     for (var i = 0; i < game.global.chars.length; i++) {
-      game.add.tween(game.global.chars[i].sprite).to({x: (((game.width/4)*(i+1) -game.width/4)+(game.width/20)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
+      game.add.tween(game.global.chars[i].sprite).to({x: Math.floor(((game.width/4)*(i+1) -game.width/4)+(game.width/25)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
     }
 
     //show the first question
@@ -347,18 +347,19 @@ var playState = {
      * create horizontal progress bars for each player
      * and animate them
      */
-    game.global.progressBars = game.add.group();
+    // game.global.progressBars = game.add.group();
     for (var i = 0; i < game.global.chars.length; i++) {
-      if(game.global.questionsAnswered <= 1){
+      if(game.global.questionsAnswered <= 1 && !game.global.isRehash){
         game.global.chars[i].gfx = game.add.graphics(0,0);
         game.global.chars[i].gfx.visible = false;
         game.global.chars[i].gfx.beginFill(0x02C487, 1);
-        game.global.progressBars.add(game.global.chars[i].gfx);
+        // game.global.progressBars.add(game.global.chars[i].gfx);
         var rect = game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
-        game.global.progressBars.add(rect);
+        // game.global.progressBars.add(rect);
         game.global.chars[i].barSprite = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].gfx.generateTexture());
         game.global.chars[i].barSprite.anchor.y = 1;
-        game.global.progressBars.add(game.global.chars[i].barSprite);
+        // game.global.progressBars.add(game.global.chars[i].gfx);
+        // game.global.progressBars.add(game.global.chars[i].barSprite);
       }
       game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].score, 1)}, 500, Phaser.Easing.Default, true, 250);
     }

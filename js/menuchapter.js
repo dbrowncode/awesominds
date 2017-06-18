@@ -4,6 +4,8 @@ var menuChapterState = {
 
     var text = game.add.text(game.world.centerX + 1000, game.global.logoText.bottom, 'Select a Chapter', game.global.whiteFont);
     game.add.tween(text).to({x: game.world.centerX - (text.width/2)}, 100, Phaser.Easing.Default, true, 0);
+    text.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    text.padding.x = 5;
 
     var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuChapterState.backButton));
 

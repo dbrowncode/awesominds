@@ -30,7 +30,7 @@ var endOfGameState = {
                 url: 'insertscore.php',
                 data: game.global.scoreData,
                 success: function(data){
-                  console.log(data);
+                  endOfGameState.makeStatUI();
                 }
               });
             });
@@ -46,7 +46,7 @@ var endOfGameState = {
                 url: 'updatescore.php',
                 data: game.global.scoreData,
                 success: function(data){
-                  console.log(data);
+                  endOfGameState.makeStatUI();
                 }
               });
             });
@@ -55,8 +55,6 @@ var endOfGameState = {
         }
       });
     });
-
-
 
     //She aint pretty she just looks that way.
     var mindStates = [
@@ -78,55 +76,114 @@ var endOfGameState = {
       //if awesomind, be happy
       game.global.jinny.frame = 2;
     }
+
+    // set up visual areas for score ranges
     for (var i = 0; i < mindStates.length; i++) {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
         game.global.jinnySpeech.destroy();
         game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2),  "You have a" + mindStates[i].mind + "!", true, false));
         this.endGameUI.add(game.global.jinnySpeech);
       }
-      //TODO mathemagic needs to happen here to make the bars show up in the right areas
-
       var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
       lineGfx.moveTo(0, lineYposition);
       lineGfx.lineTo(game.world.width, lineYposition);
-      var label = game.add.bitmapText(game.world.centerX, lineYposition, '8bitoperator', mindStates[i].label, 22 * dpr);
+      var label = game.add.text(game.world.centerX, lineYposition, mindStates[i].label, game.global.whiteFont);
       label.x -= label.width/2;
+      label.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+      label.padding.x = 5;
       this.endGameUI.add(label);
     }
 
+    // convert score + progress bars to percentage
     for (var i = 0; i < game.global.chars.length; i++) {
-      var topBar = game.global.chars[i].score
-      if(topBar > game.global.numQuestions * 25){
-        topBar = game.global.numQuestions * 25;
-      }
-      var barHeight = game.global.mapNum(topBar, 0, game.global.numQuestions * 25, 0, game.world.height - game.global.jinny.height - game.global.chars[0].sprite.height);
-      game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(barHeight, 1)}, 500, Phaser.Easing.Default, true, 250);
-      this.endGameUI.add(game.global.chars[i].barSprite);
-      this.endGameUI.add(game.global.chars[i].gfx);
-
+      var topBar = Math.min(game.global.chars[i].score, game.global.numQuestions * 25);
       var scorePercent = Math.floor(((topBar) / (game.global.numQuestions * 25)) * 100);
-      var y = game.global.mapNum(scorePercent, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
+      var y = game.global.mapNum(scorePercent, 0, 100, game.global.chars[i].sprite.top, game.global.jinny.bottom);
       scorePercentLabel = game.add.bitmapText(game.global.chars[i].sprite.centerX, game.global.chars[i].sprite.top, '8bitoperator', scorePercent + '%', 11 * dpr);
+      scorePercentLabel.centerX = Math.floor(game.global.chars[i].sprite.centerX);
       scorePercentLabel.tint = 0x000044;
       this.endGameUI.add(scorePercentLabel);
       game.add.tween(scorePercentLabel).to({y: y}, 500, Phaser.Easing.Default, true, 250);
+      game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].sprite.top - y, 1)}, 500, Phaser.Easing.Default, true, 250);
+      this.endGameUI.add(game.global.chars[i].barSprite);
+    }
+  },
+
+  makeStatUI: function(){
+    var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'View Stats', false, true, endOfGameState.viewStatsClick));
+    game.add.tween(viewStatsBtn).to({x: game.world.width - (viewStatsBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
+    endOfGameState.endGameUI.add(viewStatsBtn);
+
+    endOfGameState.statsUI = game.add.group();
+    endOfGameState.statsUI.visible = false;
+    var statBG = game.add.graphics(0, 0);
+    statBG.lineStyle(2, 0x000000, 1);
+    statBG.beginFill(0x078EB7, 1);
+    var rect = statBG.drawRoundedRect(game.world.x + 10, game.global.jinny.bottom, game.world.width - 20, game.world.height - game.global.jinny.height - 10, 10);
+    endOfGameState.statsUI.add(statBG);
+    var statLines = [
+      game.global.session.play_name,
+      "Chapter " + game.global.selectedChapter + " Stats:",
+      "Total Score: " + game.global.scoreData["total_score"],
+      "High Score: " + game.global.scoreData["high_score"]
+    ];
+
+    var prevHeights = game.global.jinny.bottom;
+    for (var i = 0; i < statLines.length; i++) {
+      var t = game.add.text(game.world.centerX, prevHeights, statLines[i], game.global.whiteFont);
+      t.x -= t.width/2;
+      t.y += t.height;
+      t.x = Math.round(t.x);
+      t.y = Math.round(t.y);
+      t.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+      t.padding.x = 5;
+      prevHeights += t.height;
+      endOfGameState.statsUI.add(t);
+    }
+    prevHeights += t.height;
+
+    // var totalScoreText = game.add.text(0, 0, statLines[0], game.global.whiteFont);
+    // totalScoreText.centerX = Math.floor(game.world.centerX);
+    // totalScoreText.x = Math.round(totalScoreText.x);
+    // totalScoreText.y = Math.floor(game.global.jinny.bottom + totalScoreText.height);
+    // endOfGameState.statsUI.add(totalScoreText);
+    // console.log(totalScoreText);
+    //
+    // var highScoreText = game.add.text(0, 0, statLines[1], game.global.whiteFont);
+    // highScoreText.centerX = Math.floor(game.world.centerX);
+    // highScoreText.y = Math.floor(totalScoreText.bottom);
+    // endOfGameState.statsUI.add(highScoreText);
+
+    var buttons = [
+      { text: 'Play Again', function: endOfGameState.playAgainClick },
+      { text: 'Courses', function: endOfGameState.chooseCourseClick },
+      { text: 'Log Out', function: endOfGameState.logOutClick }
+    ];
+
+    for (var i = 0; i < buttons.length; i++) {
+      var b = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, prevHeights + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), buttons[i].text, false, true, buttons[i].function));
+      b.centerX -= Math.floor(b.bubblewidth/2);
+      prevHeights += b.bubbleheight + game.global.borderFrameSize;
+      endOfGameState.statsUI.add(b);
     }
 
-    var playAgainBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Play Again', false, true, endOfGameState.playAgainClick));
-    game.add.tween(playAgainBtn).to({x: game.world.width - (playAgainBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
-    this.endGameUI.add(playAgainBtn);
+    // var playAgainBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, highScoreText.bottom + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Play Again', false, true, endOfGameState.playAgainClick));
+    // playAgainBtn.centerX -= Math.floor(playAgainBtn.bubblewidth/2);
+    // endOfGameState.statsUI.add(playAgainBtn);
+    //
+    // var chooseCourseBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, playAgainBtn.bottom + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Courses', false, true, endOfGameState.chooseCourseClick));
+    // chooseCourseBtn.centerX -= Math.floor(chooseCourseBtn.bubblewidth/2);
+    // endOfGameState.statsUI.add(chooseCourseBtn);
+    //
+    // var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, chooseCourseBtn.bottom + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Log Out', false, true, endOfGameState.logOutClick));
+    // logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
+    // endOfGameState.statsUI.add(logOutBtn);
 
-    var chooseCourseBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y*2, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Courses', false, true, endOfGameState.chooseCourseClick));
-    game.add.tween(chooseCourseBtn).to({x: game.world.width - (chooseCourseBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
-    this.endGameUI.add(chooseCourseBtn);
-
-    var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000,  game.global.jinnySpeech.y*3/*chooseCourseBtn.y + chooseCourseBtn.height + game.global.borderFrameSize*/, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Log Out', false, true, endOfGameState.logOutClick));
-    game.add.tween(logOutBtn).to({x: game.world.width - (logOutBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
-    this.endGameUI.add(logOutBtn);
+    endOfGameState.endGameUI.add(endOfGameState.statsUI);
   },
 
   playAgainClick: function(){
-    game.global.progressBars.destroy();
+    // game.global.progressBars.destroy();
     endOfGameState.endGameUI.destroy();
     game.global.isRehash = false;
     game.global.rehashQuestions = [];
@@ -140,5 +197,9 @@ var endOfGameState = {
 
   logOutClick: function(){
     window.location.href = "logout.php";
+  },
+
+  viewStatsClick: function(){
+    endOfGameState.statsUI.visible = !endOfGameState.statsUI.visible;
   }
 };
