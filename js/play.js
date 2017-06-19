@@ -10,9 +10,10 @@ var playState = {
     game.global.questions = game.global.isRehash ? game.global.rehashQuestions : game.global.shuffleArray(game.global.origQuestions);
     console.log('rehash: ' + game.global.isRehash);
     this.ticks = game.add.group();
-    game.global.numQuestions = Math.min(1, game.global.questions.length);
+    game.global.numQuestions = Math.min(3, game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.questionShown = false;
+    game.global.answeredBeforeAI = false;
     if(!game.global.isRehash){
       game.global.totalStats = {
         numRight: 0,
@@ -21,6 +22,7 @@ var playState = {
       };
       for (var i = 0; i < game.global.chars.length; i++) {
         game.global.chars[i].score = 0;
+        game.global.chars[i].scoreText.text = 0;
       }
       game.global.answerBubbles = game.add.group();
     }
@@ -44,11 +46,10 @@ var playState = {
     //Host
     game.global.jinny.frame = 0;
     game.global.hostComments = {
-      //TODO: add other categories of comments and content; possibly load from json or db
       right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
       wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
     };
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), 'Here comes your first question...', true, false));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.isRehash ? "Second chance. Five points each!" : 'Here comes your first question...', true, false));
 
     var chapterText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Chapter ' + game.global.selectedChapter, 11 * dpr);
     chapterText.x -= chapterText.width + game.global.borderFrameSize;
@@ -72,17 +73,42 @@ var playState = {
    */
   update: function(){
     for (var i = 0; i < game.global.chars.length; i++) {
-      game.global.chars[i].scoreText.text = game.global.chars[i].score;
+      var n = parseInt(game.global.chars[i].scoreText.text);
+      if (n < game.global.chars[i].score){
+        n++;
+        game.global.chars[i].scoreText.text = n;
+      }
+      //game.global.chars[i].scoreText.text = game.global.chars[i].score;
       game.global.chars[i].scoreText.x = Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize);
       game.global.chars[i].scoreText.y = Math.floor(game.global.chars[i].sprite.centerY + (11*dpr));
       game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.centerX - game.global.chars[i].name.width/2);
       game.global.chars[i].name.y = Math.floor(game.world.height - game.global.chars[i].name.height*2);
     }
-    game.global.chars[0].scoreText.text = game.global.totalStats.score;
+    //game.global.chars[0].scoreText.text = game.global.totalStats.score;
 
     if(this.timerOn){
+      if(Math.floor(this.timeElapsed) >= 10 && !game.global.answersShown){
+        //show ai answers after 10 seconds and make bar yellow
+        this.showAnswers(false);
+        this.gfx = game.add.graphics(game.world.width - 1000, game.world.height - 1000);
+        this.gfx.lineStyle(1, 0x000000, 1);
+        this.gfx.beginFill(0xebf442, 1);
+        this.gfx.drawRoundedRect(this.gfx.x, this.gfx.y, game.global.bubble.bubblewidth, 8*dpr, 5);
+        this.timerBar.loadTexture(this.gfx.generateTexture());
+      }
+
+      if(Math.floor(this.timeRemaining) <= 3 && !game.global.barRed){
+        this.gfx = game.add.graphics(game.world.width - 1000, game.world.height - 1000);
+        this.gfx.lineStyle(1, 0x000000, 1);
+        this.gfx.beginFill(0xf70e0e, 1);
+        this.gfx.drawRoundedRect(this.gfx.x, this.gfx.y, game.global.bubble.bubblewidth, 8*dpr, 5);
+        this.timerBar.loadTexture(this.gfx.generateTexture());
+        game.global.barRed = true;
+      }
+
       if(this.timeElapsed >= this.totalTime){
-        //TODO: call 'time is up' function, clean up question and move on with no score
+        //call 'time is up' function, clean up question and move on with no score
+        game.global.barRed = false;
         this.timeUp();
       }
     }
@@ -97,11 +123,21 @@ var playState = {
  * scores AI for new question
  */
  showQuestion: function(question){
+   console.log(question.answer);
     if (game.global.questionShown){
       playState.removeQuestion();
     }
     game.global.questionUI = game.add.group();
+    // var params = {
+    //   horizontalScroll: false,
+    //   verticalScroll: true
+    // };
+    // game.global.scroller = game.add.existing(new ScrollableArea(game.world.x, game.world.y, game.world.width, game.world.height - game.global.chars[0].sprite.height, params));
+
     game.global.questionShown = false;
+    game.global.barRed = false;
+    game.global.answeredBeforeAI = false;
+    game.global.answersShown = false;
 
     //AI win %
     if(game.global.winStreak % 4 == 0){
@@ -121,7 +157,7 @@ var playState = {
     }
     //timer - the phaser way
     game.global.timer = game.time.create(false);
-    game.global.timer.add(2000, showChoices, this);
+    game.global.timer.add(1000, showChoices, this);
     game.global.timer.start();
 
     //new question
@@ -196,9 +232,7 @@ var playState = {
 
           //randomize answer so it isn't the correct one.
           while(choice == answer){
-            console.log('first conditional worked');
             choice = availChoices[Math.floor(Math.random() * availChoices.length)];
-            console.log('ai choosing answer' + choice);
           }
           game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, choice, true, false));
         }
@@ -207,16 +241,23 @@ var playState = {
         game.global.chars[i].answerBubble.width = 0;
         game.global.answerBubbles.add(game.global.chars[i].answerBubble);
       }
-
-      //add timer to delay until answers are shown.
-      game.global.timer.stop();
-      game.global.timer.add(2000, playState.showAnswers, this);
-      game.global.timer.start();
     };
   },
 
-  showAnswers : function() {
+  // startScroller : function(){
+  //   console.log('starting scroller');
+  //   console.log(game.global.questionUI.height);
+  //   game.global.scroller.addChild(game.global.questionUI);
+  //   game.global.scroller.start();
+  // },
+
+  showAnswers : function(fromButton) {
     if((!game.global.answersShown) && game.global.questionShown && !game.global.isRehash){
+      if(!fromButton){
+        //only replace the speech if this function was not called from btn click and came from the timer
+        game.global.jinnySpeech.destroy();
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Now worth 10 points!", true, false));
+      }
       for(i=1;i<game.global.chars.length;i++){
         game.add.tween(game.global.chars[i].answerBubble).to({width: game.global.answerBubbleWidth }, 100, Phaser.Easing.Default, true, 250 * i);
       }
@@ -229,8 +270,9 @@ var playState = {
     game.canvas.style.cursor = "default";
     //disable each button
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
+    //disable timer
+    this.timerOn = false;
     //bring in a symbol of right or wrong
-    //TODO: better positioning/sizing on mobile
     game.global.symbol = game.add.sprite(game.world.x - game.world.width, this.centerY, this.data.correct ? 'check' : 'x');
     game.global.symbol.height = game.global.symbol.width = game.global.borderFrameSize * 3;
     game.global.symbol.anchor.setTo(0.5,0.5);
@@ -246,7 +288,6 @@ var playState = {
 
     game.global.jinnySpeech.destroy();
     game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
-
 
     //if answered wrong, highlight the right answer
     if(!this.data.correct){
@@ -268,7 +309,12 @@ var playState = {
     console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
     //show AI answers if not already shown
-    playState.showAnswers();
+    if(!game.global.answersShown){
+      playState.showAnswers(true);
+      game.global.answeredBeforeAI = true;
+    }else{
+      game.global.answeredBeforeAI = false;
+    }
 
     game.global.timer.stop();
     game.global.timer.add(1000, playState.animateOut, this, false);
@@ -277,9 +323,7 @@ var playState = {
 
   /* update player and NPC score
    * create right and wrong answer ticks
-   * TODO: determine score gain/loss amount based on time/other mechanics
    */
-
   updateScores : function(answerCorrect, didntAnswer){
     for(i = 1 ; i < 4; i++){
       if(game.global.chars[i].correct && !game.global.isRehash){
@@ -303,7 +347,7 @@ var playState = {
      if(game.global.isRehash){
        game.global.totalStats.score += 5;
      }else{
-       if(!game.global.answersShown){
+       if(game.global.answeredBeforeAI){
          game.global.totalStats.score += 25;
        }else{
          game.global.totalStats.score += 10;
@@ -339,7 +383,6 @@ var playState = {
   },
 
   animateOut : function(didntAnswer){
-    console.log('in animateOut: didntAnswer = ' + didntAnswer);
     game.add.tween(game.global.questionUI).to({x: game.world.x - game.world.width}, 500, Phaser.Easing.Default, true, 250);
     playState.updateScores(this.data.correct, didntAnswer);
 
@@ -347,19 +390,14 @@ var playState = {
      * create horizontal progress bars for each player
      * and animate them
      */
-    // game.global.progressBars = game.add.group();
     for (var i = 0; i < game.global.chars.length; i++) {
       if(game.global.questionsAnswered <= 1 && !game.global.isRehash){
         game.global.chars[i].gfx = game.add.graphics(0,0);
         game.global.chars[i].gfx.visible = false;
         game.global.chars[i].gfx.beginFill(0x02C487, 1);
-        // game.global.progressBars.add(game.global.chars[i].gfx);
-        var rect = game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
-        // game.global.progressBars.add(rect);
+        game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
         game.global.chars[i].barSprite = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].gfx.generateTexture());
         game.global.chars[i].barSprite.anchor.y = 1;
-        // game.global.progressBars.add(game.global.chars[i].gfx);
-        // game.global.progressBars.add(game.global.chars[i].barSprite);
       }
       game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].score, 1)}, 500, Phaser.Easing.Default, true, 250);
     }
@@ -416,9 +454,16 @@ var playState = {
   },
 
   createTimer : function(){
-    this.timeLabel = game.add.bitmapText(game.global.bubble.centerX, game.global.bubble.y + game.global.bubble.bubbleheight, '8bitoperator', '00:00', 11 * dpr);
+    game.global.barRed = false;
+    this.timeLabel = game.add.bitmapText(game.world.width + 1000, game.global.jinnySpeech.bottom + (11 * dpr), '8bitoperator', '00:00', 11 * dpr);
     this.timeLabel.tint = 0x000000;
+    this.gfx = game.add.graphics(game.world.width - 1000, game.world.height - 1000);
+    this.gfx.lineStyle(1, 0x000000, 1);
+    this.gfx.beginFill(0x02C487, 1);
+    this.gfx.drawRoundedRect(this.gfx.x, this.gfx.y, game.global.bubble.bubblewidth, 8*dpr, 5);
+    this.timerBar = game.add.sprite(this.gfx.x, this.gfx.y, this.gfx.generateTexture());
     game.global.questionUI.add(this.timeLabel);
+    game.global.questionUI.add(this.timerBar);
   },
 
   updateTimer : function(){
@@ -436,8 +481,12 @@ var playState = {
       result += (this.seconds < 10) ? ":0" + this.seconds : ":" + this.seconds;
       // update text; use 'result' if you want minutes:seconds
       this.timeLabel.text = this.seconds;
-      this.timeLabel.x = Math.floor(game.global.bubble.centerX - this.timeLabel.width/2);
-      this.timeLabel.y = Math.floor(game.global.bubble.centerY + game.global.bubble.bubbleheight);
+      this.timeLabel.centerX = Math.floor(game.global.bubble.x + game.global.bubble.bubblewidth/2);
+      this.timeLabel.y = Math.floor(game.global.bubble.y - (this.timeLabel.height*2.5));
+
+      this.timerBar.width = game.global.bubble.bubblewidth - game.global.mapNum(this.timeElapsed, 0, this.totalTime, 0, game.global.bubble.bubblewidth);
+      this.timerBar.centerX = Math.floor(game.global.bubble.x + game.global.bubble.bubblewidth/2 + game.global.borderFrameSize/2);
+      this.timerBar.centerY = game.global.bubble.y;
     }
   },
 

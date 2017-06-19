@@ -16,7 +16,6 @@ var endOfGameState = {
           game.global.scoreData = $.parseJSON(data);
           //if no data is returned, set up new data and insert it
           if(game.global.scoreData == null){
-            console.log('scoreData == null, inserting');
             game.global.scoreData = {
               chapter: game.global.selectedChapter,
               courseid: game.global.selectedCourse,
@@ -39,7 +38,6 @@ var endOfGameState = {
             //if we got data, it's in game.global.scoreData and can be updated
             game.global.scoreData["total_score"] = parseInt(game.global.scoreData["total_score"]) + game.global.totalStats.score;
             game.global.scoreData["high_score"] = Math.max(parseInt(game.global.scoreData["high_score"]), game.global.totalStats.score);
-            console.log(game.global.scoreData);
             $(function (){
               $.ajax({
                 type: 'POST',
@@ -63,14 +61,10 @@ var endOfGameState = {
       { min: 50, max: 69, mind: " good mind", label: "Good"},
       { min: 0, max: 49, mind: " meh mind", label: "Meh"}
     ];
-    var score = Math.floor(((game.global.totalStats.score) / (game.global.numQuestions * 25)) * 100);
+    var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numQuestions * 25)) * 100));
     var lineGfx = game.add.graphics(0,0);
     this.endGameUI.add(lineGfx);
     lineGfx.lineStyle(1, 0x333333, 1);
-
-    game.global.mapNum = function (num, in_min, in_max, out_min, out_max) {
-      return Math.floor((num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-    }
 
     if(score > mindStates[0].min){
       //if awesomind, be happy
@@ -81,7 +75,7 @@ var endOfGameState = {
     for (var i = 0; i < mindStates.length; i++) {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2),  "You have a" + mindStates[i].mind + "!", true, false));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "You have a" + mindStates[i].mind + "!", true, false));
         this.endGameUI.add(game.global.jinnySpeech);
       }
       var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
@@ -110,7 +104,7 @@ var endOfGameState = {
   },
 
   makeStatUI: function(){
-    var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'View Stats', false, true, endOfGameState.viewStatsClick));
+    var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Stats & Options', false, true, endOfGameState.viewStatsClick));
     game.add.tween(viewStatsBtn).to({x: game.world.width - (viewStatsBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
     endOfGameState.endGameUI.add(viewStatsBtn);
 
@@ -121,6 +115,7 @@ var endOfGameState = {
     statBG.beginFill(0x078EB7, 1);
     var rect = statBG.drawRoundedRect(game.world.x + 10, game.global.jinny.bottom, game.world.width - 20, game.world.height - game.global.jinny.height - 10, 10);
     endOfGameState.statsUI.add(statBG);
+
     var statLines = [
       game.global.session.play_name,
       "Chapter " + game.global.selectedChapter + " Stats:",
@@ -142,18 +137,6 @@ var endOfGameState = {
     }
     prevHeights += t.height;
 
-    // var totalScoreText = game.add.text(0, 0, statLines[0], game.global.whiteFont);
-    // totalScoreText.centerX = Math.floor(game.world.centerX);
-    // totalScoreText.x = Math.round(totalScoreText.x);
-    // totalScoreText.y = Math.floor(game.global.jinny.bottom + totalScoreText.height);
-    // endOfGameState.statsUI.add(totalScoreText);
-    // console.log(totalScoreText);
-    //
-    // var highScoreText = game.add.text(0, 0, statLines[1], game.global.whiteFont);
-    // highScoreText.centerX = Math.floor(game.world.centerX);
-    // highScoreText.y = Math.floor(totalScoreText.bottom);
-    // endOfGameState.statsUI.add(highScoreText);
-
     var buttons = [
       { text: 'Play Again', function: endOfGameState.playAgainClick },
       { text: 'Courses', function: endOfGameState.chooseCourseClick },
@@ -167,23 +150,10 @@ var endOfGameState = {
       endOfGameState.statsUI.add(b);
     }
 
-    // var playAgainBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, highScoreText.bottom + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Play Again', false, true, endOfGameState.playAgainClick));
-    // playAgainBtn.centerX -= Math.floor(playAgainBtn.bubblewidth/2);
-    // endOfGameState.statsUI.add(playAgainBtn);
-    //
-    // var chooseCourseBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, playAgainBtn.bottom + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Courses', false, true, endOfGameState.chooseCourseClick));
-    // chooseCourseBtn.centerX -= Math.floor(chooseCourseBtn.bubblewidth/2);
-    // endOfGameState.statsUI.add(chooseCourseBtn);
-    //
-    // var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, chooseCourseBtn.bottom + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Log Out', false, true, endOfGameState.logOutClick));
-    // logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
-    // endOfGameState.statsUI.add(logOutBtn);
-
     endOfGameState.endGameUI.add(endOfGameState.statsUI);
   },
 
   playAgainClick: function(){
-    // game.global.progressBars.destroy();
     endOfGameState.endGameUI.destroy();
     game.global.isRehash = false;
     game.global.rehashQuestions = [];

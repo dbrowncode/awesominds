@@ -179,7 +179,6 @@ var preloadState = {
     game.global.SpeechBubble.prototype.constructor = game.global.SpeechBubble;
 
     // raise volume for all sound
-    //TODO: separate volume for music/fx?
     game.global.volumeUp = function(){
       if(game.paused && game.global.inputInside(this)){
         if(game.sound.volume < 0.9){
@@ -195,7 +194,6 @@ var preloadState = {
     };
 
     // lower volume for all sound
-    //TODO: separate volume for music/fx?
     game.global.volumeDown = function(){
       if(game.paused && game.global.inputInside(this)){
         if(game.sound.volume > 0.1){
@@ -204,14 +202,13 @@ var preloadState = {
           }
           game.sound.volume -= 0.1;
           game.global.volText.text = game.sound.volume;
-          //game.global.muteText.kill();
+          game.global.muteText.kill();
           game.global.makeVolText();
         }
       }
     };
 
     // mute or unmute all sound
-    //TODO: separate mutes for music/fx?
     game.global.muteSound = function(){
       if(game.paused && game.global.inputInside(this)){
         game.sound.mute = !game.sound.mute;
@@ -354,7 +351,6 @@ var preloadState = {
       var yesBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, txt2.y + txt2.height + game.global.borderFrameSize, game.world.width * .8, 'Yes', false, true, btnResult));
       yesBtn.data.value = true;
       yesBtn.data.btn = btn;
-      //console.log(yesBtn.data);
       yesBtn.x -= yesBtn.bubblewidth;
       sureUI.add(yesBtn);
       game.input.onDown.add(btnResult, yesBtn);
@@ -367,8 +363,6 @@ var preloadState = {
     };
 
     //PROTOTYPE SPLASHSCREEN
-    //TODO make it better
-    //maybe add loading bar??
     logo = game.add.sprite(0, 0, 'logo');
     logo.scale.setTo(dpr/2, dpr/2);
     logo.centerX = game.world.centerX;

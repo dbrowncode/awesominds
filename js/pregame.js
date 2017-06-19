@@ -31,10 +31,6 @@ var preGameState = {
       }
     }
 
-    //TODO decide if we want characters to be loaded here or in play state?
-    //move NPC to vertical positions, could tween them horizontal after if
-    //chapter menu is before this
-    //
     var winChances = [20, 40, 60, 75];
     winChances = game.global.shuffleArray(winChances);
     game.global.chars = [];
@@ -52,7 +48,7 @@ var preGameState = {
       game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, prevHeights, (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i].imageKey);
       game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
       game.global.chars[i].score = 0;
-      game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', ' ', 11 * dpr);
+      game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', '0', 11 * dpr);
       game.global.chars[i].scoreText.tint = 0x000000;
       game.global.chars[i].name = game.add.bitmapText(0 - game.world.width, 0 - game.world.height, '8bitoperator', 'You', 11 * dpr);
       game.global.chars[i].name.tint = 0x000000;
@@ -93,7 +89,6 @@ var preGameState = {
         for (var i = 0; i < data.length; i++) {
           game.global.origQuestions[i] = $.parseJSON(data[i]["question"]);
         }
-        console.log('chapter ' + game.global.selectedChapter + '; ' + game.global.origQuestions.length + ' questions loaded');
         //once the questions are successfully loaded, move to the play state
         preGameState.pregameUI.destroy();
         game.global.isRehash = false;
