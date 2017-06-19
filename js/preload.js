@@ -1,8 +1,6 @@
 var preloadState = {
   preload: function() {
-    //game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-    
-
+    game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	  console.log('state: preload');
     game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     game.scale.pageAlignHorizontally = true;
@@ -10,27 +8,20 @@ var preloadState = {
     game.scale.windowConstraints.bottom = "visual";
     game.stage.disableVisibilityChange = true;
 
-    game.load.image('sky', 'assets/sky.png');
-    game.load.image('jinny', 'assets/animal.png');
-    game.load.image('cat', 'assets/cat.png');
-    game.load.image('beaver', 'assets/beaver.png');
-    game.load.image('rabbit', 'assets/rabbit.png');
     game.load.image('right', 'assets/right.png');
     game.load.image('wrong', 'assets/wrong.png');
-    game.load.image('check', 'assets/check.png');
+    game.load.image('check', 'assets/check2.png');
     game.load.image('arrow', 'assets/arrow.png');
     game.load.image('x', 'assets/x.png');
+    game.load.image('logo', 'assets/logo2.png')
 
     game.load.audio('play',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
     game.load.audio('menu',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
     game.load.audio('wrong1',['assets/music/WrongAns1.m4a','assets/music/WrongAns1.ogg']);
-    game.load.audio('wrong2',['assets/music/WrongAns2.m4a','assets/music/WrongAns2.ogg']);
-    game.load.audio('wrong3',['assets/music/WrongAns3.m4a','assets/music/WrongAns3.ogg']);
     game.load.audio('question',['assets/music/QuestionEnters.m4a','assets/music/QuestionEnters.ogg']);
     game.load.audio('endGame',['assets/music/EndOFGame.m4a','assets/music/EndOFGame.ogg']);
     game.load.audio('drums',['assets/music/DrumsAndWhoo.m4a','assets/music/DrumsAndWhoo.ogg']);
     game.load.audio('correct',['assets/music/CorrectAns.m4a','assets/music/CorrectAns.ogg']);
-    game.load.audio('correct2',['assets/music/CorrectAns2.m4a','assets/music/CorrectAns2.ogg']);
     game.load.audio('applause',['assets/music/playerWins.m4a','assets/music/PlayerWins.ogg']);
 
     game.load.spritesheet('jin', 'assets/jin.png', 264, 364);
@@ -41,10 +32,16 @@ var preloadState = {
 
     var numOppImages = 16;
     game.global.oppImageKeys = [];
+    //this sets the name for all the characters, in order of the image numbers (plus 'zero' just for index fixing)
+    var charNames = ['Zero', 'Jamar', 'Bruno', 'Edward', 'Sofia', 'Dahra', 'Manu', 'Jira', 'Chandi', 'Dimbo', 'Lamar', 'Seadog', 'Kit', 'Pablo', 'Fernanda', 'Mickey', 'Rose'];
     for (var i = 1; i <= numOppImages; i++) {
       game.load.image('opp' + i, 'assets/opp/opp' +  i + '.png');
       if(i != game.global.session['avatarnum']){
-        game.global.oppImageKeys.push('opp' + i);
+        var opp = {
+          imageKey: 'opp' + i,
+          name: charNames[i]
+        }
+        game.global.oppImageKeys.push(opp);
       }
     }
     //prevents game breaking when zoomed below 100%
@@ -57,21 +54,14 @@ var preloadState = {
   },
 
 	create: function() {
-    game.global.logoText = game.add.bitmapText(game.world.centerX, 0, '8bitoperator', 'Awesominds', 22 * dpr);
-    //turn off antialiasing for the logo; this seems to turn it off for all bitmap text after
-    game.global.logoText.smoothed = false;
-    game.global.logoText.x -= game.global.logoText.width/2;
-    game.stage.addChild(game.global.logoText);
+    //can use any font that was listed in the WebFontConfig in game.js
+    game.global.mainFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left'};
+    game.global.whiteFont = { font: 'Varela Round', fontSize: 24 * dpr, fill: 'white'};
 
-
-    game.global.wrongsounds.push(game.add.audio('wrong1'),game.add.audio('wrong2'),game.add.audio('wrong3'));
-    game.global.rightsounds.push(game.add.audio('correct'),game.add.audio('correct2'));
+    game.global.wrongsounds.push(game.add.audio('wrong1'));
+    game.global.rightsounds.push(game.add.audio('correct'));
     game.global.music = game.add.audio('menu');
     game.sound.volume = 0;
-    //TODO: dynamic font sizes for responsiveness?
-		game.global.mainFont = { font: 'roboto_monoregular', fontSize: '25', wordWrap: true};
-		game.global.optionFont = { font: 'Arial', fontSize: '16px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: 193};
-    game.global.rightSideFont = { font: 'Arial', fontSize: '16px', fill: '#000', align: 'right', boundsAlignH: 'right', boundsAlignV: 'top'};
 
     game.global.shuffleArray = function(array) {
       for (var i = array.length - 1; i > 0; i--) {
@@ -84,92 +74,43 @@ var preloadState = {
     };
 
     game.global.SpeechBubble = function(game, x, y, width, text, withTail, asButton, clickFunction, isAnswerText, choice) {
-      
-      //define the max widths for nomral text vs question text
-      if(isAnswerText){
-        var lineLength = game.width/2;
-      }else{
-        var lineLength = game.width/1.5;
-      }
-      
-      
       Phaser.Sprite.call(this, game, x, y);
 
       // Some sensible minimum defaults
       width = width || game.global.borderFrameSize * 3;
-      var height = game.global.borderFrameSize * 2;
+      var height = game.global.mainFont.fontSize + game.global.borderFrameSize;
 
       // Set up our text and run our custom wrapping routine on it
-      //game.make.bitmapText(x + game.global.borderFrameSize + 3, y + 5, '8bitoperator', text, 11 *dpr);
-      this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, text);
-      this.bitmapText.font = 'roboto_monoregular';
-      this.bitmapText.fontSize = 20 *dpr;
-      this.bitmapText.align = 'center';
-      this.bitmapText.wordWrap = true;
-      //defines max width for answer boxes to ensure uniform width 
-      if(isAnswerText){
-        this.bitmapText.wordWrap = false;
-        choice.font = 'roboto_monoregular';
-        choice.fontSize = 20 *dpr;
-       var b = this.bitmapText.getLocalBounds();
-        console.log(b);
-        this.bitmapText.text = choice + '. ' + this.bitmapText.text;
-        b = this.bitmapText.getLocalBounds();
-        console.log('b2');
-        console.log(b);
-        this.bitmapText.text=this.bitmapText.text.trim();
-        console.log('b3') 
-        var b = this.bitmapText.getLocalBounds();
-        console.log(b);
-        console.log("0: " +this.bitmapText.width);
-        this.bitmapText.wordWrapWidth = lineLength;
-        var b = this.bitmapText.getLocalBounds();
-        console.log('b4');
-        console.log(b);
-        this.bitmapText.wordWrapWidth = lineLength;
-
-        while(this.bitmapText.width < this.bitmapText.wordWrapWidth){
-            console.log("01: " +this.bitmapText.width);
-            this.bitmapText.width += .1;
-            this.bitmapText.text += '\xa0';
-            /*if(this.bitmapText.width > this.bitmapText.wordWrapWidth){
-              this.bitmapText.width = this.bitmapText.wordWrapWidth;
-              break;
-              console.log("equalizing");
-            }
-         */
-        console.log("02: " +this.bitmapText.width);
+      var prefix = isAnswerText ? choice + '. ' : '';
+      this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, prefix + text, game.global.mainFont);
+      // set width for wrapping and let phaser figure out where it should wrap the lines
+      this.bitmapText.wordWrapWidth = width;
+      var prewrapped = this.bitmapText.precalculateWordWrap(prefix + text);
+      var wrapFixed = "";
+      for (var i = 0; i < prewrapped.length; i++) {
+        //phaser seems to sometimes add lines that are just a space; ignore them
+        if(prewrapped[i] != " "){
+          //add newline if more than 1 line
+          if(i>0){
+            wrapFixed += "\n";
+          }
+          //take out the space at the end of the line that phaser's word wrap seems to add
+          wrapFixed += prewrapped[i].slice(0,-1);
         }
-        console.log('1: ' +this.bitmapText.width);
-        console.log('2: ' +lineLength);
-        console.log('3: ' +width);
       }
-      if(this.bitmapText.width >= this.bitmapText.wordWrapWidth && isAnswerText){
-        //this is based on character size, better to create a single character at whatever font and use it's width so if you change font size this number changes as well.
-        //this does not solve the problem of long words making disjointed bubble sizes.
-        this.bitmapText.wordWrapWidth += 17;
-        this.bitmapText.wordWrap = true;
-      }
-      if(!isAnswerText){
-        this.bitmapText.wordWrapWidth = lineLength;
-      }
-      
-      game.global.SpeechBubble.wrapBitmapText(this.bitmapText, width);
+      //change text to the newly wrapped text
+      this.bitmapText.text = wrapFixed;
 
       // Calculate the width and height needed for the edges
-      var bounds = this.bitmapText.getLocalBounds();
-      console.log("resising " +bounds.width);
-      if (bounds.width + 18 > width) {
-        width = bounds.width + 18;
+      var bounds = this.bitmapText.getBounds();
+      // use set width for answer choices, and variable width based on the text size for everything else
+      if(isAnswerText){
+        bounds.width = width + game.global.mainFont.fontSize;
       }else{
-    	  width = bounds.width + 18;
-    	}
-      if (bounds.height + 14 > height) {
-        height = bounds.height + 5;
+        width = bounds.width + game.global.mainFont.fontSize;
       }
-      this.bitmapText.text = this.bitmapText.text.trim();
-      console.log("width " + width);
-      console.log("height " + height);
+      height = Math.max(height, bounds.height);
+
       // Create all of our corners and edges
       this.borders = [
         game.make.tileSprite(x + game.global.borderFrameSize, y + game.global.borderFrameSize, width - game.global.borderFrameSize, height - game.global.borderFrameSize, 'bubble-border', 4),
@@ -190,14 +131,13 @@ var preloadState = {
 
       if(withTail){
         // Add the tail
-        this.tail = this.addChild(game.make.image(x - game.cache.getImage("bubble-tail").width*.7, y + bounds.centerY, 'bubble-tail'));
+        var tail = game.cache.getImage("bubble-tail");
+        this.tail = this.addChild(game.make.image(Math.floor(this.x - tail.width*.7), Math.floor(y + tail.height/3), 'bubble-tail'));
         // this.tail.angle = 90;
       }
 
       // Add our text last so it's on top
       this.addChild(this.bitmapText);
-      this.bitmapText.tint = 0x000000;
-
       this.pivot.set(x, y);
 
       //make some properties public for positioning purposes
@@ -238,29 +178,7 @@ var preloadState = {
     game.global.SpeechBubble.prototype = Object.create(Phaser.Sprite.prototype);
     game.global.SpeechBubble.prototype.constructor = game.global.SpeechBubble;
 
-    game.global.SpeechBubble.wrapBitmapText = function (bitmapText, maxWidth) {
-      var words = bitmapText.text.split(' '), output = "", test = "";
-
-      for (var w = 0, len = words.length; w < len; w++) {
-        test += words[w] + " ";
-        bitmapText.text = test;
-        bitmapText.updateText();
-        if (bitmapText.textWidth > maxWidth) {
-          output += "\n" + words[w] + " ";
-        }
-        else {
-          output += words[w] + " ";
-        }
-        test = output;
-      }
-
-      output = output.replace(/(\s)$/gm, ""); // remove trailing spaces
-      bitmapText.text = output;
-      bitmapText.updateText();
-    };
-
     // raise volume for all sound
-    //TODO: separate volume for music/fx?
     game.global.volumeUp = function(){
       if(game.paused && game.global.inputInside(this)){
         if(game.sound.volume < 0.9){
@@ -276,7 +194,6 @@ var preloadState = {
     };
 
     // lower volume for all sound
-    //TODO: separate volume for music/fx?
     game.global.volumeDown = function(){
       if(game.paused && game.global.inputInside(this)){
         if(game.sound.volume > 0.1){
@@ -285,14 +202,13 @@ var preloadState = {
           }
           game.sound.volume -= 0.1;
           game.global.volText.text = game.sound.volume;
-          //game.global.muteText.kill();
+          game.global.muteText.kill();
           game.global.makeVolText();
         }
       }
     };
 
     // mute or unmute all sound
-    //TODO: separate mutes for music/fx?
     game.global.muteSound = function(){
       if(game.paused && game.global.inputInside(this)){
         game.sound.mute = !game.sound.mute;
@@ -308,12 +224,12 @@ var preloadState = {
       }
     };
     game.global.makeVolText = function(){
-      game.global.volText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.pausedText.y + game.global.pausedText.height*2, game.world.width * .8, 'Volume: ' +  Math.round( game.sound.volume * 10), false, false));
+      game.global.volText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.pausedText.bottom, game.world.width * .8, 'Volume: ' +  Math.round( game.sound.volume * 10), false, false));
       game.global.volText.x -= Math.floor(game.global.volText.bubblewidth/2);
       game.global.pauseUI.add(game.global.volText);
 
       var t = game.sound.mute ? 'Unmute' : 'Mute';
-      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y *1.5, game.world.width * .8, t, false, false));
+      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y *1.5), game.world.width * .8, t, false, false));
       game.global.muteText.x -= Math.floor(game.global.muteText.bubblewidth/2);
       game.global.pauseUI.add(game.global.muteText);
     };
@@ -332,10 +248,12 @@ var preloadState = {
       var pauseBG = game.add.graphics(0, 0);
       pauseBG.lineStyle(2, 0x000000, 1);
       pauseBG.beginFill(0x078EB7, 1);
-      pauseBG.drawRoundedRect(game.world.x + 10, game.global.logoText.y + game.global.logoText.height*2, game.world.width - 20, game.world.height - (game.global.logoText.y + game.global.logoText.height*2) - 10, 10);
+      pauseBG.drawRoundedRect(game.world.x + 10, game.global.logoText.bottom, game.world.width - 20, game.world.height - game.global.logoText.height - 10, 10);
       game.global.pauseUI.add(pauseBG);
 
-      game.global.pausedText = game.add.bitmapText(game.world.centerX, game.global.logoText.y + game.global.logoText.height*2, '8bitoperator', 'Paused', 22 * dpr);
+      game.global.pausedText = game.add.text(game.world.centerX, game.global.logoText.bottom, 'Paused', game.global.whiteFont);
+      game.global.pausedText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+      game.global.pausedText.padding.x = 5;
       game.global.pausedText.x -= game.global.pausedText.width/2;
       game.global.pauseUI.add(game.global.pausedText);
 
@@ -351,7 +269,7 @@ var preloadState = {
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
 
-      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
+      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y * 2.5), game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
       courseSelectBtn.x -= Math.floor(courseSelectBtn.bubblewidth/2);
       game.global.pauseUI.add(courseSelectBtn);
       game.input.onDown.add(game.global.quitToCourseSelect, courseSelectBtn);
@@ -433,7 +351,6 @@ var preloadState = {
       var yesBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, txt2.y + txt2.height + game.global.borderFrameSize, game.world.width * .8, 'Yes', false, true, btnResult));
       yesBtn.data.value = true;
       yesBtn.data.btn = btn;
-      //console.log(yesBtn.data);
       yesBtn.x -= yesBtn.bubblewidth;
       sureUI.add(yesBtn);
       game.input.onDown.add(btnResult, yesBtn);
@@ -444,47 +361,31 @@ var preloadState = {
       sureUI.add(noBtn);
       game.input.onDown.add(btnResult, noBtn);
     };
-    game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width, 0, game.width, '||', false, true, game.global.pauseMenu));
-    game.global.pauseButton.x -= game.global.pauseButton.bubblewidth + game.global.borderFrameSize;
-    game.stage.addChild(game.global.pauseButton);
-    game.global.pauseButton.visible = false;
-
-    game.global.unpauseButton = game.world.add(new game.global.SpeechBubble(game, game.global.pauseButton.x, game.global.pauseButton.y, game.width, '|>', false, true, game.global.unpause));
-    game.global.unpauseButton.visible = false;
-    game.stage.addChild(game.global.unpauseButton);
 
     //PROTOTYPE SPLASHSCREEN
-    //TODO make it better
-    //maybe add loading bar??
-    logo = game.add.sprite(game.world.centerX/2+game.world.centerX/4, game.world.centerY -game.cache.getImage('check').height/2, 'check');
-    logo.scale.setTo(.5,.5);
-    text = game.add.text(game.world.centerX, game.world.centerY, ' AWESOMINDS ');
-    text.anchor.set(0.5);
-    text.align='center';
-    text.font = 'Arial Black';
-    text.fontSize = 70;
-    text.fontWeight = 'bold';
-    text.fill = '#ec008c';
-    text.setShadow(-5,5, 'rgba(0,0,0,0.5)',0);
+    logo = game.add.sprite(0, 0, 'logo');
+    logo.scale.setTo(dpr/2, dpr/2);
+    logo.centerX = game.world.centerX;
+    logo.centerY = game.world.centerY;
     this.progress = 0;
     this.loader = game.add.graphics(0,0);
     this.loader.beginFill(0x02c487,1);
     this.loader.anchor.set(.5);
-    this.loadText = game.add.text(game.world.centerX, game.height - game.height/3, this.progress + '%');
-    this.loadText.fontSize = 15;
+    this.loadText = game.add.text(game.world.centerX, logo.bottom, this.progress + '%', game.global.mainFont);
+    this.loadText.centerX = game.world.centerX;
   },
   startGame: function(){
-    	game.state.start('menuCourse');
-
+    game.state.start('menuCourse');
   },
   //Mock loading bar. It's a masterpiece.
   update: function(){
     if(this.progress <= 99){
-    this.progress+=1;
-    this.loadText.setText(this.progress + '%');
-    this.loader.drawRect(game.width/2 - 100,game.height - game.height/3, this.progress*2, 20);
+      this.progress+=1;
+      this.loadText.setText(this.progress + '%');
+      this.loadText.centerX = game.world.centerX;
+      this.loader.drawRect(game.world.centerX - 100, logo.bottom, this.progress*2, 20);
     }else{
-     this.startGame();
+      this.startGame();
     }
   }
 };

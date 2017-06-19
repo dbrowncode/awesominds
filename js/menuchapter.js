@@ -2,10 +2,10 @@ var menuChapterState = {
   create: function(){
     console.log('state: menuChapter');
 
-    var text = game.add.bitmapText(game.world.centerX + 1000, game.global.logoText.y + game.global.logoText.height*2, '8bitoperator', 'Select a Chapter', 22 * dpr);
-    text.x -= text.width/2;
-    text.smoothed = false;
-    game.add.tween(text).to({x: game.world.centerX - (text.width/2)}, 100, Phaser.Easing.Default, true, 250);
+    var text = game.add.text(game.world.centerX + 1000, game.global.logoText.bottom, 'Select a Chapter', game.global.whiteFont);
+    game.add.tween(text).to({x: game.world.centerX - (text.width/2)}, 100, Phaser.Easing.Default, true, 0);
+    text.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    text.padding.x = 5;
 
     var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuChapterState.backButton));
 
@@ -22,13 +22,13 @@ var menuChapterState = {
           chapters = $.parseJSON(data);
           var prevHeights = 0;
           for (var i = 0; i < chapters.length; i++) {
-            var b = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, text.y + text.height*2, game.world.width * .8, 'Chapter ' + chapters[i].chapter, false, true, menuChapterState.chapterBtnClick));
+            var b = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, text.bottom, game.world.width * .8, 'Chapter ' + chapters[i].chapter, false, true, menuChapterState.chapterBtnClick));
             b.y += prevHeights;
             prevHeights += b.bubbleheight;
             b.data.chapter = chapters[i];
 
             //animate button coming in
-            game.add.tween(b).to({x: Math.floor(game.world.centerX - b.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
+            game.add.tween(b).to({x: Math.floor(game.world.centerX - b.bubblewidth/2)}, 350, Phaser.Easing.Default, true, 150 * i);
           }
         }
       });
@@ -40,6 +40,6 @@ var menuChapterState = {
     game.state.start('pregame');
   },
   backButton: function(){
-    game.state.start('menu');
+    game.state.start('menuCourse');
   }
 }

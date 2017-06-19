@@ -7,20 +7,17 @@
 
 <title>Awesominds</title>
 <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-
 <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
+
 <script type="text/javascript" src="js/phaser.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="js/jquery.modal.min.js"></script>
-<script type="text/javascript" src="js/menu.js"></script>
+<script type="text/javascript" src="js/phaser-scrollable.min.js"></script>
 <script type="text/javascript" src="js/menuchapter.js"></script>
 <script type="text/javascript" src="js/menucourse.js"></script>
-<script type="text/javascript" src="js/load.js"></script>
-<script type="text/javascript" src="js/pregame.js"></script>
 <script type="text/javascript" src="js/play.js"></script>
 <script type="text/javascript" src="js/endofgame.js"></script>
 <script type="text/javascript" src="js/preload.js"></script>
-<script type="text/javascript" src="js/options.js"></script>
 <script type="text/javascript" src="js/pregame.js"></script>
 <script type="text/javascript" src="js/game.js"></script>
 
@@ -31,8 +28,7 @@
          url('assets/roboto/robotomono-regular-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-
-}
+  }
   body {
     margin: 0;
   }
