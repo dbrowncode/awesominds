@@ -15,6 +15,7 @@ var playState = {
     game.global.questionShown = false;
     game.global.answeredBeforeAI = false;
     if(!game.global.isRehash){
+      game.global.numOrigQuestions = game.global.numQuestions;
       game.global.totalStats = {
         numRight: 0,
         numWrong: 0,

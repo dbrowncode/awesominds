@@ -61,7 +61,7 @@ var endOfGameState = {
       { min: 50, max: 69, mind: " good mind", label: "Good"},
       { min: 0, max: 49, mind: " meh mind", label: "Meh"}
     ];
-    var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numQuestions * 25)) * 100));
+    var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numOrigQuestions * 25)) * 100));
     var lineGfx = game.add.graphics(0,0);
     this.endGameUI.add(lineGfx);
     lineGfx.lineStyle(1, 0x333333, 1);
@@ -90,8 +90,8 @@ var endOfGameState = {
 
     // convert score + progress bars to percentage
     for (var i = 0; i < game.global.chars.length; i++) {
-      var topBar = Math.min(game.global.chars[i].score, game.global.numQuestions * 25);
-      var scorePercent = Math.floor(((topBar) / (game.global.numQuestions * 25)) * 100);
+      var topBar = Math.min(game.global.chars[i].score, game.global.numOrigQuestions * 25);
+      var scorePercent = Math.floor(((topBar) / (game.global.numOrigQuestions * 25)) * 100);
       var y = game.global.mapNum(scorePercent, 0, 100, game.global.chars[i].sprite.top, game.global.jinny.bottom);
       scorePercentLabel = game.add.bitmapText(game.global.chars[i].sprite.centerX, game.global.chars[i].sprite.top, '8bitoperator', scorePercent + '%', 11 * dpr);
       scorePercentLabel.centerX = Math.floor(game.global.chars[i].sprite.centerX);
