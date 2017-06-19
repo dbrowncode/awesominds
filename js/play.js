@@ -78,13 +78,11 @@ var playState = {
         n++;
         game.global.chars[i].scoreText.text = n;
       }
-      //game.global.chars[i].scoreText.text = game.global.chars[i].score;
       game.global.chars[i].scoreText.x = Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize);
       game.global.chars[i].scoreText.y = Math.floor(game.global.chars[i].sprite.centerY + (11*dpr));
       game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.centerX - game.global.chars[i].name.width/2);
       game.global.chars[i].name.y = Math.floor(game.world.height - game.global.chars[i].name.height*2);
     }
-    //game.global.chars[0].scoreText.text = game.global.totalStats.score;
 
     if(this.timerOn){
       if(Math.floor(this.timeElapsed) >= 10 && !game.global.answersShown){
@@ -97,18 +95,16 @@ var playState = {
         this.timerBar.loadTexture(this.gfx.generateTexture());
       }
 
-      if(Math.floor(this.timeRemaining) <= 3 && !game.global.barRed){
+      if(Math.floor(this.timeRemaining) <= 3 && game.global.answersShown){
         this.gfx = game.add.graphics(game.world.width - 1000, game.world.height - 1000);
         this.gfx.lineStyle(1, 0x000000, 1);
         this.gfx.beginFill(0xf70e0e, 1);
         this.gfx.drawRoundedRect(this.gfx.x, this.gfx.y, game.global.bubble.bubblewidth, 8*dpr, 5);
         this.timerBar.loadTexture(this.gfx.generateTexture());
-        game.global.barRed = true;
       }
 
       if(this.timeElapsed >= this.totalTime){
         //call 'time is up' function, clean up question and move on with no score
-        game.global.barRed = false;
         this.timeUp();
       }
     }
@@ -135,7 +131,6 @@ var playState = {
     // game.global.scroller = game.add.existing(new ScrollableArea(game.world.x, game.world.y, game.world.width, game.world.height - game.global.chars[0].sprite.height, params));
 
     game.global.questionShown = false;
-    game.global.barRed = false;
     game.global.answeredBeforeAI = false;
     game.global.answersShown = false;
 
@@ -454,7 +449,6 @@ var playState = {
   },
 
   createTimer : function(){
-    game.global.barRed = false;
     this.timeLabel = game.add.bitmapText(game.world.width + 1000, game.global.jinnySpeech.bottom + (11 * dpr), '8bitoperator', '00:00', 11 * dpr);
     this.timeLabel.tint = 0x000000;
     this.gfx = game.add.graphics(game.world.width - 1000, game.world.height - 1000);
