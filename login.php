@@ -22,6 +22,7 @@ else { // User exists
         $_SESSION['play_name'] = $user['play_name'];
         $_SESSION['avatarnum'] = $user['avatarnum'];
         $_SESSION['active'] = $user['active'];
+        $_SESSION['isInstructor'] = $user['isInstructor'];
 
         // This is how we'll know the user is logged in
         $_SESSION['logged_in'] = true;

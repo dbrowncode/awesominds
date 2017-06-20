@@ -10,14 +10,14 @@
       <form action="createCourse.php" method="post" id="createCourseForm">
         <!-- could use js to restrict input type here -->
         <table>
-          <p>Create a new course based on the alphanumeric course key and name.</p>
-          <tr><td>Course ID:</td><td><input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150"></td></tr>
+          <p>Create a new course based on the alphanumeric course code and name.</p>
+          <tr><td>Course Code:</td><td><input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150" pattern="[A-Za-z]{3,4}[0-9]{3}" title="3-4 letters, 3 numbers, no spaces."></td></tr>
           <tr><td>Course Name:</td><td><input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></td</tr>
         </table>
         <input type="submit" value="Create Course" name"createC">
       </form>
       <div id="confirm"></div>
-    <div>
+    </div>
       <br>
     <div class='upload'>
       <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
@@ -51,7 +51,7 @@
 <!--jquery goes here-->
 <script>
 var create_output           = '#confirm';
-var createForm              = $('#createCourseForm'); 
+var createForm              = $('#createCourseForm');
 createForm.submit(function (e) {
   e.preventDefault();
   $.ajax({
@@ -59,8 +59,8 @@ createForm.submit(function (e) {
     url: createForm.attr('action'),
     data: createForm.serialize(),
     success: function(data) {
-     $(create_output).html(data);  
-      console.log(data);  
+     $(create_output).html(data);
+      console.log(data);
     },
   error: function(data) {
     console.log(data);
