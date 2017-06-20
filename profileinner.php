@@ -13,6 +13,7 @@
         $active = $_SESSION['active'];
         $avatarnum = $_SESSION['avatarnum'];
         $play_name = $_SESSION['play_name'];
+        $isInstructor = $_SESSION['isInstructor'];
     }
   ?>
   <title>Welcome <?= $first_name.' '.$last_name ?></title>
@@ -56,8 +57,14 @@
           <h2><?php echo '<img src="assets/opp/sm/opp' . $avatarnum . '.png"/>'; ?></h2>
           <h2><?php echo $play_name; ?></h2>
           <p><?= $email ?></p>
-          <a href="questiongame.php"><button class="button button-block" name="logout"/>Play</button></a>
-          <br>
+          <?php
+            if($active){
+              if($isInstructor){
+                echo '<a href="inst-addquestions.php"><button class="button button-block" name="upload"/>Instructor Options</button></a><br>';
+              }
+              echo '<a href="questiongame.php"><button class="button button-block" name="play"/>Play</button></a><br>';
+            }
+          ?>
           <a href="logout.php"><button class="button button-block" name="logout"/>Log Out</button></a>
 
     </div>
