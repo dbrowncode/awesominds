@@ -89,7 +89,7 @@ var playState = {
       if(Math.floor(this.timeElapsed) >= 10 && !game.global.answersShown){
         //show ai answers after 10 seconds and make bar yellow
         this.showAnswers(false);
-        this.gfx = game.add.graphics(game.world.width - 1000, game.world.height - 1000);
+        this.gfx = game.add.graphics(game.world.x - 1000, game.world.y - 1000);
         this.gfx.lineStyle(1, 0x000000, 1);
         this.gfx.beginFill(0xebf442, 1);
         this.gfx.drawRoundedRect(this.gfx.x, this.gfx.y, game.global.bubble.bubblewidth, 8*dpr, 5);
@@ -97,7 +97,7 @@ var playState = {
       }
 
       if(Math.floor(this.timeRemaining) <= 3 && game.global.answersShown){
-        this.gfx = game.add.graphics(game.world.width - 1000, game.world.height - 1000);
+        this.gfx = game.add.graphics(game.world.x - 1000, game.world.y - 1000);
         this.gfx.lineStyle(1, 0x000000, 1);
         this.gfx.beginFill(0xf70e0e, 1);
         this.gfx.drawRoundedRect(this.gfx.x, this.gfx.y, game.global.bubble.bubblewidth, 8*dpr, 5);
@@ -452,7 +452,7 @@ var playState = {
   createTimer : function(){
     this.timeLabel = game.add.bitmapText(game.world.width + 1000, game.global.jinnySpeech.bottom + (11 * dpr), '8bitoperator', '00:00', 11 * dpr);
     this.timeLabel.tint = 0x000000;
-    this.gfx = game.add.graphics(game.world.width - 1000, game.world.height - 1000);
+    this.gfx = game.add.graphics(game.world.x - 1000, game.world.y - 1000);
     this.gfx.lineStyle(1, 0x000000, 1);
     this.gfx.beginFill(0x02C487, 1);
     this.gfx.drawRoundedRect(this.gfx.x, this.gfx.y, game.global.bubble.bubblewidth, 8*dpr, 5);
