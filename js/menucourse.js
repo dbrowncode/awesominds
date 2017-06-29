@@ -1,6 +1,10 @@
 var menuCourseState = {
   create: function(){
-    // game.global.logoText.destroy();
+    if(typeof(game.global.logoText) !== "undefined"){
+      //if logotext exists, this state has happened before. eliminate some redundancy
+      game.global.logoText.destroy();
+      game.global.music.stop();
+    }
     game.global.logoText = game.add.text(game.world.centerX, 0, 'Awesominds', game.global.whiteFont);
     game.global.logoText.fontWeight = 'bold';
     game.global.logoText.fontSize = 26 * dpr;

@@ -196,7 +196,7 @@ var playState = {
       //array to store available letter choices for ai to choose from for this question
       var availChoices = [];
       for (var c in question.choices) {
-        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, Math.floor(game.world.width - (game.global.jinny.width*2)), question.choices[c], false, true, playState.btnClick, true, c));
+        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, Math.floor(game.world.width - (game.global.jinny.width*4)), question.choices[c], false, true, playState.btnClick, true, c));
         //cb.y += Math.floor(cb.bubbleheight + prevHeights);
         cb.y += Math.floor(prevHeights);
         prevHeights += cb.bubbleheight + 10 *dpr;
@@ -268,52 +268,60 @@ var playState = {
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
     //disable timer
     this.timerOn = false;
-    //bring in a symbol of right or wrong
-    game.global.symbol = game.add.sprite(game.world.x - game.world.width, this.centerY, this.data.correct ? 'check' : 'x');
-    game.global.symbol.height = game.global.symbol.width = game.global.borderFrameSize * 3;
-    game.global.symbol.anchor.setTo(0.5,0.5);
-    game.global.questionUI.add(game.global.symbol);
-    game.add.tween(game.global.symbol).to({x: this.x, y: this.y + game.global.symbol.height/2}, 200, Phaser.Easing.Default, true, 250);
-    var sounds = this.data.correct ? game.global.rightsounds : game.global.wrongsounds;
-    //play sound
-    sounds[0].play();
-
-    //set host's attitude based on right or wrong answer
-    var speech = this.data.correct ? 'right' : 'wrong';
-    game.global.jinny.frame = this.data.correct ? 2 : 1;
-
-    game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
-
-    //if answered wrong, highlight the right answer
-    if(!this.data.correct){
-      //also add wrongly answered question to the rehash round
-      game.global.rehashQuestions.push(this.data.fullQuestion);
-      game.global.choiceBubbles.forEach( function(item){
-        if(item.data.correct){
-          var arrow = game.add.sprite(game.world.x - game.world.width, item.centerY, 'arrow');
-          arrow.height = arrow.width = game.global.borderFrameSize * 3;
-          arrow.anchor.setTo(0.5,0.5);
-          game.global.questionUI.add(arrow);
-          game.add.tween(arrow).to({x: item.x, y: item.y + arrow.height/2}, 200, Phaser.Easing.Default, true, 250);
-        }
-      });
-    }
-
     //increment number of answered questions
     game.global.questionsAnswered++;
-    console.log('pressed ' + this.data.letter + ', correct?: ' + this.data.correct, '; answered ' + game.global.questionsAnswered + ' Qs');
 
-    //show AI answers if not already shown
-    if(!game.global.answersShown){
-      playState.showAnswers(true);
-      game.global.answeredBeforeAI = true;
-    }else{
-      game.global.answeredBeforeAI = false;
+    function btnClickShowAnswers(){
+      //show AI answers if not already shown
+      if(!game.global.answersShown){
+        playState.showAnswers(true);
+        game.global.answeredBeforeAI = true;
+      }else{
+        game.global.answeredBeforeAI = false;
+      }
+    }
+
+    function btnClickSymbolFeedback(){
+      //bring in a symbol of right or wrong
+      game.global.symbol = game.add.sprite(game.world.x - game.world.width, this.centerY, this.data.correct ? 'check' : 'x');
+      game.global.symbol.height = game.global.symbol.width = game.global.borderFrameSize * 3;
+      game.global.symbol.anchor.setTo(0.5,0.5);
+      game.global.questionUI.add(game.global.symbol);
+      game.add.tween(game.global.symbol).to({x: this.x, y: this.y + game.global.symbol.height/2}, 300, Phaser.Easing.Default, true, 0);
+      var sounds = this.data.correct ? game.global.rightsounds : game.global.wrongsounds;
+      //play sound
+      sounds[0].play();
+
+      //if answered wrong, highlight the right answer
+      if(!this.data.correct){
+        //also add wrongly answered question to the rehash round
+        game.global.rehashQuestions.push(this.data.fullQuestion);
+        game.global.choiceBubbles.forEach( function(item){
+          if(item.data.correct){
+            var arrow = game.add.sprite(game.world.x - game.world.width, item.centerY, 'arrow');
+            arrow.height = arrow.width = game.global.borderFrameSize * 3;
+            arrow.anchor.setTo(0.5,0.5);
+            game.global.questionUI.add(arrow);
+            game.add.tween(arrow).to({x: item.x, y: item.y + arrow.height/2}, 300, Phaser.Easing.Default, true, 0);
+          }
+        });
+      }
+    }
+
+    function btnClickHostFeedback(){
+      //set host's attitude based on right or wrong answer
+      var speech = this.data.correct ? 'right' : 'wrong';
+      game.global.jinny.frame = this.data.correct ? 2 : 1;
+
+      game.global.jinnySpeech.destroy();
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
     }
 
     game.global.timer.stop();
-    game.global.timer.add(1000, playState.animateOut, this, false);
+    game.global.timer.add(500, btnClickShowAnswers, this);
+    game.global.timer.add(1500, btnClickSymbolFeedback, this);
+    game.global.timer.add(2000, btnClickHostFeedback, this);
+    game.global.timer.add(4500, playState.animateOut, this, false);
     game.global.timer.start();
   },
 
@@ -379,26 +387,26 @@ var playState = {
   },
 
   animateOut : function(didntAnswer){
-    game.add.tween(game.global.questionUI).to({x: game.world.x - game.world.width}, 500, Phaser.Easing.Default, true, 250);
+    game.add.tween(game.global.questionUI).to({x: game.world.x - game.world.width}, 300, Phaser.Easing.Default, true, 0);
     playState.updateScores(this.data.correct, didntAnswer);
 
-    /*
-     * create horizontal progress bars for each player
-     * and animate them
-     */
-    for (var i = 0; i < game.global.chars.length; i++) {
-      if(game.global.questionsAnswered <= 1 && !game.global.isRehash){
-        game.global.chars[i].gfx = game.add.graphics(0,0);
-        game.global.chars[i].gfx.visible = false;
-        game.global.chars[i].gfx.beginFill(0x02C487, 1);
-        game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
-        game.global.chars[i].barSprite = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].gfx.generateTexture());
-        game.global.chars[i].barSprite.anchor.y = 1;
+    makeBars = function(){
+      /*
+       * create horizontal progress bars for each player
+       * and animate them
+       */
+      for (var i = 0; i < game.global.chars.length; i++) {
+        if(game.global.questionsAnswered <= 1 && !game.global.isRehash){
+          game.global.chars[i].gfx = game.add.graphics(0,0);
+          game.global.chars[i].gfx.visible = false;
+          game.global.chars[i].gfx.beginFill(0x02C487, 1);
+          game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
+          game.global.chars[i].barSprite = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].gfx.generateTexture());
+          game.global.chars[i].barSprite.anchor.y = 1;
+        }
+        game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].score, 1)}, 1000, Phaser.Easing.Default, true, 0);
       }
-      game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].score, 1)}, 500, Phaser.Easing.Default, true, 250);
     }
-
-    game.global.timer.stop();
 
     /*
      * remove answers from screen
@@ -408,8 +416,11 @@ var playState = {
       game.global.answerBubbles.destroy();
       game.global.answerBubbles = game.add.group();
     };
-    game.global.timer.add(750, removeAnswers, playState);
-    game.global.timer.add(1500, playState.nextQuestion, playState);
+
+    game.global.timer.stop();
+    game.global.timer.add(200, removeAnswers, playState);
+    game.global.timer.add(600, makeBars, playState);
+    game.global.timer.add(2000, playState.nextQuestion, playState);
     game.global.timer.start();
   },
 

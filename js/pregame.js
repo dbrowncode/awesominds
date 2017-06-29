@@ -8,7 +8,7 @@ var preGameState = {
     this.pregameUI = game.add.group();
 
     var instructLines = [
-      "Hi! I'm your host, Jinny. Welcome to Awesominds, " + game.global.session['play_name'] + "!",
+      "Hi! I'm your host, Jin. Welcome to Awesominds, " + game.global.session['play_name'] + "!",
       "Earn points by correctly answering each question.",
       "Answer before your competitors to earn full point value.",
       "Meet your competition!"

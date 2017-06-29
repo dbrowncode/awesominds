@@ -61,7 +61,7 @@ var preloadState = {
     game.global.wrongsounds.push(game.add.audio('wrong1'));
     game.global.rightsounds.push(game.add.audio('correct'));
     game.global.music = game.add.audio('menu');
-    game.sound.volume = 0;
+    game.sound.volume = 0.5;
 
     game.global.shuffleArray = function(array) {
       for (var i = array.length - 1; i > 0; i--) {
