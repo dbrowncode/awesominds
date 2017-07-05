@@ -1,2 +1,2 @@
-# thing i use to upload from my ide to my test vm, dont worry about it
-.remote-sync.json
+#ignore file of variables just for dev mode
+devvars.js

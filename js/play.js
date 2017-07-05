@@ -10,7 +10,7 @@ var playState = {
     game.global.questions = game.global.isRehash ? game.global.rehashQuestions : game.global.shuffleArray(game.global.origQuestions);
     console.log('rehash: ' + game.global.isRehash);
     this.ticks = game.add.group();
-    game.global.numQuestions = Math.min(3, game.global.questions.length);
+    game.global.numQuestions = Math.min( (devmode ? devvars.numQ : 15), game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.questionShown = false;
     game.global.answeredBeforeAI = false;
@@ -164,7 +164,8 @@ var playState = {
     game.global.questionNumText.tint = 0x000000;
     game.global.questionUI.add(game.global.questionNumText);
 
-    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight*2, game.world.width - (game.global.jinny.width*2), question.question, false, false));
+    var bwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width/2)), game.global.jinny.width * 7);
+    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight*2, bwidth, question.question, false, false));
     game.global.questionUI.add(game.global.bubble);
 
     //timer - better/more universal way?
@@ -177,7 +178,6 @@ var playState = {
 
     //animation
     game.add.tween(game.global.bubble).to({x: Math.floor(game.world.centerX - game.global.bubble.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250);
-    //playState.enterSound.volume = 0.5;
     playState.enterSound.play();
     game.global.buttons = [];
 
@@ -196,7 +196,8 @@ var playState = {
       //array to store available letter choices for ai to choose from for this question
       var availChoices = [];
       for (var c in question.choices) {
-        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, Math.floor(game.world.width - (game.global.jinny.width*4)), question.choices[c], false, true, playState.btnClick, true, c));
+        var cbwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width)), game.global.jinny.width * 5);
+        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, cbwidth, question.choices[c], false, true, playState.btnClick, true, c));
         //cb.y += Math.floor(cb.bubbleheight + prevHeights);
         cb.y += Math.floor(prevHeights);
         prevHeights += cb.bubbleheight + 10 *dpr;

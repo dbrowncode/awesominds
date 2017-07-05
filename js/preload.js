@@ -61,7 +61,7 @@ var preloadState = {
     game.global.wrongsounds.push(game.add.audio('wrong1'));
     game.global.rightsounds.push(game.add.audio('correct'));
     game.global.music = game.add.audio('menu');
-    game.sound.volume = 0.5;
+    game.sound.volume = devmode ? devvars.vol : 0.5;
 
     game.global.shuffleArray = function(array) {
       for (var i = array.length - 1; i > 0; i--) {
@@ -201,7 +201,7 @@ var preloadState = {
             game.global.muteSound.call(this);
           }
           game.sound.volume -= 0.1;
-          game.global.volText.text = game.sound.volume;
+          game.global.volText.kill();
           game.global.muteText.kill();
           game.global.makeVolText();
         }
