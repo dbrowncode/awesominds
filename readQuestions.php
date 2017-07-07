@@ -17,34 +17,66 @@
         //this conversion seems to deal with some windows screwdigglies
         $line =iconv("Windows-1252","UTF-8//IGNORE",$line);
         $line = trim($line);
+        $line = preg_replace('/[^\PC\s]/u', "\n", $line);
+        // echo $line.'<br>';
 
         //chapter number and name
         if(preg_match("/CHAPTER \d+|CHAPTER \d+:/i",$line,$match)){
-          $lineArray =  explode(" ", $line);
-          $insertChapter = str_replace(":",'',$lineArray[1]);
+          // echo 'chapter found<br>';
+          // $lineArray =  explode(" ", $line);
+          // $insertChapter = str_replace(":",'',$lineArray[1]);
+          preg_match('/[0-9]+/', $match[0], $chapnummatches);
+          $insertChapter = $chapnummatches[0];
           $chapterName = preg_replace("/CHAPTER \d+|CHAPTER \d+:/i","",$line);
+          // echo 'chapter: '.$insertChapter.'<br>';
 	  		}
 
         //question text
-        if(preg_match("/^\d+\)/",$line)){
-          $question =  preg_replace("/^\d+\) |^\d+\)/","",$line);
+        if(preg_match("/^\d+\)|^\d+\./",$line)){
+          // echo 'question found<br>';
+          $question =  preg_replace("/^\d+\) |^\d+\)|^\d+\.|^\d+\. /","",$line);
           //this might not always be right conversion string to use, but it works for now
           $question = trim($question);
           $questionBank["question"] = $question;
+          // echo $question . '<br>';
           $arrayFilled[0] = 1;
 	  		}
 
         //Choice array
         //possibility for more/less than 4 answers
-        if(preg_match("/^[A-Z]\)/i", $line, $matches)){
-          $choice = trim(preg_replace("/\)/","",$matches[0]));
-          $choices[$choice] = trim(preg_replace("/[A-Z]\) |[A-Z]\)/i","",$line));
+        if(preg_match("/^[A-Z]\)|^[A-Z]\./i", $line, $matches)){
+          $lineArray =  explode("\n", $line);
+          foreach ($lineArray as $k=>$value) {
+            // echo $value.'<br>';
+            if(preg_match("/^[A-Z]\)|^[A-Z]\./i", $value, $valmatches)){
+              // echo $valmatches[0].'<br>';
+              if(strlen($value)>strlen($valmatches[0])){
+                // choice text likely on same line
+                $choice = trim(preg_replace("/\)|\./","",$valmatches[0]));
+                $choices[$choice] = trim(preg_replace("/[A-Z]\) |[A-Z]\)|^[A-Z]\.|^[A-Z]\. /i","",$value));
+              } else {
+                //choice text on next line
+                $choice = trim(preg_replace("/\)|\./","",$valmatches[0]));
+                $choices[$choice] = trim(preg_replace("/[A-Z]\) |[A-Z]\)|^[A-Z]\.|^[A-Z]\. /i","",$lineArray[$k+1]));
+              }
+            } else {
+              // echo $value.'<br>';
+            }
+
+          }
+          // $choice = trim(preg_replace("/\)|\./","",$matches[0]));
+          // // echo 'choice ' . $choice . '<br>';
+          // $choices[$choice] = trim(preg_replace("/[A-Z]\) |[A-Z]\)|^[A-Z]\.|^[A-Z]\. /i","",$line));
           $arrayFilled[1] = 1;
         }
 		  	//Answer
-        if(preg_match("/^ANSWER/i",$line,$match)){
-          $answer = preg_replace("/ANSWER |ANSWER:/i","",$line);
-          $arrayFilled[2] = 1;
+        if(preg_match("/^ANSWER|^ANS/i",$line,$match)){
+          $answer = preg_replace("/ANSWER |ANSWER:|ANS |ANS:/i","",$line);
+          if(preg_match("/[A-Z]/i", $answer, $answermatches)){
+            $answer = $answermatches[0];
+            // echo 'answer: ' . $answer . '<br>';
+            $arrayFilled[2] = 1;
+          }
         }
         //If all values set, load into db
         //clear all arrays
@@ -53,6 +85,7 @@
   				$questionBank["choices"] = $choices;
           $questionBank["answer"] = trim($answer);
           unset($choices);
+          // echo 'inserting...<br>';
           insertIntoDB($questionBank, $insertChapter, $courseid, $dbcon, $index);
           unset($arrayFilled);
           $arrayFilled = array();
