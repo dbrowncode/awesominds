@@ -119,7 +119,7 @@ var endOfGameState = {
     var statLines = [
       game.global.session.play_name,
       "Chapter " + game.global.selectedChapter + " Stats:",
-      "Total Score: " + game.global.scoreData["total_score"],
+      "Total Points Earned: " + game.global.scoreData["total_score"],
       "High Score: " + game.global.scoreData["high_score"]
     ];
 

@@ -268,7 +268,7 @@ var playState = {
     //disable each button
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
     //disable timer
-    this.timerOn = false;
+    playState.timerOn = false;
     //increment number of answered questions
     game.global.questionsAnswered++;
 
@@ -316,6 +316,18 @@ var playState = {
 
       game.global.jinnySpeech.destroy();
       game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
+
+      //points graphic
+      if(!game.global.isRehash && this.data.correct){
+        var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.answeredBeforeAI ? 'pts25' : 'pts10');
+        // ptsImage.scale.setTo(dpr);
+        var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
+        var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
+        tweenA.chain(tweenB);
+        tweenA.start();
+        game.global.questionUI.add(ptsImage);
+      }
+
     }
 
     game.global.timer.stop();

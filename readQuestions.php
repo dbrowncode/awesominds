@@ -52,11 +52,11 @@
               // echo $valmatches[0].'<br>';
               if(strlen($value)>strlen($valmatches[0])){
                 // choice text likely on same line
-                $choice = trim(preg_replace("/\)|\./","",$valmatches[0]));
+                $choice = strtoupper(trim(preg_replace("/\)|\./","",$valmatches[0])));
                 $choices[$choice] = trim(preg_replace("/[A-Z]\) |[A-Z]\)|^[A-Z]\.|^[A-Z]\. /i","",$value));
               } else {
                 //choice text on next line
-                $choice = trim(preg_replace("/\)|\./","",$valmatches[0]));
+                $choice = strtoupper(trim(preg_replace("/\)|\./","",$valmatches[0])));
                 $choices[$choice] = trim(preg_replace("/[A-Z]\) |[A-Z]\)|^[A-Z]\.|^[A-Z]\. /i","",$lineArray[$k+1]));
               }
             } else {
