@@ -57,7 +57,7 @@ else { // Email doesn't already exist in a database, proceed...
 
         Please click this link to activate your account:
 
-        http://204.174.60.171/awesominds/verify.php?email='.$email.'&hash='.$hash;
+        http://gbl.cs.camosun.bc.ca/awesominds/verify.php?email='.$email.'&hash='.$hash;
 
         mail( $to, $subject, $message_body );
 
