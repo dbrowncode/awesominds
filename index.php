@@ -1,8 +1,5 @@
 <!doctype html>
 <html lang="en">
-<head>
-<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-  <meta charset="UTF-8" />
   <?php
     // get db connection and start session
     require '../../db.php';
@@ -18,5 +15,4 @@
       include('loginform.php');
     }
   ?>
-</body>
 </html>

@@ -1,3 +1,5 @@
+<head>
+  <meta charset="UTF-8" />
   <?php
     // Check if user is logged in using the session variable
     if ( $_SESSION['logged_in'] != 1 ) {
@@ -71,3 +73,4 @@
 
 <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <script src="js/index.js"></script>
+</body>
