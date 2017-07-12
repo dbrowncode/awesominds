@@ -50,9 +50,9 @@ else { // Email doesn't already exist in a database, proceed...
         // Send registration confirmation link (verify.php)
         $to      = $email;
         $subject = 'Account Verification (Awesominds)';
-         $headers = "From: Awesominds Registration <noreply@gbl.cs.camosun.bc.ca>" . "\r\n" .
-                    "Reply-To: noreply@gbl.cs.camosun.bc.ca" . "\r\n" .
-                    "X-Mailer: PHP/" . phpversion();
+        $headers = "From: Awesominds Registration <norepy@gbl.cs.camosun.bc.ca>" . "\r\n" .
+                   "Reply-To: norepy@gbl.cs.camosun.bc.ca" . "\r\n" .
+                   "X-Mailer: PHP/" . phpversion();
         $message_body = '
         Hello '.$first_name.',
 
@@ -66,7 +66,9 @@ else { // Email doesn't already exist in a database, proceed...
 
         header("location: index.php");
 
-    } else {
+    }
+
+    else {
         $_SESSION['message'] = 'Registration failed!';
         header("location: error.php");
     }
