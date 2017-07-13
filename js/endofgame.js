@@ -157,7 +157,7 @@ var endOfGameState = {
     endOfGameState.endGameUI.destroy();
     game.global.isRehash = false;
     game.global.rehashQuestions = [];
-    game.state.start('play', false, false);
+    game.state.start(game.global.selectedMode.gamestate, false, false);
   },
 
   chooseCourseClick: function(){

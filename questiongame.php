@@ -22,6 +22,7 @@
   }
 ?>
 
+<script type="text/javascript" src="js/menu-mode.js"></script>
 <script type="text/javascript" src="js/menuchapter.js"></script>
 <script type="text/javascript" src="js/menucourse.js"></script>
 <script type="text/javascript" src="js/play.js"></script>
@@ -29,16 +30,10 @@
 <script type="text/javascript" src="js/endofgame.js"></script>
 <script type="text/javascript" src="js/preload.js"></script>
 <script type="text/javascript" src="js/pregame.js"></script>
+<script type="text/javascript" src="js/pregame-selectuntil.js"></script>
 <script type="text/javascript" src="js/game.js"></script>
 
 <style type="text/css">
-  @font-face {
-    font-family: 'roboto_monoregular';
-    src: url('assets/roboto/robotomono-regular-webfont.woff2') format('woff2'),
-         url('assets/roboto/robotomono-regular-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-  }
   body {
     margin: 0;
   }
@@ -63,9 +58,6 @@
   </style>
 </head>
 <body>
-<div style="font-family:roboto_monoregular;position:absolute; left:-100000px">Font Loaded</div>
 <div id="wrapper">
-  <!-- button in game will use this link open the upload modal -->
-  <a href="upload.html" rel="modal" id="uploadModal"></a>
   <div id="gameDiv"></div>
 </div>

@@ -37,7 +37,7 @@ var menuChapterState = {
   chapterBtnClick: function(){
     game.global.selectedChapter = this.data.chapter.chapter;
     console.log('selected chapter id: ' + game.global.selectedChapter);
-    game.state.start('pregame');
+    game.state.start('menuMode');
   },
   backButton: function(){
     game.state.start('menuCourse');

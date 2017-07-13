@@ -1,5 +1,11 @@
 var preGameState = {
-  //TODO add proper sprite and finish the timer
+  instructLines : [
+    "Hi! I'm your host, Jin. Welcome to Awesominds, ",
+    "Earn points by correctly answering each question.",
+    "Answer before your competitors to earn full point value.",
+    "Meet your competition!"
+  ],
+
   create: function(){
     console.log("state: pregame");
     //Host
@@ -7,12 +13,8 @@ var preGameState = {
     game.global.jinny.scale.setTo(dpr/4, dpr/4);
     this.pregameUI = game.add.group();
 
-    var instructLines = [
-      "Hi! I'm your host, Jin. Welcome to Awesominds, " + game.global.session['play_name'] + "!",
-      "Earn points by correctly answering each question.",
-      "Answer before your competitors to earn full point value.",
-      "Meet your competition!"
-    ];
+    var instructLines = game.state.getCurrentState().instructLines.slice();
+    instructLines[0] += game.global.session['play_name'] + "!";
 
     var prevHeights = 0;
     var speechX = Math.floor(game.global.jinny.right + (game.global.borderFrameSize * 2));
@@ -90,10 +92,10 @@ var preGameState = {
           game.global.origQuestions[i] = $.parseJSON(data[i]["question"]);
         }
         //once the questions are successfully loaded, move to the play state
-        preGameState.pregameUI.destroy();
+        game.state.getCurrentState().pregameUI.destroy();
         game.global.isRehash = false;
         game.global.rehashQuestions = [];
-        game.state.start(devmode ? 'playSU' : 'play', false, false);
+        game.state.start(game.global.selectedMode.gamestate, false, false);
       }
     });
   },
