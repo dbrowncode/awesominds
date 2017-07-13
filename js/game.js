@@ -18,6 +18,7 @@ game.state.add('preload', preloadState);
 game.state.add('menuCourse', menuCourseState);
 game.state.add('menuChapter', menuChapterState);
 game.state.add('play', playState);
+game.state.add('playSU', playStateSU);
 game.state.add('endOfGame', endOfGameState);
 game.state.add('pregame',preGameState);
 

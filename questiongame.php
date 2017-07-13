@@ -25,6 +25,7 @@
 <script type="text/javascript" src="js/menuchapter.js"></script>
 <script type="text/javascript" src="js/menucourse.js"></script>
 <script type="text/javascript" src="js/play.js"></script>
+<script type="text/javascript" src="js/play-selectuntil.js"></script>
 <script type="text/javascript" src="js/endofgame.js"></script>
 <script type="text/javascript" src="js/preload.js"></script>
 <script type="text/javascript" src="js/pregame.js"></script>

@@ -93,7 +93,7 @@ var preGameState = {
         preGameState.pregameUI.destroy();
         game.global.isRehash = false;
         game.global.rehashQuestions = [];
-        game.state.start('play', false, false);
+        game.state.start(devmode ? 'playSU' : 'play', false, false);
       }
     });
   },

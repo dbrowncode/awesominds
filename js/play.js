@@ -122,14 +122,9 @@ var playState = {
  showQuestion: function(question){
    console.log(question.answer);
     if (game.global.questionShown){
-      playState.removeQuestion();
+      game.state.getCurrentState().removeQuestion();
     }
     game.global.questionUI = game.add.group();
-    // var params = {
-    //   horizontalScroll: false,
-    //   verticalScroll: true
-    // };
-    // game.global.scroller = game.add.existing(new ScrollableArea(game.world.x, game.world.y, game.world.width, game.world.height - game.global.chars[0].sprite.height, params));
 
     game.global.questionShown = false;
     game.global.answeredBeforeAI = false;
@@ -173,12 +168,12 @@ var playState = {
     this.totalTime = 20;
     this.timeElapsed = 0;
     this.createTimer();
-    this.gameTimer = game.time.events.loop(100, function(){ playState.updateTimer() });
+    this.gameTimer = game.time.events.loop(100, function(){ game.state.getCurrentState().updateTimer() });
     this.timerOn = true;
 
     //animation
     game.add.tween(game.global.bubble).to({x: Math.floor(game.world.centerX - game.global.bubble.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250);
-    playState.enterSound.play();
+    this.enterSound.play();
     game.global.buttons = [];
 
     //ai
@@ -197,7 +192,7 @@ var playState = {
       var availChoices = [];
       for (var c in question.choices) {
         var cbwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width)), game.global.jinny.width * 5);
-        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, cbwidth, question.choices[c], false, true, playState.btnClick, true, c));
+        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, cbwidth, question.choices[c], false, true, game.state.getCurrentState().btnClick, true, c));
         //cb.y += Math.floor(cb.bubbleheight + prevHeights);
         cb.y += Math.floor(prevHeights);
         prevHeights += cb.bubbleheight + 10 *dpr;
@@ -268,14 +263,14 @@ var playState = {
     //disable each button
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
     //disable timer
-    playState.timerOn = false;
+    game.state.getCurrentState().timerOn = false;
     //increment number of answered questions
     game.global.questionsAnswered++;
 
     function btnClickShowAnswers(){
       //show AI answers if not already shown
       if(!game.global.answersShown){
-        playState.showAnswers(true);
+        game.state.getCurrentState().showAnswers(true);
         game.global.answeredBeforeAI = true;
       }else{
         game.global.answeredBeforeAI = false;
@@ -334,7 +329,7 @@ var playState = {
     game.global.timer.add(500, btnClickShowAnswers, this);
     game.global.timer.add(1500, btnClickSymbolFeedback, this);
     game.global.timer.add(2000, btnClickHostFeedback, this);
-    game.global.timer.add(4500, playState.animateOut, this, false);
+    game.global.timer.add(4500, game.state.getCurrentState().animateOut, this, false);
     game.global.timer.start();
   },
 
@@ -401,7 +396,7 @@ var playState = {
 
   animateOut : function(didntAnswer){
     game.add.tween(game.global.questionUI).to({x: game.world.x - game.world.width}, 300, Phaser.Easing.Default, true, 0);
-    playState.updateScores(this.data.correct, didntAnswer);
+    game.state.getCurrentState().updateScores(this.data.correct, didntAnswer);
 
     makeBars = function(){
       /*
@@ -431,9 +426,9 @@ var playState = {
     };
 
     game.global.timer.stop();
-    game.global.timer.add(200, removeAnswers, playState);
-    game.global.timer.add(600, makeBars, playState);
-    game.global.timer.add(2000, playState.nextQuestion, playState);
+    game.global.timer.add(200, removeAnswers, game.state.getCurrentState());
+    game.global.timer.add(600, makeBars, game.state.getCurrentState());
+    game.global.timer.add(2000, game.state.getCurrentState().nextQuestion, game.state.getCurrentState());
     game.global.timer.start();
   },
 
@@ -443,7 +438,7 @@ var playState = {
    * switch state to endOfGame state
    */
   nextQuestion : function(){
-    playState.removeQuestion();
+    game.state.getCurrentState().removeQuestion();
     //set jin's face to default state
     game.global.jinny.frame = 0;
     if (game.global.questionsAnswered < game.global.numQuestions){
@@ -451,17 +446,17 @@ var playState = {
       game.global.jinnySpeech.destroy();
       game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Next question...",true));
 
-      this.showQuestion(game.global.questions[game.global.questionsAnswered]);
+      game.state.getCurrentState().showQuestion(game.global.questions[game.global.questionsAnswered]);
     } else if (game.global.rehashQuestions.length > 0 && !game.global.isRehash) {
       //if out of questions and any were answered wrong, and this isn't a rehash round, go to rehash round
       game.global.isRehash = true;
       game.global.jinnySpeech.destroy();
-      this.ticks.destroy();
+      game.state.getCurrentState().ticks.destroy();
       game.state.start('play', false, false);
     } else {
       //out of questions, and everything was right OR this was a rehash round? end the game
       game.global.jinnySpeech.destroy();
-      this.ticks.destroy();
+      game.state.getCurrentState().ticks.destroy();
       endGame = game.add.audio('endGame');
       endGame.play();
       game.state.start('endOfGame', false, false);
