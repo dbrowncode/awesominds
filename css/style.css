@@ -205,3 +205,18 @@ textarea {
   margin-top: -20px;
   text-align: right;
 }
+
+table{
+  /*text-align: right;*/
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid black;
+  margin: 5px;
+}
+
+td, th {
+  border: 1px solid black;
+  text-align: left;
+  padding: 5px;
+  /*border-collapse: collapse*/
+}
