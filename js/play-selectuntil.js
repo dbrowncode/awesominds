@@ -48,15 +48,27 @@ playStateSU.btnClick = function(){
     game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
 
     //points graphic
-    // if(this.data.correct){
-    //   var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.answeredBeforeAI ? 'pts25' : 'pts10');
-    //   // ptsImage.scale.setTo(dpr);
-    //   var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
-    //   var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
-    //   tweenA.chain(tweenB);
-    //   tweenA.start();
-    //   game.global.questionUI.add(ptsImage);
-    // }
+    if(this.data.correct){
+      //set the number of points earned here, use it to load the appropriate graphic and to update the score later
+      switch (game.state.getCurrentState().timesAnswered) {
+        case 1:
+          game.global.pointsToAdd = 25;
+          break;
+        case 2:
+          game.global.pointsToAdd = 15;
+          break;
+        default:
+          game.global.pointsToAdd = 5;
+          break;
+      }
+      var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.pointsToAdd + 'pts');
+      // ptsImage.scale.setTo(dpr);
+      var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
+      var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
+      tweenA.chain(tweenB);
+      tweenA.start();
+      game.global.questionUI.add(ptsImage);
+    }
   }
 
   game.global.timer.stop();
@@ -93,17 +105,7 @@ playStateSU.updateScores = function(answerCorrect, didntAnswer){
   game.global.numCor++;
 
   //update player score
-  switch (game.state.getCurrentState().timesAnswered) {
-    case 1:
-      game.global.totalStats.score += 25;
-      break;
-    case 2:
-      game.global.totalStats.score += 15;
-      break;
-    default:
-      game.global.totalStats.score += 5;
-      break;
-  }
+  game.global.totalStats.score += game.global.pointsToAdd;
 
   game.state.getCurrentState().timesAnswered = 0;
   game.global.chars[0].score = game.global.totalStats.score;

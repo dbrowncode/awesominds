@@ -16,6 +16,9 @@ var preloadState = {
     game.load.image('logo', 'assets/logo2.png');
     game.load.image('pts10', 'assets/pts10.png');
     game.load.image('pts25', 'assets/pts25.png');
+    game.load.image('5pts', 'assets/5pts.png');
+    game.load.image('15pts', 'assets/15pts.png');
+    game.load.image('25pts', 'assets/25pts.png');
 
     game.load.audio('play',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
     game.load.audio('menu',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
