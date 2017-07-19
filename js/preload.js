@@ -275,12 +275,17 @@ var preloadState = {
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
 
-      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y * 2.5), game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
+      var homeBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Home', false, true, game.global.homeBtnClick));
+      homeBtn.x -= Math.floor(homeBtn.bubblewidth/2);
+      game.global.pauseUI.add(homeBtn);
+      game.input.onDown.add(game.global.homeBtnClick, homeBtn);
+
+      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y * 3), game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
       courseSelectBtn.x -= Math.floor(courseSelectBtn.bubblewidth/2);
       game.global.pauseUI.add(courseSelectBtn);
       game.input.onDown.add(game.global.quitToCourseSelect, courseSelectBtn);
 
-      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 3, game.world.width * .8, 'Log Out', false, true, game.global.quitToCourseSelect));
+      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 3.5, game.world.width * .8, 'Log Out', false, true, game.global.logOut));
       logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
       game.global.pauseUI.add(logOutBtn);
       game.input.onDown.add(game.global.logOut, logOutBtn);
@@ -321,6 +326,15 @@ var preloadState = {
       if(game.paused && game.global.inputInside(this)){
         this.data.func = function(){
           window.location.href = "logout.php";
+        }
+        game.global.areYouSure(this);
+      }
+    };
+
+    game.global.homeBtnClick = function(){
+      if(game.paused && game.global.inputInside(this)){
+        this.data.func = function(){
+          window.location.href = "index.php";
         }
         game.global.areYouSure(this);
       }
