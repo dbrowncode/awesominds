@@ -97,7 +97,7 @@ $(function (){
           str += '<tr><td>' + scores[i].first_name + '</td><td>' + scores[i].last_name + '</td><td>' + scores[i].c_number + '</td><td>' + scores[i].play_name + '</td><td>' + scores[i].total_score + '</td></tr>';
         }
         $('#output').html(str + '</tbody></table>');
-        $('#table').DataTable({ paging: false, "order": [[1, 'asc']] });
+        $('#table').DataTable({ paging: false, "order": [[1, 'asc']], searching: false, ordering: false });
         $('#selectChapterDiv').hide();
       }
     });
