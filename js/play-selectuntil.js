@@ -113,21 +113,7 @@ playStateSU.updateScores = function(answerCorrect, didntAnswer){
 
 playStateSU.createTimer = function(){}; //emptied to remove timer visuals
 
-playStateSU.updateTimer = function(){
-  if(this.timerOn){
-    var currentTime = new Date();
-    var timeDiff = this.startTime.getTime() - currentTime.getTime();
-    //time elapsed in seconds
-    this.timeElapsed = Math.abs(timeDiff / 1000);
-    this.timeRemaining = this.totalTime - this.timeElapsed;
-    this.minutes = Math.floor(this.timeRemaining/60);
-    this.seconds = Math.floor(this.timeRemaining) - (60 * this.minutes);
-    // display minutes, add 0 if under 10
-    var result = (this.minutes < 10) ? "0" + this.minutes : this.minutes;
-    // add seconds
-    result += (this.seconds < 10) ? ":0" + this.seconds : ":" + this.seconds;
-  }
-};
+playStateSU.updateTimer = function(){}; //emptied; not using this timer in this mode
 
 playStateSU.update = function(){
   for (var i = 0; i < game.global.chars.length; i++) {
@@ -141,18 +127,10 @@ playStateSU.update = function(){
     game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.centerX - game.global.chars[i].name.width/2);
     game.global.chars[i].name.y = Math.floor(game.world.height - game.global.chars[i].name.height*2);
   }
-
-  if(this.timerOn){
-    if(Math.floor(this.timeElapsed) >= 5 && !game.global.answersShown){
-      //show ai answers after 5 seconds
-      this.showAnswers(false);
-      this.timerOn = false;
-    }
-  }
 };
 
 playStateSU.showAnswers = function(fromButton) {
-  if((!game.global.answersShown) && game.global.questionShown && !game.global.isRehash){
+  if((!game.global.answersShown) && game.global.questionShown){
     for(i=1;i<game.global.chars.length;i++){
       game.add.tween(game.global.chars[i].answerBubble).to({width: game.global.answerBubbleWidth }, 100, Phaser.Easing.Default, true, 250 * i);
     }
