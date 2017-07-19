@@ -50,7 +50,7 @@ var playState = {
       right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
       wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
     };
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.isRehash ? "Second chance. Five points each!" : 'Here comes your first question...', true, false));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.isRehash ? "Second chance. Five points each!" : 'Here comes your first question...', true, false, null, false, null, true));
 
     var chapterText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Chapter ' + game.global.selectedChapter, 11 * dpr);
     chapterText.x -= chapterText.width + game.global.borderFrameSize;
@@ -248,7 +248,7 @@ var playState = {
       if(!fromButton){
         //only replace the speech if this function was not called from btn click and came from the timer
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Now worth 10 points!", true, false));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Now worth 10 points!", true, true, false, null, false, null, true));
       }
       for(i=1;i<game.global.chars.length;i++){
         game.add.tween(game.global.chars[i].answerBubble).to({width: game.global.answerBubbleWidth }, 100, Phaser.Easing.Default, true, 250 * i);
@@ -310,7 +310,7 @@ var playState = {
       game.global.jinny.frame = this.data.correct ? 2 : 1;
 
       game.global.jinnySpeech.destroy();
-      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false));
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false, null, false, null, true));
 
       //points graphic
       if(!game.global.isRehash && this.data.correct){
@@ -444,7 +444,7 @@ var playState = {
     if (game.global.questionsAnswered < game.global.numQuestions){
       //still questions left, show the next one
       game.global.jinnySpeech.destroy();
-      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Next question...",true));
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Next question...", true, false, null, false, null, true));
 
       game.state.getCurrentState().showQuestion(game.global.questions[game.global.questionsAnswered]);
     } else if (game.global.rehashQuestions.length > 0 && !game.global.isRehash) {
@@ -506,7 +506,7 @@ var playState = {
 
   timeUp : function(){
     game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Time's up!", true, false));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Time's up!", true, false, null, false, null, true));
     game.global.questionsAnswered++;
     var dummy = {data: {correct: false}};
     this.timerOn = false;

@@ -61,6 +61,7 @@ var preloadState = {
 	create: function() {
     //can use any font that was listed in the WebFontConfig in game.js
     game.global.mainFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left'};
+    game.global.jinFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left', fill: '#a50010'};
     game.global.whiteFont = { font: 'Varela Round', fontSize: 24 * dpr, fill: 'white'};
 
     game.global.wrongsounds.push(game.add.audio('wrong1'));
@@ -78,7 +79,7 @@ var preloadState = {
       return array;
     };
 
-    game.global.SpeechBubble = function(game, x, y, width, text, withTail, asButton, clickFunction, isAnswerText, choice) {
+    game.global.SpeechBubble = function(game, x, y, width, text, withTail, asButton, clickFunction, isAnswerText, choice, isJin) {
       Phaser.Sprite.call(this, game, x, y);
 
       // Some sensible minimum defaults
@@ -87,7 +88,7 @@ var preloadState = {
 
       // Set up our text and run our custom wrapping routine on it
       var prefix = isAnswerText ? choice + '. ' : '';
-      this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, prefix + text, game.global.mainFont);
+      this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, prefix + text, isJin ? game.global.jinFont : game.global.mainFont);
       // set width for wrapping and let phaser figure out where it should wrap the lines
       this.bitmapText.wordWrapWidth = width;
       var prewrapped = this.bitmapText.precalculateWordWrap(prefix + text);

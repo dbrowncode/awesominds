@@ -22,7 +22,7 @@ var preGameState = {
     var sbtweens = [];
     var bubbles = [];
     for (var i = 0; i < instructLines.length; i++) {
-      bubbles[i] = game.world.add(new game.global.SpeechBubble(game, speechX, game.global.logoText.bottom + prevHeights, speechWidth, instructLines[i], true, false));
+      bubbles[i] = game.world.add(new game.global.SpeechBubble(game, speechX, game.global.logoText.bottom + prevHeights, speechWidth, instructLines[i], true, false, null, false, null, true));
       prevHeights += Math.floor(bubbles[i].bubbleheight + (10 * dpr));
       this.pregameUI.add(bubbles[i]);
       var w = bubbles[i].width;

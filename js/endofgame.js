@@ -75,7 +75,7 @@ var endOfGameState = {
     for (var i = 0; i < mindStates.length; i++) {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "You have a" + mindStates[i].mind + "!", true, false));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "You have a" + mindStates[i].mind + "!", true, false, null, false, null, true));
         this.endGameUI.add(game.global.jinnySpeech);
       }
       var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
