@@ -10,15 +10,18 @@
   ?>
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js" integrity="sha256-VNbX9NjQNRW+Bk02G/RO6WiTKuhncWI4Ey7LkSbE+5s=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
 </head>
 <body>
+  <a href="index.php"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
 
   <div class="formWrap form">
     <ul class="tab-group">
-      <li class="tab"><a href="index.php">Home</a></li>
       <li class="tab"><a href="inst-createcourse.php">Create Course</a></li>
       <li class="tab"><a href="inst-addquestions.php">Add Questions</a></li>
       <li class="tab"><a href="inst-givepermissions.php">Give Permissions</a></li>
+      <li class="tab active"><a href="inst-stats.php">View Student Progress</a></li>
     </ul>
     <div id='selectCourseDiv' class='tab-content field-wrap'>
       <p>Select a course</p>
@@ -34,8 +37,8 @@
       </select>
       <button id='selectChapterBtn' value='Select'>Select</button>
     </div>
-    <div id="output"></div>
   </div>
+  <div id="output" style="max-width: 90%; margin: 0 auto"></div>
 
 <script>
 var getCourses = function(){
@@ -76,7 +79,7 @@ $(function (){
       success: function(data){
         getChapters();
         $('#selectChapterDiv').show();
-        var selectedCourseText = '<p>Course: ' + $.parseJSON(data).course + '</p><p><a href="inst-addquestions.php">Back to Select</a></p>'
+        var selectedCourseText = '<p>Course: ' + $.parseJSON(data).course + '</p><p><a href="inst-stats.php">Back to Course Select</a></p>'
         $('#selectChapterDiv').append(selectedCourseText);
         $('#selectCourseDiv').hide();
       }
@@ -88,13 +91,14 @@ $(function (){
       url: 'getscores-allusers-chapter.php',
       data: 'courseid=' + $('#courseDropdown').find(":selected").val() + '&chapter=' + $('#chapterDropdown').find(":selected").val(),
       success: function(data){
-        var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + ", Chapter " + $('#chapterDropdown').find(":selected").val() + " </h2><table><tr><th>C Number</th><th>High Score</th><th>Total Points Earned</th></tr>";
+        var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + ", Chapter " + $('#chapterDropdown').find(":selected").val() + ' </h2><table id="table" class="display"><thead><tr><th>First Name</th><th>Last Name</th><th>C Number</th><th>Display Name</th><th>Total Points Earned</th></tr></thead><tbody>';
         var scores = $.parseJSON(data);
         for (var i = 0; i < scores.length; i++) {
-          console.log(scores[i]);
-          str += '<tr><td>' + scores[i].c_number + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].total_score + '</td></tr>';
+          str += '<tr><td>' + scores[i].first_name + '</td><td>' + scores[i].last_name + '</td><td>' + scores[i].c_number + '</td><td>' + scores[i].play_name + '</td><td>' + scores[i].total_score + '</td></tr>';
         }
-        $('#output').append(str + '</table>');
+        $('#output').html(str + '</tbody></table>');
+        $('#table').DataTable({ paging: false, "order": [[1, 'asc']] });
+        $('#selectChapterDiv').hide();
       }
     });
   });

@@ -62,7 +62,7 @@
           <?php
             if($active){
               if($isInstructor){
-                echo '<a href="inst-addquestions.php"><button class="button button-block" name="upload"/>Instructor Options</button></a><br>';
+                echo '<a href="inst-stats.php"><button class="button button-block" name="upload"/>Instructor Options</button></a><br>';
               }
               echo '<a href="questiongame.php"><button class="button button-block" name="play"/>Play</button></a><br>';
             }

@@ -11,13 +11,14 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
+  <a href="index.php"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
 
   <div class="formWrap form">
     <ul class="tab-group">
-      <li class="tab"><a href="index.php">Home</a></li>
       <li class="tab active"><a href="inst-createcourse.php">Create Course</a></li>
       <li class="tab"><a href="inst-addquestions.php">Add Questions</a></li>
       <li class="tab"><a href="inst-givepermissions.php">Give Permissions</a></li>
+      <li class="tab"><a href="inst-stats.php">View Student Progress</a></li>
     </ul>
     <div class="createClass">
       <form action="createCourse.php" method="post" id="createCourseForm">
