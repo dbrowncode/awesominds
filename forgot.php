@@ -1,17 +1,17 @@
 <?php
 /* Reset your password form, sends reset.php password link */
-require 'db.php';
+require '../../db.php';
 session_start();
 
 // Check if form submitted with method="post"
 if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
 {
-    $email = $mysqli->escape_string($_POST['email']);
-    $result = $mysqli->query("SELECT * FROM users WHERE email='$email'");
+    $c_number = $mysqli->escape_string($_POST['c_number']);
+    $result = $mysqli->query("SELECT * FROM users WHERE c_number='$c_number'");
 
     if ( $result->num_rows == 0 ) // User doesn't exist
     {
-        $_SESSION['message'] = "User with that email doesn't exist!";
+        $_SESSION['message'] = "User with that ID doesn't exist!";
         header("location: error.php");
     }
     else { // User exists (num_rows != 0)
@@ -39,7 +39,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
 
         Please click this link to reset your password:
 
-        http://gbl.cs.camosun.bc.ca/awesominds/reset.php?email='.$email.'&hash='.$hash;  
+        http://gbl.cs.camosun.bc.ca/awesominds/reset.php?email='.$email.'&hash='.$hash;
 
         mail($to, $subject, $message_body, $headers);
 
@@ -63,9 +63,9 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
     <form action="forgot.php" method="post">
      <div class="field-wrap">
       <label>
-        Email Address<span class="req">*</span>
+        Camosun ID<span class="req">*</span>
       </label>
-      <input type="email"required autocomplete="off" name="email"/>
+      <input type="text" required autocomplete="off" name="c_number"/>
     </div>
     <button class="button button-block"/>Reset</button>
     </form>

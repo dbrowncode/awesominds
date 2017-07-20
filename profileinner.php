@@ -49,7 +49,7 @@
           if ( !$active ){
               echo
               '<div class="info">
-              Account is unverified, please confirm your email by clicking
+              Account is unverified, please confirm your email address by clicking
               on the email link!
               </div>';
           }
@@ -57,8 +57,8 @@
           ?>
 
           <h2><?php echo '<img src="assets/opp/sm/opp' . $avatarnum . '.png"/>'; ?></h2>
-          <h2><?php echo $play_name; ?></h2>
-          <p><?= $email ?></p>
+          <h2><?php echo $play_name; ?></h2><br>
+
           <?php
             if($active){
               if($isInstructor){
