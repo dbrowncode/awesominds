@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
             <label>
               Camosun ID<span class="req">*</span>
             </label>
-            <input type="text"required autocomplete="off" name='cnumber' />
+            <input type="text"required autocomplete="off" name='cnumber' pattern="[C][0-9]{7}" title="C + 7 numbers, eg 'C0654321'"/>
           </div>
 
           <div class="field-wrap">

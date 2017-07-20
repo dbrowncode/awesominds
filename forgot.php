@@ -39,7 +39,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
 
         Please click this link to reset your password:
 
-        http://gbl.cs.camosun.bc.ca/awesominds/reset.php?email='.$email.'&hash='.$hash;
+        http://gbl.cs.camosun.bc.ca/awesominds/reset.php?c_number='.$c_number.'&hash='.$hash;
 
         mail($to, $subject, $message_body, $headers);
 

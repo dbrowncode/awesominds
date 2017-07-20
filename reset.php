@@ -6,13 +6,13 @@ require '../../db.php';
 session_start();
 
 // Make sure email and hash variables aren't empty
-if( isset($_GET['email']) && !empty($_GET['email']) AND isset($_GET['hash']) && !empty($_GET['hash']) )
+if( isset($_GET['c_number']) && !empty($_GET['c_number']) AND isset($_GET['hash']) && !empty($_GET['hash']) )
 {
-    $email = $mysqli->escape_string($_GET['email']);
+    $c_number = $mysqli->escape_string($_GET['c_number']);
     $hash = $mysqli->escape_string($_GET['hash']);
 
     // Make sure user email with matching hash exist
-    $result = $mysqli->query("SELECT * FROM users WHERE email='$email' AND hash='$hash'");
+    $result = $mysqli->query("SELECT * FROM users WHERE c_number='$c_number' AND hash='$hash'");
 
     if ( $result->num_rows == 0 )
     {
@@ -55,7 +55,7 @@ else {
           </div>
 
           <!-- This input field is needed, to get the email of the user -->
-          <input type="hidden" name="email" value="<?= $email ?>">
+          <input type="hidden" name="c_number" value="<?= $c_number ?>">
           <input type="hidden" name="hash" value="<?= $hash ?>">
 
           <button class="button button-block"/>Apply</button>
