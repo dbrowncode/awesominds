@@ -236,13 +236,6 @@ var playState = {
     };
   },
 
-  // startScroller : function(){
-  //   console.log('starting scroller');
-  //   console.log(game.global.questionUI.height);
-  //   game.global.scroller.addChild(game.global.questionUI);
-  //   game.global.scroller.start();
-  // },
-
   showAnswers : function(fromButton) {
     if((!game.global.answersShown) && game.global.questionShown && !game.global.isRehash){
       if(!fromButton){

@@ -6,13 +6,9 @@
 ?>
 
 <title>Awesominds</title>
-<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-<link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
 
 <script type="text/javascript" src="js/phaser.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="js/jquery.modal.min.js"></script>
-<script type="text/javascript" src="js/phaser-scrollable.min.js"></script>
 
 <?php
   if ($_SESSION['devmode']) {

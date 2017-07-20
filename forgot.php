@@ -23,8 +23,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
         $first_name = $user['first_name'];
 
         // Session message to display on success.php
-        $_SESSION['message'] = "<p>Please check your email <span>$email</span>"
-        . " for a confirmation link to complete your password reset!</p>";
+        $_SESSION['message'] = "<p>Please check your email for a confirmation link to complete your password reset!</p>";
 
         // Send registration confirmation link (reset.php)
         $to      = $email;
