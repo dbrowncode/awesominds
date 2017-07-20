@@ -11,7 +11,7 @@ var endOfGameState = {
     $(function (){
       $.ajax({
         url: 'getscore.php',
-        data: 'courseid=' + game.global.selectedCourse + '&chapter=' + game.global.selectedChapter,
+        data: 'courseid=' + game.global.selectedCourse + '&chapter=' + game.global.selectedChapter + '&game_mode=' + game.global.selectedMode.id,
         success: function(data){
           game.global.scoreData = $.parseJSON(data);
           //if no data is returned, set up new data and insert it
@@ -20,7 +20,9 @@ var endOfGameState = {
               chapter: game.global.selectedChapter,
               courseid: game.global.selectedCourse,
               high_score: game.global.totalStats.score,
-              total_score: game.global.totalStats.score
+              total_score: game.global.totalStats.score,
+              game_mode: game.global.selectedMode.id,
+              times_played: 1
             };
 
             $(function (){
@@ -38,6 +40,7 @@ var endOfGameState = {
             //if we got data, it's in game.global.scoreData and can be updated
             game.global.scoreData["total_score"] = parseInt(game.global.scoreData["total_score"]) + game.global.totalStats.score;
             game.global.scoreData["high_score"] = Math.max(parseInt(game.global.scoreData["high_score"]), game.global.totalStats.score);
+            game.global.scoreData["times_played"] = parseInt(game.global.scoreData["times_played"]) + 1;
             $(function (){
               $.ajax({
                 type: 'POST',

@@ -47,10 +47,11 @@ CREATE TABLE `score` (
   `c_number` varchar(11) NOT NULL,
   `high_score` int(11) NOT NULL,
   `total_score` int(11) NOT NULL,
+  `game_mode` int(11) NOT NULL DEFAULT 0,
+  `times_played` int(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`scoreid`),
   KEY `user_score_fk_idx` (`c_number`),
   KEY `user_coursse_fk_idx` (`courseid`),
   CONSTRAINT `user_coursse_fk` FOREIGN KEY (`courseid`) REFERENCES `course` (`courseid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `user_score_fk` FOREIGN KEY (`c_number`) REFERENCES `users` (`c_number`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-

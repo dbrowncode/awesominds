@@ -25,18 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 ?>
 <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="js/displaynames.js"></script>
 <script>
-	jQuery(document).ready(function($){
-	     $("#random").click(function(){
-	     var myArray = ['Johnny Depp','Edward Scissorhand','Arnold Schwarzenegger','Jim Carrey','Emma Watson','Daniel Radcliffe','Leonardo DiCaprio','Tom Cruise','Brad Pitt','Charles Chaplin','Morgan Freeman','Tom Hanks','Hugh Jackman','Matt Damon','Sylvester Stallone','Will Smith','Clint Eastwood','Cameron Diaz','George Clooney','Steven Spielberg','Harrison Ford','Robert De Niro','Al Pacino','Robert Downey','Russell Crowe','Liam Neeson','Kate Winslet','Mark Wahlberg','Natalie Portman','Pierce Brosnan','Sean Connery','Orlando Bloom','Dwayne','Jackie Chan','Anglina Jolie','Kevin Sp Nicholson'];
-	     var number= myArray[Math.floor(Math.random() * myArray.length)];
-	     document.getElementById('number').value = number;
-
+  jQuery(document).ready(function($){
+	  $("#random").click(function(){
+      $("#displayNameField").val(displayNames[Math.floor(Math.random() * displayNames.length)]);
+      $("#displayNameLabel").addClass('active highlight');
+	   });
 	});
-
-	});
-
 </script>
+
 <div class="form">
 
       <ul class="tab-group">
@@ -94,24 +92,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
             </div>
           </div>
 
-	         <div class="field-wrap">
-              <label>
-                <span class="req"></span>
-              </label>
-              <input type="text"required autocomplete="off" name='fakename' id="number" placeholder="Generate Display Name" readonly />
-              <button class="fakename" type="button" name="buttonpassvalue" id="random">Generate</button>
+          <div class="smalltext">Choose Display Name - Click 'Generate' until you find a name you like</div>
+          <div class="displayNameButton"><button class="fakename" type="button" name="buttonpassvalue" id="random">Generate</button></div>
+          <div class="field-wrap">
+            <label id="displayNameLabel">
+              Display Name<span class="req"></span>
+            </label>
+            <input type="text"required autocomplete="off" name='fakename' id="displayNameField" readonly />
           </div>
 
+          <div class="smalltext">Choose Avatar - Click the + and - buttons until you find a character you like</div>
           <div class="field-wrap avatars">
-            <label>Choose Avatar</label>
-            <input type="button" value="+" class="imgbtnplus">
+
+            <input type="button" value="+" class="imgbtnplus" style="width: 83px">
             <?php
               $numImages = 16;
               for ($i=0; $i < $numImages; $i++) {
                 echo '<img class="avatar-img" src="assets/opp/sm/opp' . ($i+1) . '.png"/>';
               }
              ?>
-            <input type="button" value="-" class="imgbtnminus">
+            <input type="button" value="-" class="imgbtnminus" style="width: 83px">
+
+
             <input type="hidden" name="avatarnum" value="1" />
 
             <script>
@@ -137,10 +139,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
                 }
               });
             </script>
-
          </div>
 
-            <div class="field-wrap">
+          <div class="field-wrap">
             <label>
               Email Address<span class="req">*</span>
             </label>
@@ -158,7 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
             <label>
               Set A Password<span class="req">*</span>
             </label>
-            <input type="password"required autocomplete="off" name='password'/>
+            <input type="password" required autocomplete="off" name='password' pattern=".{8,}" title="Minimum 8 Characters"/>
+            <div class="smalltext">Minimum 8 Characters</div>
           </div>
 
           <button type="submit" class="button button-block" name="register" />Register</button>

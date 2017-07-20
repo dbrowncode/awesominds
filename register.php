@@ -3,14 +3,6 @@
    and sends account confirmation email message
  */
 
-// Set session variables to be used on profile.php page
-$_SESSION['email'] = $_POST['email'];
-$_SESSION['c_number'] = $_POST['cnumber'];
-$_SESSION['first_name'] = $_POST['firstname'];
-$_SESSION['last_name'] = $_POST['lastname'];
-$_SESSION['play_name'] = $_POST['fakename'];
-$_SESSION['avatarnum'] = $_POST['avatarnum'];
-
 // Escape all $_POST variables to protect against SQL injections
 $first_name = $mysqli->escape_string($_POST['firstname']);
 $last_name = $mysqli->escape_string($_POST['lastname']);
@@ -24,16 +16,27 @@ $avatarnum = $_POST['avatarnum'];
 // Check if user with that email already exists
 $result = $mysqli->query("SELECT * FROM users WHERE c_number='$c_number'") or die($mysqli->error());
 
-// We know user email exists if the rows returned are more than 0
+// We know user id exists if the rows returned are more than 0
 if ( $result->num_rows > 0 ) {
 
     $_SESSION['message'] = 'User with this Camosun ID already exists!';
     header("location: error.php");
 
 }
-else { // Email doesn't already exist in a database, proceed...
+else { // id doesn't already exist in a database, proceed...
 
-    // active is 0 by DEFAULT (no need to include it here)
+    // add last 2 digits of C number to the display name
+    $play_name .= ' ' . substr($c_number, -2);
+
+    // Set session variables to be used on profile.php page
+    $_SESSION['email'] = $email;
+    $_SESSION['c_number'] = $c_number;
+    $_SESSION['first_name'] = $first_name;
+    $_SESSION['last_name'] = $last_name;
+    $_SESSION['play_name'] = $play_name;
+    $_SESSION['avatarnum'] = $avatarnum;
+
+    // active and isInstructor are 0 by DEFAULT (no need to include it here)
     $sql = "INSERT INTO users (first_name, last_name, play_name, c_number, email, password, hash, avatarnum) "
             . "VALUES ('$first_name','$last_name', '$play_name', '$c_number', '$email','$password', '$hash', '$avatarnum')";
 
