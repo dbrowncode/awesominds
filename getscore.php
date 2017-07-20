@@ -1,6 +1,7 @@
 <?php
   require('../../conn.php');
-  session_start();
+  include('redir-notloggedin.php');
+
   $query = $dbcon->prepare("SELECT * FROM score WHERE courseid = :courseid AND chapter = :chapter AND c_number = :c_number");
   $query->bindParam(':courseid', $_GET["courseid"]);
   $query->bindParam(':chapter', $_GET["chapter"]);

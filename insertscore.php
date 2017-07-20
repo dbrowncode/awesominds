@@ -1,6 +1,7 @@
 <?php
   require('../../conn.php');
-  session_start();
+  include('redir-notinstructor.php');
+  
   $query = $dbcon->prepare("INSERT INTO score (chapter, courseid, c_number, high_score, total_score) VALUES (:chapter, :courseid, :c_number, :high_score, :total_score)");
 
   $query->bindParam(':chapter', $_POST["chapter"]);

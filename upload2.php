@@ -1,5 +1,6 @@
 <?php
 Require('../../conn.php');
+include('redir-notinstructor.php');
 include 'readQuestions.php';
 include 'parseDoc.php';
 include 'insert.php';

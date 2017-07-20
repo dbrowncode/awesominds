@@ -1,5 +1,6 @@
 <?php
   require('../../conn.php');
+  include('redir-notloggedin.php');
 
   $query = $dbcon->prepare("SELECT DISTINCT chapter FROM question WHERE courseid = :courseid ORDER BY chapter");
   $query->bindParam(':courseid', $_GET["courseid"]);

@@ -1,6 +1,7 @@
 <?php
   require('../../conn.php');
-  session_start();
+  include('redir-notinstructor.php');
+  
   $query = $dbcon->prepare("UPDATE score SET high_score = :high_score, total_score = :total_score WHERE courseid = :courseid AND chapter = :chapter AND c_number = :c_number");
 
   $query->bindParam(':chapter', $_POST["chapter"]);

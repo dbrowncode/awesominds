@@ -1,5 +1,6 @@
 <?php
   Require("../../conn.php");
+  include('redir-notinstructor.php');
 
   if($_SERVER["REQUEST_METHOD"] == "POST"){
     $insertCourseID = strtoupper(test_input($_POST['courseID']));

@@ -1,5 +1,5 @@
 <?php
-  session_start();
+  include('redir-notloggedin.php');
   if(isset($_POST["course"])){
     $_SESSION["course"] = $_POST["course"];
     echo json_encode($_SESSION);

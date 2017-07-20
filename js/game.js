@@ -24,12 +24,15 @@ game.state.add('endOfGame', endOfGameState);
 game.state.add('pregame', preGameState);
 game.state.add('pregameSU', preGameStateSU);
 
-$(function (){
-  $.ajax({
-    url: 'getsession.php',
-    success: function(data){
-      game.global.session = $.parseJSON(data);
-      game.state.start('preload');
-    }
-  });
-});
+game.global.session = phpSession;
+game.state.start('preload');
+
+// $(function (){
+//   $.ajax({
+//     url: 'getsession.php',
+//     success: function(data){
+//       game.global.session = $.parseJSON(data);
+//       game.state.start('preload');
+//     }
+//   });
+// });

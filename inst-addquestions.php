@@ -14,12 +14,7 @@
   <a href="index.php"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
 
   <div class="formWrap form">
-    <ul class="tab-group">
-      <li class="tab"><a href="inst-createcourse.php">Create Course</a></li>
-      <li class="tab active"><a href="inst-addquestions.php">Add Questions</a></li>
-      <li class="tab"><a href="inst-givepermissions.php">Give Permissions</a></li>
-      <li class="tab"><a href="inst-stats.php">View Student Progress</a></li>
-    </ul>
+    <?php include 'inst-nav.php' ?>
     <div id='selectCourseDiv' class='tab-content field-wrap'>
       <p>Select a course to add questions to</p>
       <select id='courseDropdown'>

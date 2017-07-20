@@ -22,6 +22,7 @@
   }
 ?>
 
+<script type="text/javascript">var phpSession = <?php echo json_encode($_SESSION); ?></script>
 <script type="text/javascript" src="js/menu-mode.js"></script>
 <script type="text/javascript" src="js/menuchapter.js"></script>
 <script type="text/javascript" src="js/menucourse.js"></script>

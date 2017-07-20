@@ -1,5 +1,6 @@
 <?php
   require('../../conn.php');
+  include('redir-notloggedin.php');
 
   $query = $dbcon->prepare("SELECT * FROM course");
   $query->execute();

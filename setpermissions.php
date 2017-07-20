@@ -1,6 +1,7 @@
 <?php
   require('../../conn.php');
-  session_start();
+  include('redir-notinstructor.php');
+  
   $query = $dbcon->prepare("UPDATE users SET isInstructor = 1 WHERE c_number = :c_number");
 
   $query->bindParam(':c_number', test_input($_POST["cnumber"]));
