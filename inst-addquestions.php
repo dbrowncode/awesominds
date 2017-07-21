@@ -43,7 +43,7 @@ var getCourses = function(){
       $('#courseDropdown').empty();
       var courses = $.parseJSON(data);
       for (var i = 0; i < courses.length; i++) {
-        $('#courseDropdown').append('<option value="' + courses[i].courseid + '">' + courses[i].courseid + '</option>');
+        $('#courseDropdown').append('<option value="' + courses[i].courseid + '">' + courses[i].courseid + ' - ' + courses[i].name + '</option>');
       }
     }
   });

@@ -5,6 +5,7 @@ div.form *:after {
 }
 div.form {
   background: #ffffff;
+  color: #ffffff;
   /* #c1bdba */
   font-family: 'Titillium Web', sans-serif;
 }
@@ -199,4 +200,7 @@ div.form .avatars {
 }
 div.form .displayNameButton {
   text-align: center;
+}
+.modal-body p {
+  color: #000;
 }
