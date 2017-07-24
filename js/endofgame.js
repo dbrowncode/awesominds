@@ -121,9 +121,11 @@ var endOfGameState = {
 
     var statLines = [
       game.global.session.play_name,
-      "Chapter " + game.global.selectedChapter + " Stats:",
+      "Round " + game.global.roundNum + " Stats:",
+      "Score This Round: " + game.global.totalStats.score,
+      "Your Highest Score: " + game.global.scoreData["high_score"],
       "Total Points Earned: " + game.global.scoreData["total_score"],
-      "High Score: " + game.global.scoreData["high_score"]
+      "Round " + (game.global.roundNum + 1) + " Loaded and Ready"
     ];
 
     var prevHeights = game.global.jinny.bottom;
@@ -141,7 +143,7 @@ var endOfGameState = {
     prevHeights += t.height;
 
     var buttons = [
-      { text: 'Play Again', function: endOfGameState.playAgainClick },
+      { text: 'Play Round ' + (game.global.roundNum + 1), function: endOfGameState.playAgainClick },
       { text: 'Courses', function: endOfGameState.chooseCourseClick },
       { text: 'Log Out', function: endOfGameState.logOutClick }
     ];
@@ -160,6 +162,7 @@ var endOfGameState = {
     endOfGameState.endGameUI.destroy();
     game.global.isRehash = false;
     game.global.rehashQuestions = [];
+    game.global.roundNum++;
     game.state.start(game.global.selectedMode.gamestate, false, false);
   },
 

@@ -50,19 +50,22 @@ playStateSU.btnClick = function(){
     //points graphic
     if(this.data.correct){
       //set the number of points earned here, use it to load the appropriate graphic and to update the score later
+      var ptsImageScale = .5;
       switch (game.state.getCurrentState().timesAnswered) {
         case 1:
           game.global.pointsToAdd = 25;
+          ptsImageScale = 1;
           break;
         case 2:
           game.global.pointsToAdd = 15;
+          ptsImageScale = .75;
           break;
         default:
           game.global.pointsToAdd = 5;
           break;
       }
       var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.pointsToAdd + 'pts');
-      // ptsImage.scale.setTo(dpr);
+      ptsImage.scale.setTo(ptsImageScale);
       var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
       var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
       tweenA.chain(tweenB);
@@ -90,19 +93,6 @@ playStateSU.updateScores = function(answerCorrect, didntAnswer){
   }
 
   game.global.totalStats.numRight++;
-
-  //ticks -- possibly remove them in this mode? because always correct eventually...
-  correct = game.add.sprite((game.global.lXOffset),((game.height - 200) - (50 * game.global.numCor)) ,'right');
-  correct.scale.setTo(.1,.1);
-  this.ticks.add(correct);
-  if(game.global.numCor == 5){
-    game.global.numCor = 1;
-  }
-  if(game.global.totalStats.numRight !=0 && (game.global.totalStats.numRight % 5 == 0)){
-    game.global.lXOffset +=6;
-    game.global.numCor = -1;
-  }
-  game.global.numCor++;
 
   //update player score
   game.global.totalStats.score += game.global.pointsToAdd;

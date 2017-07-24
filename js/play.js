@@ -15,6 +15,11 @@ var playState = {
     game.global.questionShown = false;
     game.global.answeredBeforeAI = false;
     if(!game.global.isRehash){
+      console.log(game.global.roundNum + ' type: ' + (typeof game.global.roundNum));
+      if(typeof game.global.roundNum == 'undefined'){
+        game.global.roundNum = 1;
+        console.log(game.global.roundNum + ' type: ' + (typeof game.global.roundNum));
+      }
       game.global.numOrigQuestions = game.global.numQuestions;
       game.global.totalStats = {
         numRight: 0,
@@ -372,7 +377,6 @@ var playState = {
         wrong = game.add.sprite((game.width - game.global.rXOffset),((game.height - 200) - (50 * game.global.numWro)) , 'wrong');
         wrong.scale.setTo(.1,.1);
         this.ticks.add(wrong);
-        game.global.totalStats.score += 2;
       }
       game.global.totalStats.numWrong++;
 

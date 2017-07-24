@@ -66,6 +66,7 @@ var getChapters = function(){
 
 $(function (){
   $('#selectChapterDiv').hide();
+  var modes = ['Countdown', 'Wild Wild West'];
 
   $("#selectCourseBtn").click(function(){
     $('#output').empty();
@@ -80,9 +81,8 @@ $(function (){
           url: 'getscores-allusers-course.php',
           data: 'courseid=' + $('#courseDropdown').find(":selected").val(),
           success: function(data){
-            var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + '</h2><table id="table" class="display"><thead><tr><th>First Name</th><th>Last Name</th><th>C Number</th><th>Display Name</th><th>Chapter</th><th>Game Mode</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
+            var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + '</h2><p>Click a column heading to sort by that attribute</p><table id="table" class="display"><thead><tr><th>First Name</th><th>Last Name</th><th>C Number</th><th>Display Name</th><th>Chapter</th><th>Game Mode</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
             var scores = $.parseJSON(data);
-            var modes = ['Classic', 'Wild Wild Guess'];
             for (var i = 0; i < scores.length; i++) {
               str += '<tr><td>' + scores[i].first_name + '</td><td>' + scores[i].last_name + '</td><td>' + scores[i].c_number + '</td><td>' + scores[i].play_name + '</td><td>' + scores[i].chapter + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].times_played + '</td></tr>';
             }
@@ -104,9 +104,8 @@ $(function (){
       url: 'getscores-allusers-chapter.php',
       data: 'courseid=' + $('#courseDropdown').find(":selected").val() + '&chapter=' + $('#chapterDropdown').find(":selected").val(),
       success: function(data){
-        var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + ", Chapter " + $('#chapterDropdown').find(":selected").val() + ' </h2><table id="table" class="display"><thead><tr><th>First Name</th><th>Last Name</th><th>C Number</th><th>Display Name</th><th>Game Mode</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
+        var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + ", Chapter " + $('#chapterDropdown').find(":selected").val() + ' </h2><p>Click a column heading to sort by that attribute</p><table id="table" class="display"><thead><tr><th>First Name</th><th>Last Name</th><th>C Number</th><th>Display Name</th><th>Game Mode</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
         var scores = $.parseJSON(data);
-        var modes = ['Classic', 'Wild Wild Guess'];
         for (var i = 0; i < scores.length; i++) {
           str += '<tr><td>' + scores[i].first_name + '</td><td>' + scores[i].last_name + '</td><td>' + scores[i].c_number + '</td><td>' + scores[i].play_name + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].times_played + '</td></tr>';
         }
