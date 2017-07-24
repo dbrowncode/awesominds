@@ -133,7 +133,8 @@ $(function (){
       data: postData,
       success: function(data){
         getCourses();
-        getChapters();
+        $('#selectChapterDiv').hide();
+        $('#noChapters').hide();
         console.log(data);
       }
     });
