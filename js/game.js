@@ -1,5 +1,5 @@
 var dpr = Math.floor(window.devicePixelRatio);
-var game = new Phaser.Game(window.innerWidth * dpr, window.innerHeight * dpr, Phaser.AUTO, 'gameDiv', null, true, true);
+var game = new Phaser.Game(Math.floor(window.innerWidth * dpr), Math.floor(window.innerHeight * dpr), Phaser.AUTO, 'gameDiv', null, true, true);
 game.global = {}; // create global object we can add properties to and access from any state
 
 game.global.mapNum = function (num, in_min, in_max, out_min, out_max) {

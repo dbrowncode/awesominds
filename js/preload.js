@@ -3,6 +3,7 @@ var preloadState = {
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	  console.log('state: preload');
     game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    Phaser.scaleModes.DEFAULT = 1;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = false;
     game.scale.windowConstraints.bottom = "visual";
@@ -81,6 +82,8 @@ var preloadState = {
 
     game.global.SpeechBubble = function(game, x, y, width, text, withTail, asButton, clickFunction, isAnswerText, choice, isJin) {
       Phaser.Sprite.call(this, game, x, y);
+      x = Math.floor(x);
+      y = Math.floor(y);
 
       // Some sensible minimum defaults
       width = width || game.global.borderFrameSize * 3;
@@ -111,11 +114,11 @@ var preloadState = {
       var bounds = this.bitmapText.getBounds();
       // use set width for answer choices, and variable width based on the text size for everything else
       if(isAnswerText){
-        bounds.width = width + game.global.mainFont.fontSize;
+        bounds.width = Math.floor(width + game.global.mainFont.fontSize);
       }else{
-        width = bounds.width + game.global.mainFont.fontSize;
+        width = Math.floor(bounds.width + game.global.mainFont.fontSize);
       }
-      height = Math.max(height, bounds.height);
+      height = Math.floor(Math.max(height, bounds.height));
 
       // Create all of our corners and edges
       this.borders = [
