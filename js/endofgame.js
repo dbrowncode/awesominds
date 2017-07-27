@@ -4,9 +4,11 @@ var endOfGameState = {
 
     //create ui group to destroy when switching back to play state
     this.endGameUI = game.add.group();
+    var winningScore = 0;
     for (var i = 0; i < game.global.chars.length; i++) {
       this.endGameUI.add(game.global.chars[i].gfx);
       this.endGameUI.add(game.global.chars[i].barSprite);
+      winningScore = Math.max(winningScore, game.global.chars[i].score);
     }
     $(function (){
       $.ajax({
@@ -103,6 +105,13 @@ var endOfGameState = {
       game.add.tween(scorePercentLabel).to({y: y}, 500, Phaser.Easing.Default, true, 250);
       game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].sprite.top - y, 1)}, 500, Phaser.Easing.Default, true, 250);
       this.endGameUI.add(game.global.chars[i].barSprite);
+      if(game.global.chars[i].score == winningScore){
+        var medal = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.top, 'medal');
+        medal.width = game.global.chars[i].sprite.width;
+        medal.height = game.global.chars[i].sprite.height;
+        this.endGameUI.add(medal);
+        game.add.tween(medal).to({y: y + (scorePercentLabel.height*2)}, 500, Phaser.Easing.Default, true, 250);
+      }
     }
   },
 
