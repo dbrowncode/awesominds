@@ -153,7 +153,7 @@ var playState = {
     }
     //timer - the phaser way
     game.global.timer = game.time.create(false);
-    game.global.timer.add(1000, showChoices, this);
+    // game.global.timer.add(1000, showChoices, this);
     game.global.timer.start();
 
     //new question
@@ -165,16 +165,9 @@ var playState = {
     game.global.questionUI.add(game.global.questionNumText);
 
     var bwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width/2)), game.global.jinny.width * 7);
-    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight*2, bwidth, question.question, false, false));
+    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight*2, bwidth, question.question, false, true, game.state.getCurrentState().showChoices));
+    game.global.bubble.question = question;
     game.global.questionUI.add(game.global.bubble);
-
-    //timer - better/more universal way?
-    this.startTime = new Date();
-    this.totalTime = 20;
-    this.timeElapsed = 0;
-    this.createTimer();
-    this.gameTimer = game.time.events.loop(100, function(){ game.state.getCurrentState().updateTimer() });
-    this.timerOn = true;
 
     //animation
     game.add.tween(game.global.bubble).to({x: Math.floor(game.world.centerX - game.global.bubble.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250);
@@ -187,58 +180,70 @@ var playState = {
     for(i = 1; i < game.global.chars.length; i++){
       game.global.chars[i].correct = (game.global.winThreshold <= game.global.chars[i].chance);
     }
+  },
 
-    function showChoices(){
-      //Create a button for each choice, and put some data into it in case we need it
-      game.global.choiceBubbles = game.add.group();
-      var i = 0;
-      var prevHeights = 10 *dpr;
-      //array to store available letter choices for ai to choose from for this question
-      var availChoices = [];
-      for (var c in question.choices) {
-        var cbwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width)), game.global.jinny.width * 5);
-        var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, cbwidth, question.choices[c], false, true, game.state.getCurrentState().btnClick, true, c));
-        //cb.y += Math.floor(cb.bubbleheight + prevHeights);
-        cb.y += Math.floor(prevHeights);
-        prevHeights += cb.bubbleheight + 10 *dpr;
-        game.add.tween(cb).to({x: Math.floor(game.world.centerX - cb.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
-        cb.data = {
-          letter: c,
-          text: c + '. ' + question.choices[c],
-          correct: (c == question.answer[0]),
-          fullQuestion: question
-        };
-        game.global.choiceBubbles.add(cb);
-        availChoices[i] = c;
-        i++;
-      }
-      game.global.questionUI.add(game.global.choiceBubbles);
+  showChoices : function(){
+    this.inputEnabled = false;
 
-      game.global.questionShown = true;
+    //Create a button for each choice, and put some data into it in case we need it
+    game.global.choiceBubbles = game.add.group();
+    var i = 0;
+    var prevHeights = 10 *dpr;
+    //array to store available letter choices for ai to choose from for this question
+    var availChoices = [];
+    var question = this.question;
+    for (var c in question.choices) {
+      var cbwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width)), game.global.jinny.width * 5);
+      var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, cbwidth, question.choices[c], false, true, game.state.getCurrentState().btnClick, true, c));
+      //cb.y += Math.floor(cb.bubbleheight + prevHeights);
+      cb.y += Math.floor(prevHeights);
+      prevHeights += cb.bubbleheight + 10 *dpr;
+      game.add.tween(cb).to({x: Math.floor(game.world.centerX - cb.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
+      cb.data = {
+        letter: c,
+        text: c + '. ' + question.choices[c],
+        correct: (c == question.answer[0]),
+        fullQuestion: question
+      };
+      game.global.choiceBubbles.add(cb);
+      availChoices[i] = c;
+      i++;
+    }
+    game.global.questionUI.add(game.global.choiceBubbles);
 
-      //determine AI answers
-      for(i=1; i<game.global.chars.length; i++){
-        if(game.global.chars[i].correct){
-          game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, game.global.questions[game.global.questionsAnswered].answer, true, false));
-        }else{
+    game.global.questionShown = true;
+
+    //timer - better/more universal way?
+    var thisState = game.state.getCurrentState();
+    thisState.startTime = new Date();
+    thisState.totalTime = 20;
+    thisState.timeElapsed = 0;
+    thisState.createTimer();
+    thisState.gameTimer = game.time.events.loop(100, function(){ game.state.getCurrentState().updateTimer() });
+    thisState.timerOn = true;
+
+    //determine AI answers
+    for(i=1; i<game.global.chars.length; i++){
+      if(game.global.chars[i].correct){
+        game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, game.global.questions[game.global.questionsAnswered].answer, true, false));
+      }else{
+        choice = availChoices[Math.floor(Math.random() * availChoices.length)];
+        answer = game.global.questions[game.global.questionsAnswered].answer;
+        //strip any whitespace so comparisons will work
+        answer = answer.replace(/(^\s+|\s+$)/g,"");
+        choice = choice.replace(/(^\s+|\s+$)/g,"");
+
+        //randomize answer so it isn't the correct one.
+        while(choice == answer){
           choice = availChoices[Math.floor(Math.random() * availChoices.length)];
-          answer = game.global.questions[game.global.questionsAnswered].answer;
-          //strip any whitespace so comparisons will work
-          answer = answer.replace(/(^\s+|\s+$)/g,"");
-          choice = choice.replace(/(^\s+|\s+$)/g,"");
-
-          //randomize answer so it isn't the correct one.
-          while(choice == answer){
-            choice = availChoices[Math.floor(Math.random() * availChoices.length)];
-          }
-          game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, choice, true, false));
         }
-        //save width so we can set to 0 and tween to it later
-        game.global.answerBubbleWidth = game.global.chars[i].answerBubble.width;
-        game.global.chars[i].answerBubble.width = 0;
-        game.global.answerBubbles.add(game.global.chars[i].answerBubble);
+        game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, choice, true, false));
       }
-    };
+      //save width so we can set to 0 and tween to it later
+      game.global.answerBubbleWidth = game.global.chars[i].answerBubble.width;
+      game.global.chars[i].answerBubble.width = 0;
+      game.global.answerBubbles.add(game.global.chars[i].answerBubble);
+    }
   },
 
   showAnswers : function(fromButton) {
