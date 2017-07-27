@@ -29,7 +29,6 @@ var menuCourseState = {
       $.ajax({
         url: 'getcourses.php',
         success: function(data){
-          console.log(data);
           courses = $.parseJSON(data);
           var prevHeights = 10 * dpr;
           for (var i = 0; i < courses.length; i++) {

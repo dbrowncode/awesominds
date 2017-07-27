@@ -60,17 +60,22 @@ playStateSU.btnClick = function(){
           game.global.pointsToAdd = 15;
           ptsImageScale = .75;
           break;
-        default:
+        case 3:
           game.global.pointsToAdd = 5;
           break;
+        default:
+          game.global.pointsToAdd = 0;
+          break;
       }
-      var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.pointsToAdd + 'pts');
-      ptsImage.scale.setTo(ptsImageScale);
-      var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
-      var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
-      tweenA.chain(tweenB);
-      tweenA.start();
-      game.global.questionUI.add(ptsImage);
+      if(game.global.pointsToAdd > 0){
+        var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.pointsToAdd + 'pts');
+        ptsImage.scale.setTo(ptsImageScale);
+        var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
+        var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
+        tweenA.chain(tweenB);
+        tweenA.start();
+        game.global.questionUI.add(ptsImage);
+      }
     }
   }
 
@@ -86,7 +91,7 @@ playStateSU.btnClick = function(){
 };
 
 playStateSU.updateScores = function(answerCorrect, didntAnswer){
-  for(i = 1 ; i < 4; i++){
+  for(i = 1 ; i < game.global.chars.length; i++){
     if(game.global.chars[i].correct){
       game.global.chars[i].score += 25;
     }

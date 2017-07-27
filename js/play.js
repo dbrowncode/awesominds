@@ -67,7 +67,7 @@ var playState = {
     //animate avatars to the bottom
     var image = game.global.imagecheck;
     for (var i = 0; i < game.global.chars.length; i++) {
-      game.add.tween(game.global.chars[i].sprite).to({x: Math.floor(((game.width/4)*(i+1) -game.width/4)+(game.width/25)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
+      game.add.tween(game.global.chars[i].sprite).to({x: Math.floor(((game.width/game.global.chars.length)*(i+1) -game.width/game.global.chars.length)+(game.width/25)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
     }
 
     //show the first question
@@ -137,14 +137,14 @@ var playState = {
 
     //AI win %
     if(game.global.winStreak % 4 == 0){
-      for(i = 1; i < 4; i++){
+      for(i = 1; i < game.global.chars.length; i++){
         if(game.global.chars[i].chance >= 80){
           game.global.chars[i].chance = 80;
         }
         else{game.global.chars[i].chance += 5;}
       }
     }else if(game.global.loseStreak % 4 == 0){
-      for(i = 1; i < 4; i++){
+      for(i = 1; i < game.global.chars.length; i++){
         if(game.global.chars[i].chance <= 25){
           game.global.chars[i].chance = 25;
         }
@@ -184,7 +184,7 @@ var playState = {
     //ai
     game.global.winThreshold = Math.floor(Math.random() * 100) + 1;
     console.log('ai wins if over ' + game.global.winThreshold);
-    for(i = 1; i < 4; i++){
+    for(i = 1; i < game.global.chars.length; i++){
       game.global.chars[i].correct = (game.global.winThreshold <= game.global.chars[i].chance);
     }
 
@@ -217,7 +217,7 @@ var playState = {
       game.global.questionShown = true;
 
       //determine AI answers
-      for(i=1;i<game.global.chars.length;i++){
+      for(i=1; i<game.global.chars.length; i++){
         if(game.global.chars[i].correct){
           game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, game.global.questions[game.global.questionsAnswered].answer, true, false));
         }else{
@@ -335,7 +335,7 @@ var playState = {
    * create right and wrong answer ticks
    */
   updateScores : function(answerCorrect, didntAnswer){
-    for(i = 1 ; i < 4; i++){
+    for(i = 1 ; i < game.global.chars.length; i++){
       if(game.global.chars[i].correct && !game.global.isRehash){
         game.global.chars[i].score += 25;
       }

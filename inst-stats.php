@@ -66,7 +66,7 @@ var getChapters = function(){
 
 $(function (){
   $('#selectChapterDiv').hide();
-  var modes = ['Countdown', 'Wild Wild West'];
+  var modes = ['Countdown', 'Wild Wild Guess'];
 
   $("#selectCourseBtn").click(function(){
     $('#output').empty();

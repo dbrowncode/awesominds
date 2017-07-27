@@ -45,7 +45,7 @@ var preGameState = {
 
     prevHeights += bubbles[bubbles.length - 1].bubbleheight + (10*dpr);
 
-    for(var i = 0; i < 4; i++){
+    for(var i = 0; i < 3; i++){
       game.global.chars[i] = {};
       game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, prevHeights, (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i].imageKey);
       game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);

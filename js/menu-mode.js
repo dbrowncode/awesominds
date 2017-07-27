@@ -18,7 +18,7 @@ var menuModeState = {
 
     var modes = [
       { name: 'Countdown', prestate: 'pregame', gamestate: 'play', id: 0},
-      { name: 'Wild Wild West', prestate: 'pregameSU', gamestate: 'playSU', id:1},
+      { name: 'Wild Wild Guess', prestate: 'pregameSU', gamestate: 'playSU', id:1},
     ];
     var prevHeights = 0;
     for (var i = 0; i < modes.length; i++) {
