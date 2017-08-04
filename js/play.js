@@ -461,7 +461,7 @@ var playState = {
       game.state.getCurrentState().ticks.destroy();
       endGame = game.add.audio('endGame');
       endGame.play();
-      game.state.start('endOfGame', false, false);
+      game.state.start(game.global.selectedMode.endstate, false, false);
     }
   },
 

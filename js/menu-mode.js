@@ -7,7 +7,7 @@ var menuModeState = {
     text.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
     text.padding.x = 5;
 
-    var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuChapterState.backButton));
+    var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuModeState.backButton));
 
     var courseText = game.add.bitmapText(back.bubblewidth + game.global.borderFrameSize*2, game.world.y, '8bitoperator', game.global.selectedCourseName, 11 * dpr);
     courseText.tint = 0x000000;
@@ -17,8 +17,8 @@ var menuModeState = {
     chapterText.tint = 0x000000;
 
     var modes = [
-      { name: 'Countdown', prestate: 'pregame', gamestate: 'play', id: 0},
-      { name: 'Wild Wild Guess', prestate: 'pregameSU', gamestate: 'playSU', id:1},
+      { name: 'Countdown', prestate: 'pregame', gamestate: 'play', id: 0, endstate: 'endOfGame'},
+      { name: 'Wild Wild Guess', prestate: 'pregameSU', gamestate: 'playSU', id: 1, endstate: 'endOfGameWWG'},
     ];
     var prevHeights = 0;
     for (var i = 0; i < modes.length; i++) {

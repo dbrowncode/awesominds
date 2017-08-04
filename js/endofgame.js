@@ -1,4 +1,11 @@
 var endOfGameState = {
+  hostMindStates : [
+    { min: 90, max: 100, mind: "n awesomind", label: "Awesome!"},
+    { min: 70, max: 89, mind: " great mind", label: "Great"},
+    { min: 50, max: 69, mind: " good mind", label: "Good"},
+    { min: 0, max: 49, mind: " mediocre mind", label: "Mediocre"}
+  ],
+
   create: function(){
     console.log('state: endofgame');
 
@@ -33,7 +40,7 @@ var endOfGameState = {
                 url: 'insertscore.php',
                 data: game.global.scoreData,
                 success: function(data){
-                  endOfGameState.makeStatUI();
+                  game.state.getCurrentState().makeStatUI();
                 }
               });
             });
@@ -49,7 +56,7 @@ var endOfGameState = {
                 url: 'updatescore.php',
                 data: game.global.scoreData,
                 success: function(data){
-                  endOfGameState.makeStatUI();
+                  game.state.getCurrentState().makeStatUI();
                 }
               });
             });
@@ -59,13 +66,7 @@ var endOfGameState = {
       });
     });
 
-    //She aint pretty she just looks that way.
-    var mindStates = [
-      { min: 90, max: 100, mind: "n awesomind", label: "Awesome!"},
-      { min: 70, max: 89, mind: " great mind", label: "Great"},
-      { min: 50, max: 69, mind: " good mind", label: "Good"},
-      { min: 0, max: 49, mind: " meh mind", label: "Meh"}
-    ];
+    var mindStates = game.state.getCurrentState().hostMindStates.slice();
     var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numOrigQuestions * 25)) * 100));
     var lineGfx = game.add.graphics(0,0);
     this.endGameUI.add(lineGfx);
@@ -116,17 +117,17 @@ var endOfGameState = {
   },
 
   makeStatUI: function(){
-    var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Stats & Options', false, true, endOfGameState.viewStatsClick));
+    var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Stats & Options', false, true, game.state.getCurrentState().viewStatsClick));
     game.add.tween(viewStatsBtn).to({x: game.world.width - (viewStatsBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
-    endOfGameState.endGameUI.add(viewStatsBtn);
+    game.state.getCurrentState().endGameUI.add(viewStatsBtn);
 
-    endOfGameState.statsUI = game.add.group();
-    endOfGameState.statsUI.visible = false;
+    game.state.getCurrentState().statsUI = game.add.group();
+    game.state.getCurrentState().statsUI.visible = false;
     var statBG = game.add.graphics(0, 0);
     statBG.lineStyle(2, 0x000000, 1);
     statBG.beginFill(0x078EB7, 1);
     var rect = statBG.drawRoundedRect(game.world.x + 10, game.global.jinny.bottom, game.world.width - 20, game.world.height - game.global.jinny.height - 10, 10);
-    endOfGameState.statsUI.add(statBG);
+    game.state.getCurrentState().statsUI.add(statBG);
 
     var statLines = [
       game.global.session.play_name,
@@ -147,28 +148,29 @@ var endOfGameState = {
       t.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
       t.padding.x = 5;
       prevHeights += t.height;
-      endOfGameState.statsUI.add(t);
+      game.state.getCurrentState().statsUI.add(t);
     }
     prevHeights += t.height;
 
     var buttons = [
-      { text: 'Play Round ' + (game.global.roundNum + 1), function: endOfGameState.playAgainClick },
-      { text: 'Courses', function: endOfGameState.chooseCourseClick },
-      { text: 'Log Out', function: endOfGameState.logOutClick }
+      { text: 'Play Round ' + (game.global.roundNum + 1), function: game.state.getCurrentState().playAgainClick },
+      { text: 'Select Different Course', function: game.state.getCurrentState().chooseCourseClick },
+      { text: 'Select Different Game', function: game.state.getCurrentState().chooseChapterClick },
+      { text: 'Log Out', function: game.state.getCurrentState().logOutClick }
     ];
 
     for (var i = 0; i < buttons.length; i++) {
       var b = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, prevHeights + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), buttons[i].text, false, true, buttons[i].function));
       b.centerX -= Math.floor(b.bubblewidth/2);
       prevHeights += b.bubbleheight + game.global.borderFrameSize;
-      endOfGameState.statsUI.add(b);
+      game.state.getCurrentState().statsUI.add(b);
     }
 
-    endOfGameState.endGameUI.add(endOfGameState.statsUI);
+    game.state.getCurrentState().endGameUI.add(game.state.getCurrentState().statsUI);
   },
 
   playAgainClick: function(){
-    endOfGameState.endGameUI.destroy();
+    game.state.getCurrentState().endGameUI.destroy();
     game.global.isRehash = false;
     game.global.rehashQuestions = [];
     game.global.roundNum++;
@@ -180,11 +182,19 @@ var endOfGameState = {
     game.state.start('menuCourse');
   },
 
+  chooseChapterClick: function(){
+    game.global.music.stop();
+    game.global.music = game.add.audio('menu');
+    game.global.music.volume = 0.5;
+    game.global.music.play();    
+    game.state.start('menuChapter');
+  },
+
   logOutClick: function(){
     window.location.href = "logout.php";
   },
 
   viewStatsClick: function(){
-    endOfGameState.statsUI.visible = !endOfGameState.statsUI.visible;
+    game.state.getCurrentState().statsUI.visible = !game.state.getCurrentState().statsUI.visible;
   }
 };

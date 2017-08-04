@@ -280,17 +280,22 @@ var preloadState = {
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
 
-      var homeBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Home', false, true, game.global.homeBtnClick));
+      var resumeBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Resume Game', false, true, game.global.unpause));
+      resumeBtn.x -= Math.floor(resumeBtn.bubblewidth/2);
+      game.global.pauseUI.add(resumeBtn);
+      game.input.onDown.add(game.global.unpause, resumeBtn);
+
+      var homeBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 3, game.world.width * .8, 'Home', false, true, game.global.homeBtnClick));
       homeBtn.x -= Math.floor(homeBtn.bubblewidth/2);
       game.global.pauseUI.add(homeBtn);
       game.input.onDown.add(game.global.homeBtnClick, homeBtn);
 
-      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y * 3), game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
+      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y * 3.5), game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
       courseSelectBtn.x -= Math.floor(courseSelectBtn.bubblewidth/2);
       game.global.pauseUI.add(courseSelectBtn);
       game.input.onDown.add(game.global.quitToCourseSelect, courseSelectBtn);
 
-      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 3.5, game.world.width * .8, 'Log Out', false, true, game.global.logOut));
+      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 4, game.world.width * .8, 'Log Out', false, true, game.global.logOut));
       logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
       game.global.pauseUI.add(logOutBtn);
       game.input.onDown.add(game.global.logOut, logOutBtn);
@@ -367,7 +372,7 @@ var preloadState = {
           var b = this.data.btn;
           sureUI.destroy();
           if(v){
-            console.log(b.data);
+            // console.log(b.data);
             b.data.func.call(this.data.btn);
           }
         }
