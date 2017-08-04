@@ -6,10 +6,15 @@ var preGameState = {
     "Meet your competition!"
   ],
 
+  makeHost: function(){
+    game.global.jinny = game.add.sprite(0,0, 'jin', 0);
+  },
+
   create: function(){
     console.log("state: pregame");
     //Host
-    game.global.jinny = game.add.sprite(0,0, 'jin', 0);
+    // game.global.jinny = game.add.sprite(0,0, 'jin', 0);
+    game.state.getCurrentState().makeHost();
     game.global.jinny.scale.setTo(dpr/4, dpr/4);
     this.pregameUI = game.add.group();
 

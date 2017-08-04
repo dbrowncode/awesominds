@@ -104,14 +104,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
           <div class="smalltext">Choose Avatar - Click the + and - buttons until you find a character you like</div>
           <div class="field-wrap avatars">
 
-            <input type="button" value="+" class="imgbtnplus" style="width: 83px">
+            <input type="button" value="+" class="imgbtnplus" style="width: 120px">
             <?php
               $numImages = 16;
               for ($i=0; $i < $numImages; $i++) {
-                echo '<img class="avatar-img" src="assets/opp/sm/opp' . ($i+1) . '.png"/>';
+                echo '<img class="avatar-img" src="assets/opp2/oppon' . ($i+1) . '.png" width=120/>';
               }
              ?>
-            <input type="button" value="-" class="imgbtnminus" style="width: 83px">
+            <input type="button" value="-" class="imgbtnminus" style="width: 120px">
 
 
             <input type="hidden" name="avatarnum" value="1" />
