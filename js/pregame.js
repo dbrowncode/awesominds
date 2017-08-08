@@ -14,6 +14,7 @@ var preGameState = {
     console.log("state: pregame");
     //Host
     // game.global.jinny = game.add.sprite(0,0, 'jin', 0);
+    game.global.bonus = 0;
     game.state.getCurrentState().makeHost();
     game.global.jinny.scale.setTo(dpr/4, dpr/4);
     this.pregameUI = game.add.group();
@@ -100,6 +101,7 @@ var preGameState = {
         game.state.getCurrentState().pregameUI.destroy();
         game.global.isRehash = false;
         game.global.rehashQuestions = [];
+        game.global.roundNum = 1;
         game.state.start(game.global.selectedMode.gamestate, false, false);
       }
     });

@@ -1,22 +1,41 @@
 var endOfGameState = {
   hostMindStates : [
-    { min: 90, max: 100, mind: "n awesomind", label: "Awesome!"},
-    { min: 70, max: 89, mind: " great mind", label: "Great"},
-    { min: 50, max: 69, mind: " good mind", label: "Good"},
-    { min: 0, max: 49, mind: " mediocre mind", label: "Mediocre"}
+    { min: 90, max: 100, mind: "You have an awesomind!", label: "Awesome!", gameOver: false, bonus: 0},
+    { min: 70, max: 89, mind: "You have a great mind!", label: "Great", gameOver: false, bonus: 0},
+    { min: 50, max: 69, mind: "You have a good mind.", label: "Good", gameOver: false, bonus: 0},
+    { min: 0, max: 49, mind: "You have a mediocre mind.", label: "Mediocre", gameOver: false, bonus: 0}
   ],
+
+  optionButtons: function(gameOver){
+    var buttons = [
+      { text: 'Play Round ' + (game.global.roundNum + 1), function: game.state.getCurrentState().playAgainClick },
+      { text: 'Select Different Course', function: game.state.getCurrentState().chooseCourseClick },
+      { text: 'Select Different Game', function: game.state.getCurrentState().chooseChapterClick },
+      { text: 'Log Out', function: game.state.getCurrentState().logOutClick }
+    ];
+    return buttons;
+  },
+
+  getStatLines: function(gameOver){
+    var statLines = [
+      game.global.session.play_name,
+      "Round " + game.global.roundNum + " Stats:",
+      "Score This Round: " + game.global.totalStats.score,
+      "Your Highest Score: " + game.global.scoreData["high_score"],
+      "Total Points Earned: " + game.global.scoreData["total_score"],
+      "Round " + (game.global.roundNum + 1) + " Loaded and Ready"
+    ];
+    return statLines;
+  },
+
+  gameOver: false,
 
   create: function(){
     console.log('state: endofgame');
 
     //create ui group to destroy when switching back to play state
     this.endGameUI = game.add.group();
-    var winningScore = 0;
-    for (var i = 0; i < game.global.chars.length; i++) {
-      this.endGameUI.add(game.global.chars[i].gfx);
-      this.endGameUI.add(game.global.chars[i].barSprite);
-      winningScore = Math.max(winningScore, game.global.chars[i].score);
-    }
+
     $(function (){
       $.ajax({
         url: 'getscore.php',
@@ -65,7 +84,9 @@ var endOfGameState = {
         }
       });
     });
+  },
 
+  makeStatUI: function(){
     var mindStates = game.state.getCurrentState().hostMindStates.slice();
     var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numOrigQuestions * 25)) * 100));
     var lineGfx = game.add.graphics(0,0);
@@ -81,8 +102,11 @@ var endOfGameState = {
     for (var i = 0; i < mindStates.length; i++) {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "You have a" + mindStates[i].mind + "!", true, false, null, false, null, true));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), mindStates[i].mind, true, false, null, false, null, true));
         this.endGameUI.add(game.global.jinnySpeech);
+        game.state.getCurrentState().buttons = game.state.getCurrentState().optionButtons(mindStates[i].gameOver);
+        game.state.getCurrentState().statLines = game.state.getCurrentState().getStatLines(mindStates[i].gameOver);
+        game.global.bonus = mindStates[i].bonus;
       }
       var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
       lineGfx.moveTo(0, lineYposition);
@@ -95,6 +119,12 @@ var endOfGameState = {
     }
 
     // convert score + progress bars to percentage
+    var winningScore = 0;
+    for (var i = 0; i < game.global.chars.length; i++) {
+      this.endGameUI.add(game.global.chars[i].gfx);
+      this.endGameUI.add(game.global.chars[i].barSprite);
+      winningScore = Math.max(winningScore, game.global.chars[i].score);
+    }
     for (var i = 0; i < game.global.chars.length; i++) {
       var topBar = Math.min(game.global.chars[i].score, game.global.numOrigQuestions * 25);
       var scorePercent = Math.floor(((topBar) / (game.global.numOrigQuestions * 25)) * 100);
@@ -114,9 +144,7 @@ var endOfGameState = {
         game.add.tween(medal).to({y: y + (scorePercentLabel.height*2)}, 500, Phaser.Easing.Default, true, 250);
       }
     }
-  },
 
-  makeStatUI: function(){
     var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Stats & Options', false, true, game.state.getCurrentState().viewStatsClick));
     game.add.tween(viewStatsBtn).to({x: game.world.width - (viewStatsBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
     game.state.getCurrentState().endGameUI.add(viewStatsBtn);
@@ -129,14 +157,7 @@ var endOfGameState = {
     var rect = statBG.drawRoundedRect(game.world.x + 10, game.global.jinny.bottom, game.world.width - 20, game.world.height - game.global.jinny.height - 10, 10);
     game.state.getCurrentState().statsUI.add(statBG);
 
-    var statLines = [
-      game.global.session.play_name,
-      "Round " + game.global.roundNum + " Stats:",
-      "Score This Round: " + game.global.totalStats.score,
-      "Your Highest Score: " + game.global.scoreData["high_score"],
-      "Total Points Earned: " + game.global.scoreData["total_score"],
-      "Round " + (game.global.roundNum + 1) + " Loaded and Ready"
-    ];
+    var statLines = game.state.getCurrentState().statLines;
 
     var prevHeights = game.global.jinny.bottom;
     for (var i = 0; i < statLines.length; i++) {
@@ -152,12 +173,7 @@ var endOfGameState = {
     }
     prevHeights += t.height;
 
-    var buttons = [
-      { text: 'Play Round ' + (game.global.roundNum + 1), function: game.state.getCurrentState().playAgainClick },
-      { text: 'Select Different Course', function: game.state.getCurrentState().chooseCourseClick },
-      { text: 'Select Different Game', function: game.state.getCurrentState().chooseChapterClick },
-      { text: 'Log Out', function: game.state.getCurrentState().logOutClick }
-    ];
+    var buttons = game.state.getCurrentState().buttons;
 
     for (var i = 0; i < buttons.length; i++) {
       var b = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, prevHeights + game.global.borderFrameSize, Math.floor(game.world.width - (game.global.jinny.width*2)), buttons[i].text, false, true, buttons[i].function));
@@ -186,7 +202,7 @@ var endOfGameState = {
     game.global.music.stop();
     game.global.music = game.add.audio('menu');
     game.global.music.volume = 0.5;
-    game.global.music.play();    
+    game.global.music.play();
     game.state.start('menuChapter');
   },
 

@@ -2,7 +2,7 @@ var preloadState = {
   preload: function() {
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	  console.log('state: preload');
-    // game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
 
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = false;

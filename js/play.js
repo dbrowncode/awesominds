@@ -30,6 +30,11 @@ var playState = {
         game.global.chars[i].score = 0;
         game.global.chars[i].scoreText.text = 0;
       }
+      if(game.global.bonus > 0){
+        game.global.totalStats.score = game.global.bonus;
+        game.global.chars[0].score = game.global.totalStats.score;
+        game.global.bonus = 0;
+      }
       game.global.answerBubbles = game.add.group();
     }
 
