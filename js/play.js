@@ -76,7 +76,7 @@ var playState = {
     }
 
     //show the first question
-    this.showQuestion(game.global.questions[game.global.questionsAnswered]);
+    this.showQuestion(game.global.questions.shift());
   },
 
   /*
@@ -130,7 +130,7 @@ var playState = {
  * scores AI for new question
  */
  showQuestion: function(question){
-   console.log(question.answer);
+   console.log(question.answer + ' - questions left: ' + game.global.questions.length );
     if (game.global.questionShown){
       game.state.getCurrentState().removeQuestion();
     }
@@ -230,10 +230,10 @@ var playState = {
     //determine AI answers
     for(i=1; i<game.global.chars.length; i++){
       if(game.global.chars[i].correct){
-        game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, game.global.questions[game.global.questionsAnswered].answer, true, false));
+        game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, question.answer, true, false));
       }else{
         choice = availChoices[Math.floor(Math.random() * availChoices.length)];
-        answer = game.global.questions[game.global.questionsAnswered].answer;
+        answer = question.answer;
         //strip any whitespace so comparisons will work
         answer = answer.replace(/(^\s+|\s+$)/g,"");
         choice = choice.replace(/(^\s+|\s+$)/g,"");
@@ -453,7 +453,7 @@ var playState = {
       game.global.jinnySpeech.destroy();
       game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Next question...", true, false, null, false, null, true));
 
-      game.state.getCurrentState().showQuestion(game.global.questions[game.global.questionsAnswered]);
+      game.state.getCurrentState().showQuestion(game.global.questions.shift());
     } else if (game.global.rehashQuestions.length > 0 && !game.global.isRehash) {
       //if out of questions and any were answered wrong, and this isn't a rehash round, go to rehash round
       game.global.isRehash = true;

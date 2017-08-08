@@ -104,8 +104,9 @@ var endOfGameState = {
         game.global.jinnySpeech.destroy();
         game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), mindStates[i].mind, true, false, null, false, null, true));
         this.endGameUI.add(game.global.jinnySpeech);
-        game.state.getCurrentState().buttons = game.state.getCurrentState().optionButtons(mindStates[i].gameOver);
-        game.state.getCurrentState().statLines = game.state.getCurrentState().getStatLines(mindStates[i].gameOver);
+        var gameOver = (mindStates[i].gameOver || game.global.questions.length == 0);
+        game.state.getCurrentState().buttons = game.state.getCurrentState().optionButtons(gameOver);
+        game.state.getCurrentState().statLines = game.state.getCurrentState().getStatLines(gameOver);
         game.global.bonus = mindStates[i].bonus;
       }
       var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
