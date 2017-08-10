@@ -31,6 +31,7 @@
           <option value="default">No Chapters Found</option>
         </select>
         <button id='selectChapterBtn' value='Select'>Select</button>
+        <p> </p>
       </div>
     </div>
     <div id="output" class="container"></div>
