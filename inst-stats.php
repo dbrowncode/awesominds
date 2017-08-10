@@ -30,10 +30,10 @@
         <select id='chapterDropdown'>
           <option value="default">No Chapters Found</option>
         </select>
-        <button id='selectChapterBtn' value='Select'>Select</button><br>
+        <button id='selectChapterBtn' value='Select'>Select</button>
       </div>
     </div>
-    <div id="output" style="max-width: 90%; margin: 0 auto"></div>
+    <div id="output" class="container"></div>
   </div>
 
 <script>
