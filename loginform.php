@@ -5,6 +5,7 @@
   /* Main page with two forms: sign up and log in */
   include 'css/css.html';
 ?>
+<link rel="stylesheet" href="css/style.css">
 </head>
 
 <?php

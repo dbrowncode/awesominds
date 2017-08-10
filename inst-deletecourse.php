@@ -8,45 +8,43 @@
     }
     include 'css/css.html';
   ?>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 </head>
 <body>
-  <a href="index.php"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
+  <?php include 'inst-nav2.php' ?>
+  <div class="container text-center">
+    <div class="formWrap form">
+      <h2>Delete Courses/Chapters</h2><br>
+      <p>Select a course to view its chapters/games. You may then delete the selected course or any of its chapters/games.</p>
+      <div id='selectCourseDiv'>
+        Select a course:
+        <select id='courseDropdown'>
+          <option value="default">No Courses Found</option>
+        </select>
+        <button id='selectCourseBtn' value='Select'>Select</button>
+      </div>
 
-  <div class="formWrap form">
-    <?php include 'inst-nav.php' ?>
-    <div id='selectCourseDiv'>
-      Select a course:
-      <select id='courseDropdown'>
-        <option value="default">No Courses Found</option>
-      </select>
-      <button id='selectCourseBtn' value='Select'>Select</button>
+      <div id="noChapters"><br>No chapters available for this course<br><br><button class='deleteCourseBtn' value='Delete Course' data-toggle="modal" data-target="#confirmDelete">Delete Course</button></div>
+
+      <div id='selectChapterDiv'>
+        <br><button class='deleteCourseBtn' value='Delete Course' data-toggle="modal" data-target="#confirmDelete">Delete Course</button><br><br>
+        Select chapter:
+        <select id='chapterDropdown'>
+          <option value="default">No Chapters Found</option>
+        </select>
+        <button id='selectChapterBtn' value='Delete Chapter' data-toggle="modal" data-target="#confirmDelete">Delete Chapter</button>
+      </div>
     </div>
-
-    <div id="noChapters"><br>No chapters available for this course<br><br><button class='deleteCourseBtn' value='Delete Course' data-toggle="modal" data-target="#confirmDelete">Delete Course</button></div>
-
-    <div id='selectChapterDiv'>
-      <br><button class='deleteCourseBtn' value='Delete Course' data-toggle="modal" data-target="#confirmDelete">Delete Course</button><br><br>
-      Select chapter:
-      <select id='chapterDropdown'>
-        <option value="default">No Chapters Found</option>
-      </select>
-      <button id='selectChapterBtn' value='Delete Chapter' data-toggle="modal" data-target="#confirmDelete">Delete Chapter</button>
-    </div>
+    <div id="output" style="max-width: 90%; margin: 0 auto"></div>
   </div>
-  <div id="output" style="max-width: 90%; margin: 0 auto"></div>
 
-  <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title text-center" id="myModalLabel">Are you sure?</h4>
+          <h4 class="modal-title text-center" id="myModalLabel2">Are you sure?</h4>
         </div>
-        <div class="modal-body text-center" id='modalBody'>
+        <div class="modal-body text-center" id='modalBody2'>
           Are you sure you want to delete this course?
         </div>
         <div class="modal-footer">
@@ -110,12 +108,12 @@ $(function (){
   });
 
   $('.deleteCourseBtn').click(function(){
-    $('#modalBody').html('Are you sure you want to delete ' + $('#courseDropdown').find(":selected").html() + '?');
+    $('#modalBody2').html('Are you sure you want to delete ' + $('#courseDropdown').find(":selected").html() + '?');
     deletingCourse = true;
   });
 
   $("#selectChapterBtn").click(function(){
-    $('#modalBody').html('Are you sure you want to delete Chapter ' + $('#chapterDropdown').find(":selected").val() + ' from ' + $('#courseDropdown').find(":selected").html() + '?');
+    $('#modalBody2').html('Are you sure you want to delete Chapter ' + $('#chapterDropdown').find(":selected").val() + ' from ' + $('#courseDropdown').find(":selected").html() + '?');
     deletingCourse = false;
   });
 
