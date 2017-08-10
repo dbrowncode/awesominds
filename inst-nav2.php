@@ -6,18 +6,21 @@
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
 
-      <div class="nav-item dropdown">
-        <a class="d-block dropdown-toggle btn btn-outline-primary" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Instructor Options
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="inst-createcourse.php">Create Course</a>
-          <a class="dropdown-item" href="inst-addquestions.php">Add Chapter/Game</a>
-          <a class="dropdown-item" href="inst-givepermissions.php">Give Permissions</a>
-          <a class="dropdown-item" href="inst-stats.php">View Student Progress</a>
-          <a class="dropdown-item" href="inst-deletecourse.php">Delete Courses/Chapters</a>
-        </div>
-      </div>
+
+      <?php if ($_SESSION['isInstructor']){
+        echo '  <div class="nav-item dropdown">
+            <a class="d-block dropdown-toggle btn btn-outline-primary" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Instructor Options
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="inst-createcourse.php">Create Course</a>
+              <a class="dropdown-item" href="inst-addquestions.php">Add Chapter/Game</a>
+              <a class="dropdown-item" href="inst-givepermissions.php">Give Permissions</a>
+              <a class="dropdown-item" href="inst-stats.php">View Student Progress</a>
+              <a class="dropdown-item" href="inst-deletecourse.php">Delete Courses/Chapters</a>
+            </div>
+          </div>';
+      } ?>
 
       <a class="btn btn-outline-success" href="questiongame.php">Play</a>
       <a class="btn btn-outline-info" href="" name="story" data-toggle="modal" data-target="#storyModal">Story</a>
