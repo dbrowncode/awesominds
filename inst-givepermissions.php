@@ -8,23 +8,23 @@
     }
     include 'css/css.html';
   ?>
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
-  <a href="index.php"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
+  <?php include 'inst-nav2.php' ?>
+  <div class="container text-center">
+    <div class="formWrap form">
+      <h2>Give Permissions</h2><br>
+      <div class='permission tab-content' id="grant">
+        <form action="upload2.php" method="post" id='permissions'>
 
-  <div class="formWrap form">
-    <?php include 'inst-nav.php' ?>
-    <div class='permission tab-content' id="grant">
-      <form action="upload2.php" method="post" id='permissions'>
+            <p>Grant instructor permissions to another active account to let them access the Instructor Options.</p>
+            <p>Instructor C number: <input type="text" name="instructorC" id="instructorC" required ="true" placeholder="CXXXXXXX"></p>
 
-          <p>Grant instructor permissions to another account to let them access this area and add courses and questions.</p>
-          <p>Instructor C number:<input type="text" name="instructorC" id="instructorC" required ="true" placeholder="CXXXXXXX"></p>
-
-        <input type="submit" class='button button-block' value="Give Permissions" name'grantPermission'>
-      </form>
+          <input type="submit" class='button button-block' value="Give Permissions" name'grantPermission'>
+        </form>
+      </div>
+      <p id="output"></p>
     </div>
-    <p id="output"></p>
   </div>
 
 <!--jquery goes here-->

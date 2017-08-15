@@ -8,24 +8,24 @@
     }
     include 'css/css.html';
   ?>
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
-  <a href="index.php"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
+  <?php include 'inst-nav2.php' ?>
+  <div class="container text-center">
+    <div class="formWrap form">
+      <h2>Create a Course</h2><br>
+        <div class="createClass">
+          <form action="createCourse.php" method="post" id="createCourseForm">
+            <!-- could use js to restrict input type here -->
 
-  <div class="formWrap form">
-    <?php include 'inst-nav.php' ?>
-    <div class="createClass">
-      <form action="createCourse.php" method="post" id="createCourseForm">
-        <!-- could use js to restrict input type here -->
-        <table>
-          <p>Create a new course based on the alphanumeric course code and name.</p>
-          <tr><td><p>Course Code:<input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150" pattern="[A-Za-z]{3,4}[0-9]{3}" title="3-4 letters, 3 numbers, no spaces."></p></td>
-          <td><p>Course Name:<input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></p></td></tr>
-        </table>
-        <input type="submit" class='button button-block' value="Create Course" name"createC">
-      </form>
-      <p id="confirm"></p>
+              <p>Create a new course based on the alphanumeric course code and name.</p>
+              <p>Course Code: <input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150" pattern="[A-Za-z]{3,4}[0-9]{3}" title="3-4 letters, 3 numbers, no spaces."></p>
+              <p>Course Name: <input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></p>
+
+            <input type="submit" class='button button-block' value="Create Course" name"createC">
+          </form>
+        <p id="confirm"></p>
+      </div>
     </div>
   </div>
 

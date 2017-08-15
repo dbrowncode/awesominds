@@ -8,41 +8,44 @@
     }
     include 'css/css.html';
   ?>
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js" integrity="sha256-VNbX9NjQNRW+Bk02G/RO6WiTKuhncWI4Ey7LkSbE+5s=" crossorigin="anonymous"></script>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
 </head>
 <body>
-  <a href="index.php"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
-
-  <div class="formWrap form">
-    <?php include 'inst-nav.php' ?>
-    <div id='selectCourseDiv'>
-      Select a course:
-      <select id='courseDropdown'>
-        <option value="default">No Courses Found</option>
-      </select>
-      <button id='selectCourseBtn' value='Select'>Select</button>
+  <?php include 'inst-nav2.php' ?>
+  <div class="container text-center">
+    <div class="formWrap form">
+      <h2>View Student Progress</h2><br>
+      <p>Select a course to view its game statistics.<br> You may then select a chapter/game for specific stats.<br> Courses and chapters/games with no available statistics are not shown.</p>
+      <div id='selectCourseDiv'>
+        Select a course:
+        <select id='courseDropdown'>
+          <option value="default">No Courses Found</option>
+        </select>
+        <button id='selectCourseBtn' value='Select'>Select</button>
+      </div>
+      <div id='selectChapterDiv'>
+        <br>
+        Select chapter:
+        <select id='chapterDropdown'>
+          <option value="default">No Chapters Found</option>
+        </select>
+        <button id='selectChapterBtn' value='Select'>Select</button>
+        <p> </p>
+      </div>
     </div>
-    <div id='selectChapterDiv'>
-      <br>
-      Select chapter:
-      <select id='chapterDropdown'>
-        <option value="default">No Chapters Found</option>
-      </select>
-      <button id='selectChapterBtn' value='Select'>Select</button>
-    </div>
+    <div id="output" class="container"></div>
   </div>
-  <div id="output" style="max-width: 90%; margin: 0 auto"></div>
 
 <script>
 var getCourses = function(){
   $.ajax({
     url: 'getcourses-forstats.php',
     success: function(data){
+      console.log('got courses');
       $('#courseDropdown').empty();
       var courses = $.parseJSON(data);
+      console.log(data);
       for (var i = 0; i < courses.length; i++) {
         $('#courseDropdown').append('<option value="' + courses[i].courseid + '">' + courses[i].courseid + ' - ' + courses[i].name + '</option>');
       }

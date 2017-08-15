@@ -20,16 +20,14 @@
   ?>
   <title>Welcome <?= $first_name.' '.$last_name ?></title>
   <?php include 'css/css.html'; ?>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 </head>
 
 <body>
+  <?php include 'inst-nav2.php' ?>
+  <div class="container text-center">
   <div class="form">
 
-          <h1>Awesominds</h1>
+          <h2>Welcome to Awesominds</h2>
 
           <p>
           <?php
@@ -60,21 +58,16 @@
 
           ?>
 
-          <h2><?php echo '<img src="assets/opp/sm/opp' . $avatarnum . '.png"/>'; ?></h2>
-          <h2><?php echo $play_name; ?></h2><br>
+          <h4>You are logged in as</h4><br>
+          <?php echo '<img src="assets/opp2/oppon' . $avatarnum . '.png" width=120/>'; ?>
+          <h3><?php echo $play_name; ?></h3><br>
 
-          <?php
-            if($active){
-              if($isInstructor){
-                echo '<a href="inst-stats.php"><button class="button button-block" name="upload"/>Instructor Options</button></a><br>';
-              }
-              echo '<a href="questiongame.php"><button class="button button-block" name="play"/>Play</button></a><br>';
-            }
-          ?>
-          <button class="button button-block" name="story" data-toggle="modal" data-target="#storyModal">Story</button><br>
-          <a href="logout.php"><button class="button button-block" name="logout"/>Log Out</button></a>
+
+          <!-- <button class="button button-block" name="story" data-toggle="modal" data-target="#storyModal">Story</button><br> -->
+          <!-- <a href="logout.php"><button class="button button-block" name="logout"/>Log Out</button></a>  -->
 
     </div>
+  </div>
     <div class="modal fade" id="storyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -101,6 +94,5 @@
         </div>
       </div>
     </div>
-<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <script src="js/index.js"></script>
 </body>

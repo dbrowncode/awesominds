@@ -8,15 +8,14 @@
     }
     include 'css/css.html';
   ?>
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
-  <a href="index.php"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
-
+  <?php include 'inst-nav2.php' ?>
+  <div class="container text-center">
   <div class="formWrap form">
-    <?php include 'inst-nav.php' ?>
+    <h2>Add Chapter/Game</h2><br>
     <div id='selectCourseDiv' class='tab-content field-wrap'>
-      <p>Select a course to add questions to</p>
+      <p>Select a course to add a new chapter/game of questions to</p>
       <select id='courseDropdown'>
         <option value="default">No Courses Found</option>
       </select>
@@ -25,14 +24,15 @@
     <div id='uploadDiv' class='tab-content field-wrap'>
       <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
 
-          <p>Select a .doc or .txt file of questions to upload</p>
-          <input type="file" name="fileToUpload" id="fileToUpload"><br>
+          <p>Select a .doc or .txt file of questions to upload. Chapter number must be included in the file.</p>
+          <input type="file" name="fileToUpload" id="fileToUpload">
           <input class='button button-block' type="submit" value="Upload file" name="submit">
 
       </form>
       <p id="output"></p>
     </div>
   </div>
+</div>
 
 <!--jquery goes here-->
 <script>
