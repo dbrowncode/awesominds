@@ -1,8 +1,16 @@
+
+
 var preloadState = {
   preload: function() {
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	  console.log('state: preload');
     game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+
+    //function to check if a click occurs inside a SpeechBubble
+    //necessary for any input while the game is paused
+    game.global.inputInside = function(item){
+      return (game.input.x > item.x && game.input.x < item.x + item.bubblewidth + game.global.borderFrameSize && game.input.y > item.y && game.input.y < item.y + item.bubbleheight + game.global.borderFrameSize);
+    };
 
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = false;
@@ -157,6 +165,7 @@ var preloadState = {
       this.bubblewidth = width;
 
       if(asButton){
+        this.isButton = true;
         //enable input if this is a button
         this.inputEnabled = true;
         this.input.useHandCursor = true;
@@ -173,15 +182,29 @@ var preloadState = {
           }
         };
 
-        this.click = function(){
-          for (var b in this.borders) {
-            this.borders[b].tint = 0xffffaa;
+        this.click = function(thing, pointer, isOver){
+          if(isOver){
+            for (var b in this.borders) {
+              this.borders[b].tint = 0xffffaa;
+            }
+            clickFunction.call(this);
           }
-          clickFunction.call(this);
+          else{
+            for (var i = 0; i < this.parent.children.length; i++) {
+              var item = this.parent.children[i];
+              if((typeof item == 'object') && (item.hasOwnProperty('isButton')) && (pointer.x > item.x && pointer.x < item.x + item.bubblewidth + game.global.borderFrameSize && pointer.y > item.y && pointer.y < item.y + item.bubbleheight + game.global.borderFrameSize)){
+                for (var b in item.borders) {
+                  item.borders[b].tint = 0xffffaa;
+                }
+                clickFunction.call(item);
+              }
+            }
+          }
         }
 
         this.events.onInputOver.add(this.over, this);
         this.events.onInputOut.add(this.out, this);
+        this.events.onInputDown.add(this.over, this);
         this.events.onInputUp.add(this.click, this);
       }
     };
@@ -300,12 +323,6 @@ var preloadState = {
       game.global.pauseUI.add(logOutBtn);
       game.input.onDown.add(game.global.logOut, logOutBtn);
 
-    };
-
-    //function to check if a click occurs inside a SpeechBubble
-    //necessary for any input while the game is paused
-    game.global.inputInside = function(item){
-      return (game.input.x > item.x && game.input.x < item.x + item.bubblewidth + game.global.borderFrameSize && game.input.y > item.y && game.input.y < item.y + item.bubbleheight + game.global.borderFrameSize);
     };
 
     game.global.unpause = function(){
