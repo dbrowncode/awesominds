@@ -122,14 +122,14 @@ var playState = {
   },
 
 
-/*
- * Clear any question that is already up
- * checks if player is on a streak and adjusts ai, maxes out at 80% mins at 25%
- * sets timer to 2 second delay before showing options
- * creates new question
- * scores AI for new question
- */
- showQuestion: function(question){
+  /*
+  * Clear any question that is already up
+  * checks if player is on a streak and adjusts ai, maxes out at 80% mins at 25%
+  * sets timer to 2 second delay before showing options
+  * creates new question
+  * scores AI for new question
+  */
+  showQuestion: function(question){
    console.log(question.answer + ' - questions left: ' + game.global.questions.length );
     if (game.global.questionShown){
       game.state.getCurrentState().removeQuestion();

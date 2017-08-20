@@ -39,19 +39,25 @@ var preloadState = {
     game.load.audio('correct',['assets/music/CorrectAns.m4a','assets/music/CorrectAns.ogg']);
     game.load.audio('applause',['assets/music/playerWins.m4a','assets/music/PlayerWins.ogg']);
 
-    game.load.spritesheet('jin', 'assets/jin.png', 264, 364);
-    game.load.image('annabelle', 'assets/annabelle.png');
+    if(dpr >= 2){
+      game.load.spritesheet('jin', 'assets/jin.png', 264, 364);
+      game.load.image('annabelle', 'assets/annabelle.png');
+    } else {
+      game.load.spritesheet('jin', 'assets/jinSmall.png', 66, 91);
+      game.load.image('annabelle', 'assets/annabelleSmall.png');
+    }
     game.load.start();
 
     game.global.wrongsounds = [];
     game.global.rightsounds = [];
 
-    var numOppImages = 16;
+    var numOppImages = 18;
     game.global.oppImageKeys = [];
     //this sets the name for all the characters, in order of the image numbers (plus 'zero' just for index fixing)
-    var charNames = ['Zero', 'Jamar', 'Bruno', 'Edward', 'Sofia', 'Dahra', 'Manu', 'Jira', 'Chandi', 'Dimbo', 'Lamar', 'Seadog', 'Kit', 'Pablo', 'Fernanda', 'Mickey', 'Rose'];
+    var charNames = ['Zero', 'Jamar', 'Bruno', 'Edward', 'Sofia', 'Dahra', 'Manu', 'Jira', 'Chandi', 'Dimbo', 'Lamar', 'Seadog', 'Kit', 'Pablo', 'Fernanda', 'Mickey', 'Rose', 'Harpo', 'Geraldine'];
+    var oppPath = (dpr >= 2) ? 'assets/opp2/oppon' : 'assets/oppSmall/oppon';
     for (var i = 1; i <= numOppImages; i++) {
-      game.load.image('opp' + i, 'assets/opp2/oppon' +  i + '.png');
+      game.load.image('opp' + i, oppPath + i + '.png');
       if(i != game.global.session['avatarnum']){
         var opp = {
           imageKey: 'opp' + i,

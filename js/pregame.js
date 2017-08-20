@@ -2,6 +2,7 @@ var preGameState = {
   instructLines : [
     "Hi! I'm your host, Jin. Welcome to Awesominds, ",
     "Earn points by correctly answering each question.",
+    "Click/tap a question to reveal its options.",
     "Answer before your competitors to earn full point value.",
     "Meet your competition!"
   ],
@@ -16,7 +17,7 @@ var preGameState = {
     // game.global.jinny = game.add.sprite(0,0, 'jin', 0);
     game.global.bonus = 0;
     game.state.getCurrentState().makeHost();
-    game.global.jinny.scale.setTo(dpr/4, dpr/4);
+    if (dpr >=2) game.global.jinny.scale.setTo(dpr/4, dpr/4);
     this.pregameUI = game.add.group();
 
     var instructLines = game.state.getCurrentState().instructLines.slice();
@@ -46,7 +47,7 @@ var preGameState = {
 
     //Dirty fix for opponents being on screen for smaller devices
     game.global.imagecheck = game.add.sprite((game.width + game.width) ,(game.height + game.height), game.global.oppImageKeys[1].imageKey);
-    game.global.imagecheck.scale.setTo(dpr/4,dpr/4);
+    if(dpr>=2) game.global.imagecheck.scale.setTo(dpr/4,dpr/4);
     var image = game.global.imagecheck;
 
     prevHeights += bubbles[bubbles.length - 1].bubbleheight + (10*dpr);
@@ -54,7 +55,7 @@ var preGameState = {
     for(var i = 0; i < 3; i++){
       game.global.chars[i] = {};
       game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, prevHeights, (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i].imageKey);
-      game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
+      if(dpr>=2) game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
       game.global.chars[i].score = 0;
       game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', '0', 11 * dpr);
       game.global.chars[i].scoreText.tint = 0x000000;
