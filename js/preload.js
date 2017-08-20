@@ -101,7 +101,7 @@ var preloadState = {
 
       // Set up our text and run our custom wrapping routine on it
       var prefix = isAnswerText ? choice + '. ' : '';
-      this.bitmapText = game.add.text(x + game.global.borderFrameSize + 5, y + 5, prefix + text, isJin ? game.global.jinFont : game.global.mainFont);
+      this.bitmapText = game.add.text(x + game.global.borderFrameSize, y + (game.global.borderFrameSize/3) + 5, prefix + text, isJin ? game.global.jinFont : game.global.mainFont);
       // set width for wrapping and let phaser figure out where it should wrap the lines
       this.bitmapText.wordWrapWidth = width;
       var prewrapped = this.bitmapText.precalculateWordWrap(prefix + text);
@@ -128,30 +128,27 @@ var preloadState = {
       }else{
         width = Math.floor(bounds.width + game.global.mainFont.fontSize);
       }
-      height = Math.floor(Math.max(height, bounds.height));
+      height = Math.floor(Math.max(height, bounds.height) + 10);
+
+      var bubbleGfx = game.add.graphics(0, 0);
+      bubbleGfx.lineStyle(2 * dpr, 0x000000, 1);
+      bubbleGfx.beginFill(0xffffff, 1);
+      bubbleGfx.drawRoundedRect(x, y, width, height, 8*dpr);
 
       // Create all of our corners and edges
       this.borders = [
-        game.make.tileSprite(x + game.global.borderFrameSize, y + game.global.borderFrameSize, width - game.global.borderFrameSize, height - game.global.borderFrameSize, 'bubble-border', 4),
-        game.make.image(x, y, 'bubble-border', 0),
-        game.make.image(x + width, y, 'bubble-border', 2),
-        game.make.image(x + width, y + height, 'bubble-border', 8),
-        game.make.image(x, y + height, 'bubble-border', 6),
-        game.make.tileSprite(x + game.global.borderFrameSize, y, width - game.global.borderFrameSize, game.global.borderFrameSize, 'bubble-border', 1),
-        game.make.tileSprite(x + game.global.borderFrameSize, y + height, width - game.global.borderFrameSize, game.global.borderFrameSize, 'bubble-border', 7),
-        game.make.tileSprite(x, y + game.global.borderFrameSize, game.global.borderFrameSize, height - game.global.borderFrameSize, 'bubble-border', 3),
-        game.make.tileSprite(x + width, y + game.global.borderFrameSize, game.global.borderFrameSize, height - game.global.borderFrameSize, 'bubble-border', 5)
+        bubbleGfx //replaced the images; TODO actually remove them
       ];
 
       // Add all of the above to this sprite
-      for (var b = 0, len = this.borders.length; b < len; b++) {
+      for (var b in this.borders) {
         this.addChild(this.borders[b]);
       }
 
       if(withTail){
         // Add the tail
-        var tail = game.cache.getImage("bubble-tail");
-        this.tail = this.addChild(game.make.image(Math.floor(this.x - tail.width*.7), Math.floor(y + tail.height/3), 'bubble-tail'));
+        var tail = game.cache.getImage("bubble-tail"); //TODO graphics-draw this too if doable and remove the image
+        this.tail = this.addChild(game.make.image(Math.floor(this.x - tail.width*.95), Math.floor(y + tail.height/3), 'bubble-tail'));
         // this.tail.angle = 90;
       }
 
