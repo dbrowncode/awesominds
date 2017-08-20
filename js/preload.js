@@ -266,7 +266,7 @@ var preloadState = {
       game.global.pauseUI.add(game.global.volText);
 
       var t = game.sound.mute ? 'Unmute' : 'Mute';
-      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y *1.5), game.world.width * .8, t, false, false));
+      game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y + game.global.volText.bubbleheight + 5), game.world.width * .8, t, false, false));
       game.global.muteText.x -= Math.floor(game.global.muteText.bubblewidth/2);
       game.global.pauseUI.add(game.global.muteText);
     };
@@ -288,44 +288,40 @@ var preloadState = {
       pauseBG.drawRoundedRect(game.world.x + 10, game.global.logoText.bottom, game.world.width - 20, game.world.height - game.global.logoText.height - 10, 10);
       game.global.pauseUI.add(pauseBG);
 
-      game.global.pausedText = game.add.text(game.world.centerX, game.global.logoText.bottom, 'Paused', game.global.whiteFont);
+      game.global.pausedText = game.add.text(game.world.centerX, Math.floor(game.global.logoText.bottom), 'Paused', game.global.whiteFont);
       game.global.pausedText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
       game.global.pausedText.padding.x = 5;
-      game.global.pausedText.x -= game.global.pausedText.width/2;
+      game.global.pausedText.x = Math.floor(game.global.pausedText.x - (game.global.pausedText.width/2));
       game.global.pauseUI.add(game.global.pausedText);
 
       game.global.makeVolText();
       game.input.onDown.add(game.global.muteSound, game.global.muteText);
+      var prevHeights = game.global.volText.y;
 
-      var volBtnUp = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x + game.global.volText.bubblewidth + 10, game.global.volText.y, game.world.width * .8, '+', false, true, game.global.volumeUp));
+      var volBtnUp = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x + game.global.volText.bubblewidth + 10, prevHeights, game.world.width * .8, '+', false, true, game.global.volumeUp));
       game.global.pauseUI.add(volBtnUp);
       game.input.onDown.add(game.global.volumeUp, volBtnUp);
 
-      var volBtnDown = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x, game.global.volText.y, game.world.width * .8, '-', false, true, game.global.volumeDown));
+      var volBtnDown = game.world.add(new game.global.SpeechBubble(game, game.global.volText.x, prevHeights, game.world.width * .8, '-', false, true, game.global.volumeDown));
       volBtnDown.x -= volBtnDown.bubblewidth + 10;
       game.global.pauseUI.add(volBtnDown);
       game.input.onDown.add(game.global.volumeDown, volBtnDown);
+      prevHeights = game.global.muteText.y + ((game.global.muteText.bubbleheight + 5) *2);
 
-      var resumeBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 2.5, game.world.width * .8, 'Resume Game', false, true, game.global.unpause));
-      resumeBtn.x -= Math.floor(resumeBtn.bubblewidth/2);
-      game.global.pauseUI.add(resumeBtn);
-      game.input.onDown.add(game.global.unpause, resumeBtn);
+      var btns = [
+        {text: 'Resume Game', clickFunction: game.global.unpause},
+        {text: 'Home', clickFunction: game.global.homeBtnClick},
+        {text: 'Quit to Course Select', clickFunction: game.global.quitToCourseSelect},
+        {text: 'Log Out', clickFunction: game.global.logOut}
+      ];
 
-      var homeBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 3, game.world.width * .8, 'Home', false, true, game.global.homeBtnClick));
-      homeBtn.x -= Math.floor(homeBtn.bubblewidth/2);
-      game.global.pauseUI.add(homeBtn);
-      game.input.onDown.add(game.global.homeBtnClick, homeBtn);
-
-      var courseSelectBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y * 3.5), game.world.width * .8, 'Quit to Course Select', false, true, game.global.quitToCourseSelect));
-      courseSelectBtn.x -= Math.floor(courseSelectBtn.bubblewidth/2);
-      game.global.pauseUI.add(courseSelectBtn);
-      game.input.onDown.add(game.global.quitToCourseSelect, courseSelectBtn);
-
-      var logOutBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.global.volText.y * 4, game.world.width * .8, 'Log Out', false, true, game.global.logOut));
-      logOutBtn.x -= Math.floor(logOutBtn.bubblewidth/2);
-      game.global.pauseUI.add(logOutBtn);
-      game.input.onDown.add(game.global.logOut, logOutBtn);
-
+      for (var b in btns) {
+        var btn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, prevHeights, game.world.width * .8, btns[b].text, false, true, btns[b].clickFunction));
+        btn.x -= Math.floor(btn.bubblewidth/2);
+        game.global.pauseUI.add(btn);
+        game.input.onDown.add(btns[b].clickFunction, btn);
+        prevHeights += btn.bubbleheight + 5;
+      };
     };
 
     game.global.unpause = function(){
@@ -378,12 +374,14 @@ var preloadState = {
       sureGfx.drawRoundedRect(game.world.x + 10, game.global.logoText.y + game.global.logoText.height*2, game.world.width - 20, game.world.height - (game.global.logoText.y + game.global.logoText.height*2) - 10, 10);
       sureUI.add(sureGfx);
 
-      var txt = game.add.bitmapText(game.world.centerX, game.global.logoText.y + game.global.logoText.height*2, '8bitoperator', btn.bitmapText.text, 22 * dpr);
-      txt.x -= txt.width/2;
+      var txt = game.add.text(game.world.centerX, Math.floor(game.global.logoText.y + game.global.logoText.height*2), btn.bitmapText.text, game.global.whiteFont);
+      txt.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+      txt.padding.x = 5;
+      txt.x = Math.floor(txt.x - (txt.width/2));
       sureUI.add(txt);
 
-      var txt2 = game.add.bitmapText(game.world.centerX, txt.y + txt.height, '8bitoperator', 'Are you sure?', 11 * dpr);
-      txt2.x -= txt2.width/2;
+      var txt2 = game.add.bitmapText(game.world.centerX, Math.floor(txt.y + txt.height), '8bitoperator', 'Are you sure?', 11 * dpr);
+      txt2.x = Math.floor(txt2.x - (txt2.width/2));
       sureUI.add(txt2);
 
       var btnResult = function(btn){
@@ -401,13 +399,13 @@ var preloadState = {
       var yesBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, txt2.y + txt2.height + game.global.borderFrameSize, game.world.width * .8, 'Yes', false, true, btnResult));
       yesBtn.data.value = true;
       yesBtn.data.btn = btn;
-      yesBtn.x -= yesBtn.bubblewidth;
+      yesBtn.x -= yesBtn.bubblewidth * 1.5;
       sureUI.add(yesBtn);
       game.input.onDown.add(btnResult, yesBtn);
 
       var noBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, yesBtn.y, game.world.width * .8, 'No', false, true, btnResult));
       noBtn.data.value = false;
-      noBtn.x += noBtn.bubblewidth;
+      noBtn.x += noBtn.bubblewidth/2;
       sureUI.add(noBtn);
       game.input.onDown.add(btnResult, noBtn);
     };
