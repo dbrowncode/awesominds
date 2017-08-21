@@ -7,7 +7,21 @@ var playState = {
    */
   create: function(){
     console.log('state: play');
-    game.global.questions = game.global.isRehash ? game.global.rehashQuestions : game.global.shuffleArray(game.global.origQuestions);
+    if(game.global.isRehash){
+      game.global.questions = game.global.rehashQuestions;
+    } else {
+      if(game.global.roundNum == 1){
+        //new game, first round
+        console.log('new game');
+        game.global.questionsBackup = game.global.origQuestions.slice();
+        game.global.questions = game.global.shuffleArray(game.global.origQuestions);
+      } else {
+        //returning on round 2 or higher
+        if(game.global.questions.length <= 0){
+          game.global.questions = game.global.shuffleArray(game.global.questionsBackup.slice());
+        }
+      }
+    }
     console.log('rehash: ' + game.global.isRehash);
     this.ticks = game.add.group();
     game.global.numQuestions = Math.min( (devmode ? devvars.numQ : 15), game.global.questions.length);
@@ -15,11 +29,6 @@ var playState = {
     game.global.questionShown = false;
     game.global.answeredBeforeAI = false;
     if(!game.global.isRehash){
-      console.log(game.global.roundNum + ' type: ' + (typeof game.global.roundNum));
-      if(typeof game.global.roundNum == 'undefined'){
-        game.global.roundNum = 1;
-        console.log(game.global.roundNum + ' type: ' + (typeof game.global.roundNum));
-      }
       game.global.numOrigQuestions = game.global.numQuestions;
       game.global.totalStats = {
         numRight: 0,

@@ -7,35 +7,6 @@ endOfGameStateWWG.hostMindStates = [
   { min: 0, max: 49, mind: "You have died on the frontier!", label: "Die", gameOver: true, bonus: 0}
 ];
 
-endOfGameStateWWG.optionButtons = function(gameOver){
-  var buttonsTemplate = [
-    { text: 'Select Different Course', function: game.state.getCurrentState().chooseCourseClick },
-    { text: 'Select Different Game', function: game.state.getCurrentState().chooseChapterClick },
-    { text: 'Log Out', function: game.state.getCurrentState().logOutClick }
-  ];
-  var buttons = [];
-
-  if(!gameOver){
-    buttons.push({ text: 'Play Round ' + (game.global.roundNum + 1), function: game.state.getCurrentState().playAgainClick });
-  }
-
-  for (var i = 0; i < buttonsTemplate.length; i++) {
-    buttons.push(buttonsTemplate[i]);
-  }
-
-  return buttons;
+endOfGameStateWWG.isGameOver = function(mindStateGameOver){
+  return mindStateGameOver; //only condition for gameover is if the mindstate says so in this mode
 };
-
-endOfGameStateWWG.getStatLines = function(gameOver){
-  var statLines = [
-    game.global.session.play_name,
-    "Round " + game.global.roundNum + " Stats:",
-    "Score This Round: " + game.global.totalStats.score,
-    "Your Highest Score: " + game.global.scoreData["high_score"],
-    "Total Points Earned: " + game.global.scoreData["total_score"]
-  ];
-  if(!gameOver){
-    statLines.push("Round " + (game.global.roundNum + 1) + " Loaded and Ready");
-  }
-  return statLines;
-}

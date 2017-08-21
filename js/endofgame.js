@@ -7,12 +7,21 @@ var endOfGameState = {
   ],
 
   optionButtons: function(gameOver){
-    var buttons = [
-      { text: 'Play Round ' + (game.global.roundNum + 1), function: game.state.getCurrentState().playAgainClick },
+    var buttonsTemplate = [
       { text: 'Select Different Course', function: game.state.getCurrentState().chooseCourseClick },
       { text: 'Select Different Game', function: game.state.getCurrentState().chooseChapterClick },
       { text: 'Log Out', function: game.state.getCurrentState().logOutClick }
     ];
+    var buttons = [];
+
+    if(!gameOver){
+      buttons.push({ text: 'Play Round ' + (game.global.roundNum + 1), function: game.state.getCurrentState().playAgainClick });
+    }
+
+    for (var i = 0; i < buttonsTemplate.length; i++) {
+      buttons.push(buttonsTemplate[i]);
+    }
+
     return buttons;
   },
 
@@ -23,8 +32,10 @@ var endOfGameState = {
       "Score This Round: " + game.global.totalStats.score,
       "Your Highest Score: " + game.global.scoreData["high_score"],
       "Total Points Earned: " + game.global.scoreData["total_score"],
-      "Round " + (game.global.roundNum + 1) + " Loaded and Ready"
     ];
+    if(!gameOver){
+      statLines.push("Round " + (game.global.roundNum + 1) + " Loaded and Ready");
+    }
     return statLines;
   },
 
@@ -86,6 +97,10 @@ var endOfGameState = {
     });
   },
 
+  isGameOver: function(mindStateGameOver){
+    return false; //in original countdown mode, no reason for game over.
+  },
+
   makeStatUI: function(){
     var mindStates = game.state.getCurrentState().hostMindStates.slice();
     var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numOrigQuestions * 25)) * 100));
@@ -104,7 +119,7 @@ var endOfGameState = {
         game.global.jinnySpeech.destroy();
         game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), mindStates[i].mind, true, false, null, false, null, true));
         this.endGameUI.add(game.global.jinnySpeech);
-        var gameOver = (mindStates[i].gameOver || game.global.questions.length == 0);
+        var gameOver = game.state.getCurrentState().isGameOver(mindStates[i].gameOver);
         game.state.getCurrentState().buttons = game.state.getCurrentState().optionButtons(gameOver);
         game.state.getCurrentState().statLines = game.state.getCurrentState().getStatLines(gameOver);
         game.global.bonus = mindStates[i].bonus;
