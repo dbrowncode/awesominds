@@ -2,8 +2,8 @@ var menuModeState = {
   create: function(){
     console.log('state: menuMode');
 
-    var text = game.add.text(game.world.centerX + 1000, game.global.logoText.bottom, 'Select a Game Mode', game.global.whiteFont);
-    game.add.tween(text).to({x: game.world.centerX - (text.width/2)}, 100, Phaser.Easing.Default, true, 0);
+    var text = game.add.text(game.world.centerX + 1000, Math.floor(game.global.logoText.bottom), 'Select a Game Mode', game.global.whiteFont);
+    game.add.tween(text).to({x: Math.floor(game.world.centerX - (text.width/2))}, 100, Phaser.Easing.Default, true, 0);
     text.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
     text.padding.x = 5;
 
@@ -20,11 +20,11 @@ var menuModeState = {
       { name: 'Countdown', prestate: 'pregame', gamestate: 'play', id: 0, endstate: 'endOfGame'},
       { name: 'Wild Wild Guess', prestate: 'pregameSU', gamestate: 'playSU', id: 1, endstate: 'endOfGameWWG'},
     ];
-    var prevHeights = 0;
+    var prevHeights = 10 * dpr;
     for (var i = 0; i < modes.length; i++) {
       var b = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, text.bottom, game.world.width * .8, modes[i].name, false, true, this.btnClick));
       b.y += prevHeights;
-      prevHeights += b.bubbleheight;
+      prevHeights += b.bubbleheight + 10 * dpr;
       b.data = modes[i];
 
       //animate button coming in

@@ -8,7 +8,7 @@ var menuCourseState = {
     game.global.logoText = game.add.text(game.world.centerX, 0, 'Awesominds', game.global.whiteFont);
     game.global.logoText.fontWeight = 'bold';
     game.global.logoText.fontSize = 26 * dpr;
-    game.global.logoText.centerX = game.world.centerX;
+    game.global.logoText.x = Math.floor(game.global.logoText.x - game.global.logoText.width/2);
     game.global.logoText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
     game.global.logoText.padding.x = 5;
     game.stage.addChild(game.global.logoText);
@@ -19,8 +19,8 @@ var menuCourseState = {
     game.global.music.play();
     console.log('state: menuCourse');
 
-    var text = game.add.text(game.world.centerX + 1000, game.global.logoText.bottom, 'Select a Course', game.global.whiteFont);
-    game.add.tween(text).to({x: game.world.centerX - (text.width/2)}, 100, Phaser.Easing.Default, true, 0);
+    var text = game.add.text(game.world.centerX + 1000, Math.floor(game.global.logoText.bottom), 'Select a Course', game.global.whiteFont);
+    game.add.tween(text).to({x: Math.floor(game.world.centerX - (text.width/2))}, 100, Phaser.Easing.Default, true, 0);
     text.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
     text.padding.x = 5;
 

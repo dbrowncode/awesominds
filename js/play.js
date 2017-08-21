@@ -308,7 +308,7 @@ var playState = {
       game.global.symbol.height = game.global.symbol.width = game.global.borderFrameSize * 3;
       game.global.symbol.anchor.setTo(0.5,0.5);
       game.global.questionUI.add(game.global.symbol);
-      game.add.tween(game.global.symbol).to({x: this.x, y: this.y + game.global.symbol.height/2}, 300, Phaser.Easing.Default, true, 0);
+      game.add.tween(game.global.symbol).to({x: Math.floor(this.x - game.global.symbol.width/3), y: Math.floor(this.y + this.bubbleheight/2)}, 300, Phaser.Easing.Default, true, 0);
       var sounds = this.data.correct ? game.global.rightsounds : game.global.wrongsounds;
       //play sound
       sounds[0].play();
@@ -323,7 +323,7 @@ var playState = {
             arrow.height = arrow.width = game.global.borderFrameSize * 3;
             arrow.anchor.setTo(0.5,0.5);
             game.global.questionUI.add(arrow);
-            game.add.tween(arrow).to({x: item.x, y: item.y + arrow.height/2}, 300, Phaser.Easing.Default, true, 0);
+            game.add.tween(arrow).to({x: Math.floor(item.x - arrow.width/3), y: Math.floor(item.y + item.bubbleheight/2)}, 300, Phaser.Easing.Default, true, 0);
           }
         });
       }

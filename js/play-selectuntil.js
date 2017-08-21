@@ -33,7 +33,7 @@ playStateSU.btnClick = function(){
     game.global.symbol.height = game.global.symbol.width = game.global.borderFrameSize * 3;
     game.global.symbol.anchor.setTo(0.5,0.5);
     game.global.questionUI.add(game.global.symbol);
-    game.add.tween(game.global.symbol).to({x: this.x, y: this.y + game.global.symbol.height/2}, 300, Phaser.Easing.Default, true, 0);
+    game.add.tween(game.global.symbol).to({x: Math.floor(this.x - game.global.symbol.width/3), y: Math.floor(this.y + this.bubbleheight/2)}, 300, Phaser.Easing.Default, true, 0);
     var sounds = this.data.correct ? game.global.rightsounds : game.global.wrongsounds;
     //play sound
     sounds[0].play();

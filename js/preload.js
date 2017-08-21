@@ -2,6 +2,8 @@
 
 var preloadState = {
   preload: function() {
+    //prevents game breaking when zoomed below 100%
+    if(dpr<=0){ dpr = 1};
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	  console.log('state: preload');
     game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
@@ -17,18 +19,20 @@ var preloadState = {
     game.scale.windowConstraints.bottom = "visual";
     game.stage.disableVisibilityChange = true;
 
+    var assetPath = (dpr >= 2) ? 'assets/' : 'assets/small/';
+
     game.load.image('right', 'assets/right.png');
     game.load.image('wrong', 'assets/wrong.png');
-    game.load.image('check', 'assets/check2.png');
-    game.load.image('arrow', 'assets/arrow.png');
-    game.load.image('x', 'assets/x.png');
-    game.load.image('logo', 'assets/logo2.png');
+    game.load.image('check', assetPath + 'check2.png');
+    game.load.image('arrow', assetPath + 'arrow.png');
+    game.load.image('x', assetPath + 'x.png');
+    game.load.image('logo', assetPath + 'logo2.png');
     game.load.image('pts10', 'assets/pts10.png');
     game.load.image('pts25', 'assets/pts25.png');
     game.load.image('5pts', 'assets/5pts.png');
     game.load.image('15pts', 'assets/15pts.png');
     game.load.image('25pts', 'assets/25pts.png');
-    game.load.image('medal', 'assets/medal.png');
+    game.load.image('medal', assetPath + 'medal.png');
 
     game.load.audio('play',['assets/music/Mushroom.m4a','assets/music/Mushroom.ogg']);
     game.load.audio('menu',['assets/music/Crystal.m4a','assets/music/Crystal.ogg']);
@@ -39,13 +43,10 @@ var preloadState = {
     game.load.audio('correct',['assets/music/CorrectAns.m4a','assets/music/CorrectAns.ogg']);
     game.load.audio('applause',['assets/music/playerWins.m4a','assets/music/PlayerWins.ogg']);
 
-    if(dpr >= 2){
-      game.load.spritesheet('jin', 'assets/jin.png', 264, 364);
-      game.load.image('annabelle', 'assets/annabelle.png');
-    } else {
-      game.load.spritesheet('jin', 'assets/jinSmall.png', 66, 91);
-      game.load.image('annabelle', 'assets/annabelleSmall.png');
-    }
+    var jinSheetDim = (dpr >= 2) ? [264, 364] : [66, 91];
+    game.load.spritesheet('jin', assetPath + 'jin.png', jinSheetDim[0], jinSheetDim[1]);
+    game.load.image('annabelle', assetPath + 'annabelle.png');
+
     game.load.start();
 
     game.global.wrongsounds = [];
@@ -55,9 +56,8 @@ var preloadState = {
     game.global.oppImageKeys = [];
     //this sets the name for all the characters, in order of the image numbers (plus 'zero' just for index fixing)
     var charNames = ['Zero', 'Jamar', 'Bruno', 'Edward', 'Sofia', 'Dahra', 'Manu', 'Jira', 'Chandi', 'Dimbo', 'Lamar', 'Seadog', 'Kit', 'Pablo', 'Fernanda', 'Mickey', 'Rose', 'Harpo', 'Geraldine'];
-    var oppPath = (dpr >= 2) ? 'assets/opp2/oppon' : 'assets/oppSmall/oppon';
     for (var i = 1; i <= numOppImages; i++) {
-      game.load.image('opp' + i, oppPath + i + '.png');
+      game.load.image('opp' + i, assetPath + 'opp2/oppon' + i + '.png');
       if(i != game.global.session['avatarnum']){
         var opp = {
           imageKey: 'opp' + i,
@@ -66,8 +66,6 @@ var preloadState = {
         game.global.oppImageKeys.push(opp);
       }
     }
-    //prevents game breaking when zoomed below 100%
-    if(dpr<=0){ dpr = 1};
 
     game.global.borderFrameSize = 9 * dpr;
     game.load.spritesheet('bubble-border','assets/bubbleborder' + dpr + '.png', game.global.borderFrameSize, game.global.borderFrameSize);
@@ -107,7 +105,7 @@ var preloadState = {
 
       // Set up our text and run our custom wrapping routine on it
       var prefix = isAnswerText ? choice + '. ' : '';
-      this.bitmapText = game.add.text(x + game.global.borderFrameSize, y + (game.global.borderFrameSize/3) + 5, prefix + text, isJin ? game.global.jinFont : game.global.mainFont);
+      this.bitmapText = game.add.text(Math.floor(x + game.global.borderFrameSize + 5), Math.floor(y + (game.global.borderFrameSize/3) + 5), prefix + text, isJin ? game.global.jinFont : game.global.mainFont);
       // set width for wrapping and let phaser figure out where it should wrap the lines
       this.bitmapText.wordWrapWidth = width;
       var prewrapped = this.bitmapText.precalculateWordWrap(prefix + text);
@@ -130,9 +128,9 @@ var preloadState = {
       var bounds = this.bitmapText.getBounds();
       // use set width for answer choices, and variable width based on the text size for everything else
       if(isAnswerText){
-        bounds.width = Math.floor(width + game.global.mainFont.fontSize);
+        bounds.width = Math.floor(width + game.global.mainFont.fontSize + 10);
       }else{
-        width = Math.floor(bounds.width + game.global.mainFont.fontSize);
+        width = Math.floor(bounds.width + game.global.mainFont.fontSize + 10);
       }
       height = Math.floor(Math.max(height, bounds.height) + 10);
 
@@ -396,25 +394,25 @@ var preloadState = {
         }
       };
 
-      var yesBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, txt2.y + txt2.height + game.global.borderFrameSize, game.world.width * .8, 'Yes', false, true, btnResult));
+      var yesBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(txt2.y + txt2.height + game.global.borderFrameSize), game.world.width * .8, 'Yes', false, true, btnResult));
       yesBtn.data.value = true;
       yesBtn.data.btn = btn;
-      yesBtn.x -= yesBtn.bubblewidth * 1.5;
+      yesBtn.x = Math.floor(yesBtn.x - yesBtn.bubblewidth * 1.5);
       sureUI.add(yesBtn);
       game.input.onDown.add(btnResult, yesBtn);
 
       var noBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, yesBtn.y, game.world.width * .8, 'No', false, true, btnResult));
       noBtn.data.value = false;
-      noBtn.x += noBtn.bubblewidth/2;
+      noBtn.x = Math.floor(noBtn.x + noBtn.bubblewidth/2);
       sureUI.add(noBtn);
       game.input.onDown.add(btnResult, noBtn);
     };
 
     //PROTOTYPE SPLASHSCREEN
-    logo = game.add.sprite(0, 0, 'logo');
-    logo.scale.setTo(dpr/2, dpr/2);
-    logo.centerX = game.world.centerX;
-    logo.centerY = game.world.centerY;
+    logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
+    if(dpr >=2 ) logo.scale.setTo(dpr/2, dpr/2);
+    logo.x = Math.floor(logo.x - logo.width/2);
+    logo.y = Math.floor(logo.y - logo.height/2);
     this.progress = 0;
     this.loader = game.add.graphics(0,0);
     this.loader.beginFill(0x02c487,1);
