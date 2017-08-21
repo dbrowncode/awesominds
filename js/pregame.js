@@ -1,8 +1,8 @@
 var preGameState = {
   instructLines : [
     "Hi! I'm your host, Jin. Welcome to Awesominds, ",
-    "Earn points by correctly answering each question.",
-    "Click/tap a question to reveal its options.",
+    "Earn points by correctly answering each question before time runs out.",
+    "Click/tap a question to reveal its options and start the timer.",
     "Answer before your competitors to earn full point value.",
     "Meet your competition!"
   ],

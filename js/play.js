@@ -156,10 +156,7 @@ var playState = {
         else{game.global.chars[i].chance -= 5;}
       }
     }
-    //timer - the phaser way
-    game.global.timer = game.time.create(false);
-    // game.global.timer.add(1000, showChoices, this);
-    game.global.timer.start();
+
 
     //new question
     var prefix = game.global.isRehash ? 'REHASH ' : '';
@@ -185,10 +182,30 @@ var playState = {
     for(i = 1; i < game.global.chars.length; i++){
       game.global.chars[i].correct = (game.global.winThreshold <= game.global.chars[i].chance);
     }
+
+    game.global.promptShown = false;
+    //timer - the phaser way
+    game.global.timer = game.time.create(false);
+    game.global.timer.add(5500, game.state.getCurrentState().showClickPrompt, this);
+    game.global.timer.start();
+  },
+
+  showClickPrompt : function(){
+    if(!game.global.questionShown){
+      game.global.promptText = game.add.bitmapText(game.global.bubble.x, Math.floor(game.global.bubble.y + game.global.bubble.bubbleheight), '8bitoperator', '^ Click/Tap Question To Show Options ^', 11 * dpr);
+      game.global.promptText.centerX = Math.floor(game.world.centerX);
+      game.global.promptText.x = Math.floor(game.global.promptText.x);
+      game.global.promptText.tint = 0xffffaa;
+    }
+    game.global.promptShown = true;
   },
 
   showChoices : function(){
     this.inputEnabled = false;
+    if(game.global.promptShown){
+      game.global.promptText.destroy();
+      game.global.promptShown = false;
+    }
 
     //Create a button for each choice, and put some data into it in case we need it
     game.global.choiceBubbles = game.add.group();
