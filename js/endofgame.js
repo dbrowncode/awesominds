@@ -117,7 +117,7 @@ var endOfGameState = {
     for (var i = 0; i < mindStates.length; i++) {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), mindStates[i].mind, true, false, null, false, null, true));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), mindStates[i].mind, true, false, null, false, null, true));
         this.endGameUI.add(game.global.jinnySpeech);
         var gameOver = game.state.getCurrentState().isGameOver(mindStates[i].gameOver);
         game.state.getCurrentState().buttons = game.state.getCurrentState().optionButtons(gameOver);
@@ -161,7 +161,7 @@ var endOfGameState = {
       }
     }
 
-    var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Stats & Options', false, true, game.state.getCurrentState().viewStatsClick));
+    var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.chapterText.bottom, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Stats & Options', false, true, game.state.getCurrentState().viewStatsClick));
     game.add.tween(viewStatsBtn).to({x: game.world.width - (viewStatsBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
     game.state.getCurrentState().endGameUI.add(viewStatsBtn);
 
