@@ -8,9 +8,12 @@ var menuChapterState = {
     text.padding.x = 5;
 
     var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuChapterState.backButton));
+    game.add.tween(game.global.logoText).to({x: Math.floor(game.world.x + back.bubblewidth + game.global.borderFrameSize)}, 60, Phaser.Easing.Default, true, 0);
 
-    var courseText = game.add.bitmapText(back.bubblewidth + game.global.borderFrameSize*2, game.world.y, '8bitoperator', game.global.selectedCourseName, 11 * dpr);
-    courseText.tint = 0x000000;
+    var courseText = game.add.text(game.global.pauseButton.left, game.world.y, game.global.selectedCourseName, game.global.smallerWhiteFont);
+    courseText.x = Math.round(courseText.x - courseText.width - game.global.borderFrameSize);
+    courseText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    courseText.padding.x = 5;
 
     var chapters = [];
     $(function (){

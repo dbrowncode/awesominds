@@ -18,18 +18,29 @@ var preGameState = {
     game.global.bonus = 0;
     game.state.getCurrentState().makeHost();
     if (dpr >=2) game.global.jinny.scale.setTo(dpr/4, dpr/4);
+    game.add.tween(game.global.logoText).to({x: Math.floor(game.global.jinny.right + game.global.borderFrameSize)}, 60, Phaser.Easing.Default, true, 0);
     this.pregameUI = game.add.group();
 
     var instructLines = game.state.getCurrentState().instructLines.slice();
     instructLines[0] += game.global.session['play_name'] + "!";
 
+    var courseText = game.add.text(game.global.pauseButton.left, game.world.y, game.global.selectedCourseName, game.global.smallerWhiteFont);
+    courseText.x = Math.round(courseText.x - courseText.width - game.global.borderFrameSize);
+    courseText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    courseText.padding.x = 5;
+
+    game.global.chapterText = game.add.text(game.global.pauseButton.left, Math.floor(courseText.bottom - 5), 'Chapter ' + game.global.selectedChapter, game.global.smallerWhiteFont);
+    game.global.chapterText.x = Math.round(game.global.chapterText.x - game.global.chapterText.width - game.global.borderFrameSize);
+    game.global.chapterText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    game.global.chapterText.padding.x = 5;
+
     var prevHeights = 0;
     var speechX = Math.floor(game.global.jinny.right + (game.global.borderFrameSize * 2));
-    var speechWidth = Math.floor(game.world.width - (game.global.jinny.width*2));
+    var speechWidth = Math.floor(game.world.width - (game.global.jinny.width*1.5));
     var sbtweens = [];
     var bubbles = [];
     for (var i = 0; i < instructLines.length; i++) {
-      bubbles[i] = game.world.add(new game.global.SpeechBubble(game, speechX, game.global.logoText.bottom + prevHeights, speechWidth, instructLines[i], true, false, null, false, null, true));
+      bubbles[i] = game.world.add(new game.global.SpeechBubble(game, speechX, game.global.chapterText.bottom + prevHeights, speechWidth, instructLines[i], true, false, null, false, null, true));
       prevHeights += Math.floor(bubbles[i].bubbleheight + (10 * dpr));
       this.pregameUI.add(bubbles[i]);
       var w = bubbles[i].width;
@@ -79,8 +90,9 @@ var preGameState = {
       }
     }
 
-    var skip = game.world.add(new game.global.SpeechBubble(game, game.width, game.height - 50, game.width, "Continue", false, true, this.skipFunction));
-    skip.x -= skip.bubblewidth + (game.global.borderFrameSize * 3);
+    var skip = game.world.add(new game.global.SpeechBubble(game, game.width, game.height, game.width, "Continue", false, true, this.skipFunction));
+    skip.x = Math.floor(skip.x - (skip.bubblewidth + game.global.borderFrameSize));
+    skip.y = Math.floor(game.height - skip.bubbleheight - game.global.borderFrameSize);
     this.pregameUI.add(skip);
 
     sbtweens[0].start();

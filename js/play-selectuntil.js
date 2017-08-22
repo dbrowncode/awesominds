@@ -45,7 +45,7 @@ playStateSU.btnClick = function(){
     game.global.jinny.frame = this.data.correct ? 2 : 1;
 
     game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false, null, false, null, true));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false, null, false, null, true));
 
     //points graphic
     if(this.data.correct){

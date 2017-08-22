@@ -69,14 +69,7 @@ var playState = {
       right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
       wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
     };
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.isRehash ? "Second chance. Five points each!" : 'Here comes your first question...', true, false, null, false, null, true));
-
-    var chapterText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Chapter ' + game.global.selectedChapter, 11 * dpr);
-    chapterText.x -= chapterText.width + game.global.borderFrameSize;
-    chapterText.tint = 0x000000;
-
-    var courseText = game.add.bitmapText(game.global.jinny.width, game.world.y, '8bitoperator', game.global.selectedCourseName, 11 * dpr);
-    courseText.tint = 0x000000;
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.isRehash ? "Second chance. Five points each!" : 'Here comes your first question...', true, false, null, false, null, true));
 
     //animate avatars to the bottom
     var image = game.global.imagecheck;
@@ -166,17 +159,16 @@ var playState = {
       }
     }
 
-
     //new question
     var prefix = game.global.isRehash ? 'REHASH ' : '';
-    game.global.questionNumText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', prefix + 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, 11 * dpr);
-    game.global.questionNumText.x -= game.global.questionNumText.width + game.global.borderFrameSize;
-    game.global.questionNumText.y += game.global.questionNumText.height;
-    game.global.questionNumText.tint = 0x000000;
-    game.global.questionUI.add(game.global.questionNumText);
+    var questionNumText = game.add.text(game.world.width, Math.floor(game.global.logoText.bottom + 5), prefix + 'Q ' + (game.global.questionsAnswered + 1) + '/' + game.global.numQuestions, game.global.smallerWhiteFont);
+    questionNumText.x = Math.round(questionNumText.x - questionNumText.width - game.global.borderFrameSize);
+    questionNumText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    questionNumText.padding.x = 5;
+    game.global.questionUI.add(questionNumText);
 
     var bwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width/2)), game.global.jinny.width * 7);
-    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight*2, bwidth, question.question, false, true, game.state.getCurrentState().showChoices));
+    game.global.bubble = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.jinnySpeech.y + (game.global.jinnySpeech.bubbleheight*2), bwidth, question.question, false, true, game.state.getCurrentState().showChoices));
     game.global.bubble.question = question;
     game.global.questionUI.add(game.global.bubble);
 
@@ -282,7 +274,7 @@ var playState = {
       if(!fromButton){
         //only replace the speech if this function was not called from btn click and came from the timer
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Now worth 10 points!", true, true, false, null, false, null, true));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), "Now worth 10 points!", true, false, null, false, null, true));
       }
       for(i=1;i<game.global.chars.length;i++){
         game.add.tween(game.global.chars[i].answerBubble).to({width: game.global.answerBubbleWidth }, 100, Phaser.Easing.Default, true, 250 * i);
@@ -344,7 +336,7 @@ var playState = {
       game.global.jinny.frame = this.data.correct ? 2 : 1;
 
       game.global.jinnySpeech.destroy();
-      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false, null, false, null, true));
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false, null, false, null, true));
 
       //points graphic
       if(!game.global.isRehash && this.data.correct){
@@ -477,7 +469,7 @@ var playState = {
     if (game.global.questionsAnswered < game.global.numQuestions){
       //still questions left, show the next one
       game.global.jinnySpeech.destroy();
-      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Next question...", true, false, null, false, null, true));
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), "Next question...", true, false, null, false, null, true));
 
       game.state.getCurrentState().showQuestion(game.global.questions.shift());
     } else if (game.global.rehashQuestions.length > 0 && !game.global.isRehash) {
@@ -502,7 +494,7 @@ var playState = {
   },
 
   createTimer : function(){
-    this.timeLabel = game.add.bitmapText(game.world.width + 1000, game.global.jinnySpeech.bottom + (11 * dpr), '8bitoperator', '00:00', 11 * dpr);
+    this.timeLabel = game.add.bitmapText(game.world.width + 1000, game.global.jinnySpeech.bottom + (11 * dpr), '8bitoperator', '20', 11 * dpr);
     this.timeLabel.tint = 0x000000;
     this.gfx = game.add.graphics(game.world.x - 1000, game.world.y - 1000);
     this.gfx.lineStyle(1, 0x000000, 1);
@@ -532,14 +524,14 @@ var playState = {
       this.timeLabel.y = Math.floor(game.global.bubble.y - (this.timeLabel.height*2.5));
 
       this.timerBar.width = game.global.bubble.bubblewidth - game.global.mapNum(this.timeElapsed, 0, this.totalTime, 0, game.global.bubble.bubblewidth);
-      this.timerBar.centerX = Math.floor(game.global.bubble.x + game.global.bubble.bubblewidth/2 + game.global.borderFrameSize/2);
+      this.timerBar.centerX = Math.floor(game.global.bubble.x + game.global.bubble.bubblewidth/2);
       this.timerBar.centerY = game.global.bubble.y;
     }
   },
 
   timeUp : function(){
     game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.logoText.bottom, game.world.width - (game.global.jinny.width*2), "Time's up!", true, false, null, false, null, true));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), "Time's up!", true, false, null, false, null, true));
     game.global.questionsAnswered++;
     var dummy = {data: {correct: false}};
     this.timerOn = false;

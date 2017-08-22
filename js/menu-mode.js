@@ -9,12 +9,15 @@ var menuModeState = {
 
     var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuModeState.backButton));
 
-    var courseText = game.add.bitmapText(back.bubblewidth + game.global.borderFrameSize*2, game.world.y, '8bitoperator', game.global.selectedCourseName, 11 * dpr);
-    courseText.tint = 0x000000;
+    var courseText = game.add.text(game.global.pauseButton.left, game.world.y, game.global.selectedCourseName, game.global.smallerWhiteFont);
+    courseText.x = Math.round(courseText.x - courseText.width - game.global.borderFrameSize);
+    courseText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    courseText.padding.x = 5;
 
-    var chapterText = game.add.bitmapText(game.global.pauseButton.left, game.world.y, '8bitoperator', 'Chapter ' + game.global.selectedChapter, 11 * dpr);
-    chapterText.x -= chapterText.width + game.global.borderFrameSize;
-    chapterText.tint = 0x000000;
+    var chapterText = game.add.text(game.global.pauseButton.left, Math.floor(courseText.bottom - 5), 'Chapter ' + game.global.selectedChapter, game.global.smallerWhiteFont);
+    chapterText.x = Math.round(chapterText.x - chapterText.width - game.global.borderFrameSize);
+    chapterText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    chapterText.padding.x = 5;
 
     var modes = [
       { name: 'Countdown', prestate: 'pregame', gamestate: 'play', id: 0, endstate: 'endOfGame'},

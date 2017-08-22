@@ -78,6 +78,7 @@ var preloadState = {
     game.global.mainFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left'};
     game.global.jinFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left', fill: '#a50010'};
     game.global.whiteFont = { font: 'Varela Round', fontSize: 24 * dpr, fill: 'white'};
+    game.global.smallerWhiteFont = { font: 'Varela Round', fontSize: 17 * dpr, fill: 'white', align: 'right'};
 
     game.global.wrongsounds.push(game.add.audio('wrong1'));
     game.global.rightsounds.push(game.add.audio('correct'));
@@ -107,7 +108,7 @@ var preloadState = {
       var prefix = isAnswerText ? choice + '. ' : '';
       this.bitmapText = game.add.text(Math.floor(x + game.global.borderFrameSize + 5), Math.floor(y + (game.global.borderFrameSize/3) + 5), prefix + text, isJin ? game.global.jinFont : game.global.mainFont);
       // set width for wrapping and let phaser figure out where it should wrap the lines
-      this.bitmapText.wordWrapWidth = width;
+      this.bitmapText.wordWrapWidth = width - game.global.mainFont.fontSize - 10;
       var prewrapped = this.bitmapText.precalculateWordWrap(prefix + text);
       var wrapFixed = "";
       for (var i = 0; i < prewrapped.length; i++) {
