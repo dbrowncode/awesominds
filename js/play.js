@@ -24,7 +24,7 @@ var playState = {
     }
     console.log('rehash: ' + game.global.isRehash);
     this.ticks = game.add.group();
-    game.global.numQuestions = Math.min( (devmode ? devvars.numQ : 15), game.global.questions.length);
+    game.global.numQuestions = Math.min( (devmode ? devvars.numQ : 10), game.global.questions.length);
     game.global.questionsAnswered = 0;
     game.global.questionShown = false;
     game.global.answeredBeforeAI = false;
@@ -187,16 +187,16 @@ var playState = {
     game.global.promptShown = false;
     //timer - the phaser way
     game.global.timer = game.time.create(false);
-    game.global.timer.add(5500, game.state.getCurrentState().showClickPrompt, this);
+    game.global.timer.add(1500, game.state.getCurrentState().showClickPrompt, this);
     game.global.timer.start();
   },
 
   showClickPrompt : function(){
     if(!game.global.questionShown){
-      game.global.promptText = game.add.bitmapText(game.global.bubble.x, Math.floor(game.global.bubble.y + game.global.bubble.bubbleheight), '8bitoperator', '^ Click/Tap Question To Show Options ^', 11 * dpr);
-      game.global.promptText.centerX = Math.floor(game.world.centerX);
-      game.global.promptText.x = Math.floor(game.global.promptText.x);
-      game.global.promptText.tint = 0xffffaa;
+      game.global.promptText = game.add.text(game.global.bubble.x, Math.floor(game.global.bubble.y + game.global.bubble.bubbleheight), '^ Click/Tap Question To Show Options ^', game.global.smallerWhiteFont);
+      game.global.promptText.x = Math.floor(game.world.centerX - game.global.promptText.width/2);
+      game.global.promptText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+      game.global.promptText.padding.x = 5;
     }
     game.global.promptShown = true;
   },
