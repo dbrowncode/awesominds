@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
       if( isset($_SESSION['loginpart2']) ){
         if($_SESSION['loginpart2'] == 2){ //instructor
           echo '<form action="loginpart2.php" method="post" autocomplete="off" id="loginForm">
-                  <div class="form-group" id="loginPart2" style="max-width: 400px;">
+                  <div class="form-group container" id="loginPart2" style="max-width: 400px;">
                     <label for="passwordInput" class="form-label"><b>Password*<b> </label>
                     <div class="input-group">
                       <input class="form-control" type="password" required autocomplete="off" name="password" id="passwordInput"/>
