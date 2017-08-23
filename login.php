@@ -23,6 +23,7 @@ else { // User exists
         $_SESSION['avatarnum'] = $user['avatarnum'];
         $_SESSION['active'] = $user['active'];
         $_SESSION['isInstructor'] = $user['isInstructor'];
+        $_SESSION['user_volume'] = $user['user_volume'];
 
         // This is how we'll know the user is logged in
         $_SESSION['logged_in'] = true;

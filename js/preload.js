@@ -52,6 +52,16 @@ var preloadState = {
     game.global.wrongsounds = [];
     game.global.rightsounds = [];
 
+    //use setuservolume.php to get a fresh copy of the session in case volume or anything changed since last login
+    $.ajax({
+      type: 'POST',
+      url: 'setuservolume.php',
+      data: game.global.session,
+      success: function(data){
+        game.global.session = $.parseJSON(data);
+      }
+    });
+
     var numOppImages = 18;
     game.global.oppImageKeys = [];
     //this sets the name for all the characters, in order of the image numbers (plus 'zero' just for index fixing)
@@ -83,7 +93,9 @@ var preloadState = {
     game.global.wrongsounds.push(game.add.audio('wrong1'));
     game.global.rightsounds.push(game.add.audio('correct'));
     game.global.music = game.add.audio('menu');
-    game.sound.volume = devmode ? devvars.vol : 0.5;
+
+    game.sound.volume = Math.round(game.global.session.user_volume * 10) / 10;
+    console.log(game.sound.volume);
 
     game.global.shuffleArray = function(array) {
       for (var i = array.length - 1; i > 0; i--) {
@@ -232,7 +244,7 @@ var preloadState = {
     // lower volume for all sound
     game.global.volumeDown = function(){
       if(game.paused && game.global.inputInside(this)){
-        if(game.sound.volume > 0.1){
+        if(game.sound.volume > 0.0){
           if(game.sound.mute){
             game.global.muteSound.call(this);
           }
@@ -247,7 +259,14 @@ var preloadState = {
     // mute or unmute all sound
     game.global.muteSound = function(){
       if(game.paused && game.global.inputInside(this)){
-        game.sound.mute = !game.sound.mute;
+        if(game.sound.mute) {
+          game.sound.mute = !game.sound.mute;
+          game.sound.volume = game.global.prevVolume;
+        } else {
+          game.global.prevVolume = game.sound.volume;
+          game.sound.volume = 0.0;
+          game.sound.mute = !game.sound.mute;
+        }
         game.global.volText.kill();
         game.global.muteText.kill();
         game.global.makeVolText();
@@ -264,7 +283,7 @@ var preloadState = {
       game.global.volText.x -= Math.floor(game.global.volText.bubblewidth/2);
       game.global.pauseUI.add(game.global.volText);
 
-      var t = game.sound.mute ? 'Unmute' : 'Mute';
+      var t = (game.sound.mute || game.sound.volume == 0.0) ? 'Unmute' : 'Mute';
       game.global.muteText = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, Math.floor(game.global.volText.y + game.global.volText.bubbleheight + 5), game.world.width * .8, t, false, false));
       game.global.muteText.x -= Math.floor(game.global.muteText.bubblewidth/2);
       game.global.pauseUI.add(game.global.muteText);
@@ -325,6 +344,17 @@ var preloadState = {
 
     game.global.unpause = function(){
       if(game.paused && game.global.inputInside(this)){
+        //save user volume
+        game.global.session.user_volume = Math.round(game.sound.volume * 10) / 10;
+        console.log(game.global.session.user_volume);
+        $.ajax({
+          type: 'POST',
+          url: 'setuservolume.php',
+          data: game.global.session,
+          success: function(data){
+            game.global.session = $.parseJSON(data);
+          }
+        });
         game.global.unpauseButton.visible = false;
         game.global.pauseButton.visible = true;
         game.global.pauseUI.destroy();
@@ -389,7 +419,6 @@ var preloadState = {
           var b = this.data.btn;
           sureUI.destroy();
           if(v){
-            // console.log(b.data);
             b.data.func.call(this.data.btn);
           }
         }

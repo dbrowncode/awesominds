@@ -18,7 +18,7 @@
   }
 ?>
 
-<script type="text/javascript">var phpSession = <?php echo json_encode($_SESSION); ?></script>
+<script type="text/javascript">var phpSession = <?php echo json_encode(array('play_name'=>$_SESSION['play_name'], 'avatarnum'=>$_SESSION['avatarnum'], 'user_volume'=>$_SESSION['user_volume'])); ?></script>
 <script type="text/javascript" src="js/menu-mode.js"></script>
 <script type="text/javascript" src="js/menuchapter.js"></script>
 <script type="text/javascript" src="js/menucourse.js"></script>
