@@ -12,7 +12,7 @@
     if($_SESSION['logged_in']){
       include('profileinner.php');
     }else{
-      include('loginform.php');
+      include('loginform2.php');
     }
   ?>
 </html>

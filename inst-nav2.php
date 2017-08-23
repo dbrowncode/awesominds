@@ -21,11 +21,18 @@
               <a class="dropdown-item" href="inst-deletecourse.php">Delete Courses/Chapters</a>
             </div>
           </div>';
-      } ?>
+      }
+      if ($_SESSION['logged_in'] && $_SESSION['active']){
+        echo '<a class="btn btn-outline-success" href="questiongame.php">Play</a>';
+      }
+      echo '<a class="btn btn-outline-info" href="" name="story" data-toggle="modal" data-target="#creditsModal">Credits</a>';
+      if ($_SESSION['logged_in']){
+        echo '<a class="btn btn-outline-warning" href="logout.php">Log Out</a>';
+      } else {
+        echo '<a class="btn btn-outline-success" href="signup.php">Create Account</a>';
+      }
 
-      <a class="btn btn-outline-success" href="questiongame.php">Play</a>
-      <a class="btn btn-outline-info" href="" name="story" data-toggle="modal" data-target="#creditsModal">Credits</a>
-      <a class="btn btn-outline-warning" href="logout.php">Log Out</a>
+      ?>
 
     </div>
   </div>
