@@ -1,7 +1,6 @@
 <?php
 require('../../conn.php');
 include('redir-notinstructor.php');
-require('insert.php');
 
 $stmt = $dbcon->prepare('UPDATE question SET question = :question WHERE questionid = :questionid');
 $stmt->bindParam(':question', json_encode($_POST["questionBank"]));

@@ -10,6 +10,7 @@
   ?>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+  <title>View Student Progress - Awesominds</title>
 </head>
 <body>
   <?php include 'inst-nav2.php' ?>

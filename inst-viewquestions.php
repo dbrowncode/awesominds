@@ -8,6 +8,8 @@
     }
     include 'css/css.html';
   ?>
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
   <title>View Questions - Awesominds</title>
 </head>
 <body>
@@ -43,7 +45,31 @@
     <div id="output" style="margin-top: 20px"></div>
   </div>
 
+  <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title text-center" id="myModalLabel2">Are you sure?</h4>
+        </div>
+        <div class="modal-body text-center" id='modalBody2'>
+          Are you sure you want to delete this question?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger btn-ok" data-dismiss="modal" id="deleteBtn">Delete</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
+var selectedCourse = "";
+var selectedChapter = 0;
+var questions = [];
+var questionid = 0;
+var table = null;
+
 var getCourses = function(){
   $.ajax({
     url: 'getcourses.php',
@@ -78,12 +104,40 @@ var getChapters = function(course){
   });
 }
 
+var getQuestions = function(){
+  $.ajax({
+    type: 'GET',
+    url: 'getquestion.php',
+    data: { 'courseid': selectedCourse, 'chapter': selectedChapter },
+    dataType: 'json',
+    success: function(data){
+      questions = [];
+      $('#output').empty();
+      var htmlStr = '<h3>Chapter ' + selectedChapter + ' Questions</h3><table id="table" class="display table table-hover table-bordered text-left"><thead><tr><th>ID#</th><th>Question Text</th><th>Choices</th><th>Answer</th><th>Options</th></tr></thead><tbody>';
+      for (var i = 0; i < data.length; i++) {
+        var q = $.parseJSON(data[i]["question"]);
+        var id = $.parseJSON(data[i]["questionid"]);
+        // console.log(q);
+        htmlStr += '<tr id="row' + id + '"><td>' + id +'</td><td>' + q.question + '</td><td>'
+        Object.keys(q.choices).forEach(function(key){
+          htmlStr += key + ': ' + q.choices[key] + '<br>';
+        });
+        htmlStr += '</td><td>' + q.answer + '</td><td><a href="inst-editquestion.php?mode=edit&qid=' + id + '"><button class="btn btn-info">Edit</button></a><br><button class="btn btn-danger deleteQuestionBtn" data-toggle="modal" data-target="#confirmDelete" id="' + id + '">Delete</button></td></tr>';
+      }
+      htmlStr += '</tbody></table>';
+      $('#output').html(htmlStr);
+      table = $('#table').DataTable({ paging: false, "order": [[0, 'asc']] });
+      $('.deleteQuestionBtn').click(function(){
+        $('#modalBody2').html('Are you sure you want to delete question #' + $(this).attr('id') + '?');
+        questionid = $(this).attr('id');
+      });
+    }
+  });
+}
+
 $(function (){
   $('#selectChapterDiv').hide();
   $('#noChapters').hide();
-  var selectedCourse = "";
-  var selectedChapter = 0;
-  var questions = [];
 
   $("#selectCourseBtn").click(function(){
     $('#output').empty();
@@ -100,41 +154,17 @@ $(function (){
 
   $("#selectChapterBtn").click(function(){
     selectedChapter = $('#chapterDropdown').find(":selected").val();
+    getQuestions();
+  });
+
+  $('#deleteBtn').click(function(){
     $.ajax({
-      type: 'GET',
-      url: 'getquestion.php',
-      data: { 'courseid': selectedCourse, 'chapter': selectedChapter },
-      dataType: 'json',
+      type: 'POST',
+      url: 'api-deletequestion.php',
+      data: { questionid : questionid },
       success: function(data){
-        questions = [];
-        $('#output').empty();
-        var htmlStr = '<h3>Chapter ' + selectedChapter + ' Questions</h3><table class="table table-responsive table-hover table-bordered text-left"><thead class="thead-default"><tr><th>Question Text</th><th>Choices</th><th>Answer</th><th>Options</th></tr></thead><tbody>';
-        for (var i = 0; i < data.length; i++) {
-          var q = $.parseJSON(data[i]["question"]);
-          var id = $.parseJSON(data[i]["questionid"]);
-          // console.log(q);
-          htmlStr += '<tr><td>' + q.question + '</td><td>'
-          Object.keys(q.choices).forEach(function(key){
-            htmlStr += key + ': ' + q.choices[key] + '<br>';
-          });
-          htmlStr += '</td><td>' + q.answer + '</td><td><a href="inst-editquestion.php?mode=edit&qid=' + id + '">Edit</a><br><a href="">Delete</a>';
-          // for (var v in q.choices) {
-          //   if (q.choices.hasOwnProperty(v)) {
-          //     htmlStr += v + ': ' + q.choices.v;
-          //   }
-          // }
-          // console.log(q.choices);
-          // <div id="question' + q.questionid + '">'
-
-
-
-          // questions[i] = {};
-          // questions[i].questionid = $.parseJSON(data[i]["questionid"]);
-          // questions[i].questionObj = $.parseJSON(data[i]["question"]);
-        }
-        htmlStr += '</tbody></table>';
-        $('#output').append(htmlStr);
-        // console.log(questions);
+        // $('#row' + questionid).remove();
+        getQuestions();
       }
     });
   });

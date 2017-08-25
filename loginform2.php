@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
                   $("li").addClass("col-sm-3 mx-auto");
                 });
                 </script>';
+          unset($_SESSION['avatarKeys'], $_SESSION['names']);
         }
         unset($_SESSION['loginpart2']);
       } else {
