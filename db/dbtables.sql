@@ -3,6 +3,7 @@ drop table if exists course cascade;
 drop table if exists users cascade;
 drop table if exists question cascade;
 drop table if exists score cascade;
+drop table if exists invite cascade;
 Set foreign_Key_checks = 1;
 
 CREATE TABLE `users` (
@@ -20,6 +21,14 @@ CREATE TABLE `users` (
   `user_volume` decimal(2,1) NOT NULL DEFAULT 0.5,
   PRIMARY KEY (`c_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `invite` (
+  `inviteid` int(11) NOT NULL AUTO_INCREMENT,
+  `invitecode` varchar(40) NOT NULL,
+  `email_sentto` varchar(100) UNIQUE NOT NULL,
+  `c_number_sentby` varchar(11) NOT NULL,
+  PRIMARY KEY (`inviteid`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `course` (
   `courseid` varchar(9) NOT NULL,

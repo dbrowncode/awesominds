@@ -15,7 +15,7 @@
               <a class="dropdown-item" href="inst-createcourse.php">Create Course</a>
               <a class="dropdown-item" href="inst-addquestions.php">Add Chapter/Game</a>
               <a class="dropdown-item" href="inst-viewquestions.php">View/Edit/Delete Questions</a>
-              <a class="dropdown-item" href="inst-givepermissions.php">Give Permissions</a>
+              <a class="dropdown-item" href="inst-inviteinstructor.php">Invite Instructor</a>
               <a class="dropdown-item" href="inst-stats.php">View Student Progress</a>
               <a class="dropdown-item" href="inst-deletecourse.php">Delete Courses/Chapters</a>
             </div>

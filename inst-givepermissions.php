@@ -15,7 +15,7 @@
     <div class="formWrap form">
       <h2>Give Permissions</h2><br>
       <div class='permission tab-content' id="grant">
-        <form action="upload2.php" method="post" id='permissions'>
+        <form method="post" id='permissions'>
 
             <p>Grant instructor permissions to another active account to let them access the Instructor Options.</p>
             <p>Instructor C number: <input type="text" name="instructorC" id="instructorC" required ="true" placeholder="CXXXXXXX"></p>

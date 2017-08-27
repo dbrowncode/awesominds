@@ -10,6 +10,14 @@
 </head>
 
 <?php
+if (isset($_GET['invitecode'])){  //check if invite code is valid for instructor registration
+  $query = $dbcon->prepare("SELECT invitecode FROM invite WHERE invitecode = :invitecode");
+  $query->bindParam(':invitecode', $_GET["invitecode"]);
+  $query->execute();
+  if($query->fetch(PDO::FETCH_ASSOC)){ //code exists, save it in session for now
+    $_SESSION['invitecode'] = $_GET['invitecode'];
+  }
+}
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
   if (isset($_POST['register'])) { //user registering
@@ -29,9 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
   	});
   </script>
   <div class="container text-center" style="max-width: 400px;">
-    <h2>Create Account</h2>
-    <p>Already registered? <a href="index.php">Log in</a></p>
     <?php
+      if (isset($_SESSION['invitecode'])){
+        echo '<h2>Create Instructor Account</h2>';
+      } else {
+        echo '<h2>Create Account</h2>
+        <p>Already registered? <a href="index.php">Log in</a></p>';
+      }
       if( isset($_SESSION['message']) AND !empty($_SESSION['message']) ){
         echo $_SESSION['message'];
         unset($_SESSION['message']);
@@ -64,7 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
       <p><small>Click the + and - buttons until you find a character you like</small></p>
       <input type="hidden" name="avatarnum" value="1" />
 
-      <p><b>Remember your Display Name and Avatar!</b><br>You will need these to log in.</p>
+      <?php
+      if (isset($_SESSION['invitecode'])) {
+        echo '<label for="passwordInput" class="form-label"><b>Password*<b></label>
+              <input class="form-control" type="password" required autocomplete="off" name="password" id="passwordInput"/><br>';
+      } else {
+        echo '<p><b>Remember your Display Name and Avatar!</b><br>You will need these to log in.</p>';
+      }
+      ?>
       <button type="submit" class="btn btn-primary" name="register" />Create Account</button>
     </form>
   </div>
