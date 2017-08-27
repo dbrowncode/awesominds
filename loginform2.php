@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
       } else {
         echo '<form action="loginpart1.php" method="post" autocomplete="off" id="loginForm">
                 <div class="form-group container" id="loginPart1" style="max-width: 400px;">
-                  <label for="cnumberInput" class="form-label"><b>Camosun ID*<b> </label>
+                  <label for="cnumberInput" class="form-label"><b>Camosun ID*</b></label>
                   <div class="input-group">
                     <input class="form-control" type="text" required autocomplete="off" name="cnumber" id="cnumberInput"/>
                     <input id="name1" name="name1" type="hidden" class="randomName">

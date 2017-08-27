@@ -13,7 +13,7 @@
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
   if (isset($_POST['register'])) { //user registering
-    require 'register.php';
+    require 'registerstudent.php';
   }
 }
 ?>
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
   	   });
   	});
   </script>
-  <div class="container text-center">
+  <div class="container text-center" style="max-width: 400px;">
     <h2>Create Account</h2>
     <p>Already registered? <a href="index.php">Log in</a></p>
     <?php
@@ -38,93 +38,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
       }
     ?>
     <form action="signup.php" method="post" autocomplete="off" id="registerForm">
-      <div class="top-row">
-        <div class="field-wrap">
-          <label>
-            First Name<span class="req">*</span>
-          </label>
-          <input type="text" required autocomplete="off" name='firstname' />
-        </div>
+      <label for="cnumberInput" class="form-label"><b>Camosun ID*</b></label>
+      <input class="form-control" type="text" required autocomplete="off" name="cnumber" id="cnumberInput" pattern="[C][0-9]{7}" title="C + 7 numbers, eg 'C0654321'"/><br>
 
-        <div class="field-wrap">
-          <label>
-            Last Name<span class="req">*</span>
-          </label>
-          <input type="text"required autocomplete="off" name='lastname' />
-        </div>
+      <label id="displayNameLabel" for="displayNameField"><b>Choose Display Name</b></label>
+      <div class="input-group">
+        <span class="input-group-btn"><button class="btn btn-success" type="button" id="random">Generate</button></span>
+        <input type="text" class="form-control" required autocomplete="off" name='fakename' id="displayNameField" readonly placeholder="Display Name"/>
       </div>
+      <p><small>Click 'Generate' until you find a name you like</small></p>
 
-      <div class="smalltext">Choose Display Name - Click 'Generate' until you find a name you like</div>
-      <div class="displayNameButton"><button class="fakename" type="button" name="buttonpassvalue" id="random">Generate</button></div>
-      <div class="field-wrap">
-        <label id="displayNameLabel">
-          Display Name<span class="req"></span>
-        </label>
-        <input type="text"required autocomplete="off" name='fakename' id="displayNameField" readonly />
+      <label><b>Choose Avatar</b></label>
+      <div class="avatars">
+      <?php
+        $numImages = 18;
+        for ($i=0; $i < $numImages; $i++) {
+          echo '<img class="avatar-img img-thumbnail" src="assets/oppSmall/oppon' . ($i+1) . '.png" />';
+        }
+      ?>
       </div>
-
-      <div class="smalltext">Choose Avatar - Click the + and - buttons until you find a character you like</div>
-      <div class="field-wrap avatars">
-        <input type="button" value="+" class="imgbtnplus" style="width: 120px">
-        <?php
-          $numImages = 18;
-          for ($i=0; $i < $numImages; $i++) {
-            echo '<img class="avatar-img" src="assets/oppSmall/oppon' . ($i+1) . '.png" />';
-          }
-         ?>
-        <input type="button" value="-" class="imgbtnminus" style="width: 120px">
-        <input type="hidden" name="avatarnum" value="1" />
-
-        <script>
-          $(".avatar-img").hide();
-          var val = 1;
-          $('.avatar-img:eq(' + (val-1) + ')').show();
-
-          $('.imgbtnplus').click(function() {
-            if (val < $(".avatars img").length) {
-              $('img:eq(' + val + ')').hide();
-              val++;
-              $('img:eq(' + val + ')').show();
-              $('input[name="avatarnum"]').val(val+1);
-              console.log(val);
-            }
-          });
-
-          $('.imgbtnminus').click(function() {
-            if (val > 1) {
-              $('img:eq(' + val + ')').hide();
-              val--;
-              $('img:eq(' + val + ')').show();
-              $('input[name="avatarnum"]').val(val+1);
-              console.log(val);
-            }
-          });
-        </script>
+      <div class="btn-group" role="group">
+        <button type="button" value="-" class="imgbtnminus btn btn-secondary" id="imgbtnminus">-</button>
+        <button type="button" value="+" class="imgbtnplus btn btn-secondary" id="imgbtnplus">+</button>
       </div>
+      <p><small>Click the + and - buttons until you find a character you like</small></p>
+      <input type="hidden" name="avatarnum" value="1" />
 
-      <div class="field-wrap">
-        <label>
-          Email Address<span class="req">*</span>
-        </label>
-        <input type="email"required autocomplete="off" name='email' />
-      </div>
-
-      <div class="field-wrap">
-        <label>
-          Camosun ID<span class="req">*</span>
-        </label>
-        <input type="text"required autocomplete="off" name='cnumber' pattern="[C][0-9]{7}" title="C + 7 numbers, eg 'C0654321'"/>
-      </div>
-
-      <div class="field-wrap">
-        <label>
-          Set A Password<span class="req">*</span>
-        </label>
-        <input type="password" required autocomplete="off" name='password' pattern=".{8,}" title="Minimum 8 Characters"/>
-        <div class="smalltext">Minimum 8 Characters</div>
-      </div>
-
-      <button type="submit" class="button button-block" name="register" />Register</button>
+      <p><b>Remember your Display Name and Avatar!</b><br>You will need these to log in.</p>
+      <button type="submit" class="btn btn-primary" name="register" />Create Account</button>
     </form>
   </div>
 </body>
+
+<script>
+jQuery(document).ready(function($){
+  $(".avatar-img").hide();
+  var val = 1;
+  $('.avatar-img:eq(' + (val-1) + ')').show();
+
+  $('#imgbtnplus').click(function() {
+    if (val < $(".avatars img").length) {
+      $('img:eq(' + val + ')').hide();
+      val++;
+      $('img:eq(' + val + ')').show();
+      $('input[name="avatarnum"]').val(val);
+    }
+  });
+
+  $('#imgbtnminus').click(function() {
+    if (val > 1) {
+      $('img:eq(' + val + ')').hide();
+      val--;
+      $('img:eq(' + val + ')').show();
+      $('input[name="avatarnum"]').val(val);
+    }
+  });
+});
+</script>

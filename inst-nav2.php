@@ -3,9 +3,8 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <a class="navbar-brand" href="index.php">Awesominds</a>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <div class="navbar-nav">
-
+  <div class="navbar-collapse in" id="navbarNavAltMarkup">
+    <div class="navbar-nav in">
 
       <?php if ($_SESSION['isInstructor']){
         echo '  <div class="nav-item dropdown">
@@ -25,11 +24,12 @@
       if ($_SESSION['logged_in'] && $_SESSION['active']){
         echo '<a class="btn btn-outline-success" href="questiongame.php">Play</a>';
       }
-      echo '<a class="btn btn-outline-info" href="" name="story" data-toggle="modal" data-target="#creditsModal">Credits</a>';
+      echo '<a class="btn btn-outline-info" href="" name="story" data-toggle="modal" data-target="#creditsModal">About</a>';
       if ($_SESSION['logged_in']){
         echo '<a class="btn btn-outline-warning" href="logout.php">Log Out</a>';
       } else {
-        echo '<a class="btn btn-outline-success" href="signup.php">Create Account</a>';
+        echo '<a class="btn btn-outline-primary" href="index.php">Log In</a>
+              <a class="btn btn-outline-success" href="signup.php">Create Account</a>';
       }
 
       ?>
@@ -42,7 +42,7 @@
     <div class="modal-content">
       <div class="modal-header text-center">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title text-center" id="myModalLabel">Credits</h4>
+        <h4 class="modal-title text-center" id="myModalLabel">About Awesominds</h4>
       </div>
       <div class="modal-body text-center">
 

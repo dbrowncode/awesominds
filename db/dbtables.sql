@@ -7,12 +7,12 @@ Set foreign_Key_checks = 1;
 
 CREATE TABLE `users` (
   `c_number` varchar(11) NOT NULL,
-  `first_name` varchar(50) NOT NULL,
-  `last_name` varchar(50) NOT NULL,
+  `first_name` varchar(50),
+  `last_name` varchar(50),
   `play_name` varchar(50) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(100) NOT NULL,
-  `hash` varchar(32) NOT NULL,
+  `email` varchar(100),
+  `password` varchar(100),
+  `hash` varchar(32),
   `avatarnum` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 0,
   `laston` datetime DEFAULT NULL,
