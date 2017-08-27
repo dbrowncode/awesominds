@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
       <?php
       if (isset($_SESSION['invitecode'])) {
         echo '<label for="passwordInput" class="form-label"><b>Password*<b></label>
-              <input class="form-control" type="password" required autocomplete="off" name="password" id="passwordInput"/><br>';
+              <input class="form-control" type="password" required autocomplete="off" name="password" id="passwordInput" pattern=".{8,}" title="Minimum 8 Characters"/><br>';
       } else {
         echo '<p><b>Remember your Display Name and Avatar!</b><br>You will need these to log in.</p>';
       }
