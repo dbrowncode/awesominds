@@ -23,24 +23,16 @@
 
       <label class="col-form-label" for="optionText">Options</label>
 
-      <div class="form-group row optionRow" id="optionRow0">
+      <div class="form-group input-group optionRow" id="optionRow0">
+        <span class="input-group-addon" id="optionLetter" value="A">A</span>
+        <input name="optionLetterHidden" id="optionLetterHidden" type="hidden" value="A">
 
-        <div class="col-1">
-          <small class="form-text">Letter</small>
-          <input name="optionLetter" type="text" required class="form-control" id="optionLetter" style="width: 40px" maxlength="1" style="text-transform:uppercase" pattern="[A-Za-z]" readonly title="Single letter only" value="A">
-        </div>
-        <div class="col-10">
-          <small class="form-text">Option Text</small>
-          <input name="optionText" type="text" class="form-control" id="optionText">
-        </div>
+        <input name="optionText" type="text" class="form-control" id="optionText">
 
-        <div class="form-check form-check-inline col-1">
-          <label class="form-check-label">
-            <small class="form-text">Correct</small>
-            <input class="form-check-input" type="radio" name="answer" id="answerRadio" value="A" checked>
-          </label>
-        </div>
-
+        <span class="input-group-addon">
+          <small class="form-text">Correct</small>
+          <input type="radio" name="answer" id="answerRadio" value="A" checked>
+        </span>
       </div>
 
       <div class="form-group" id="addOption">
@@ -75,8 +67,9 @@ function addOption(){
   if(numTotal < optionLimit){
     var $div = $('div[id^="optionRow"]:last');
     var newRow = $div.clone().prop('id', 'optionRow' + numTotal );
-    var letter = newRow.find('#optionLetter').val().toUpperCase();
-    newRow.find('#optionLetter').val(nextLetter(letter));
+    var letter = newRow.find('#optionLetterHidden').val().toUpperCase();
+    newRow.find('#optionLetter').html(nextLetter(letter));
+    newRow.find('#optionLetterHidden').val(nextLetter(letter));
     newRow.find('#answerRadio').val(nextLetter(letter));
     newRow.find('#optionText').val('');
     $("#addOption").before(newRow);
@@ -86,9 +79,7 @@ function addOption(){
       $("#addOption").append('<p><small>Limit ' + optionLimit + ' options per question</small></p>');
     }
   }
-}
-
-
+};
 
 $(function (){
   $("#addOptionBtn").click(function(){
@@ -103,6 +94,7 @@ $(function (){
     for (var i = 0; i < formArray.length; i++) {
       switch (formArray[i].name) {
         case 'optionText':
+          // console.log(formArray[i-1]);
           questionBank.choices[formArray[i-1].value] = formArray[i].value;
           break;
         case 'questionText':
@@ -115,7 +107,7 @@ $(function (){
           break;
       }
     }
-    console.log(questionBank);
+    // console.log(questionBank);
     if(mode != 'edit'){
       $.ajax({
         type: 'POST',
@@ -124,15 +116,15 @@ $(function (){
         data: { questionBank: questionBank, chapter: 1, courseid: 'BUTT666' },
         success: function(data) {
           $('#output').html(data);
-          console.log(data);
+          // console.log(data);
         },
         error: function(data) {
-          console.log(data);
+          // console.log(data);
         },
       });
     } else {
-      console.log('edit mode yo');
-      console.log(questionBank);
+      // console.log('edit mode yo');
+      // console.log(questionBank);
       $.ajax({
         type: 'POST',
         url: 'api-updatequestion.php',
@@ -140,10 +132,10 @@ $(function (){
         data: { questionBank: questionBank, questionid: questionid },
         success: function(data) {
           $('#output').html(data);
-          console.log(data);
+          // console.log(data);
         },
         error: function(data) {
-          console.log(data);
+          // console.log(data);
         },
       });
     }
@@ -160,7 +152,7 @@ $(function (){
         var keys = Object.keys(q.choices);
         for (var i = 0; i < keys.length; i++) {
           if(i < keys.length-1) addOption();
-          $('#optionRow' + i).children('.col-10').children('#optionText').val(q.choices[keys[i]]);
+          $('#optionRow' + i).children('#optionText').val(q.choices[keys[i]]);
         }
         $('#answerRadio[value='+ q.answer +']').prop("checked", true);
       }

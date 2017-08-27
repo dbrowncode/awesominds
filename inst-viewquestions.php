@@ -63,12 +63,89 @@
     </div>
   </div>
 
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title text-center" id="myModalLabel3">Editing Question</h4>
+        </div>
+        <div class="modal-body container text-center" id='editModalBody'>
+          <form id='editQuestionForm'>
+
+            <label class="col-form-label" for="questionText">Question Text</label>
+
+            <div class="form-group row" id="questionRow">
+              <textarea name="questionText" class="col-sm-12 form-control" id="questionText" required rows="3"></textarea>
+            </div>
+
+            <label class="col-form-label" for="optionText">Options</label>
+
+            <div class="form-group input-group optionRow" id="optionRow0">
+              <span class="input-group-addon" id="optionLetter" value="A">A</span>
+              <input name="optionLetterHidden" id="optionLetterHidden" type="hidden" value="A">
+
+              <input name="optionText" type="text" class="form-control" id="optionText">
+
+              <span class="input-group-addon">
+                <small class="form-text">Correct</small>
+                <input type="radio" name="answer" id="answerRadio" value="A" checked>
+              </span>
+            </div>
+
+            <div class="form-group" id="addOption">
+              <button id="addOptionBtn" type="button" class="btn btn-success">+ Add Option</button>
+            </div>
+            <!-- <button id="saveQuestionBtn" type="button" class="btn btn-primary">Save Question</button> -->
+
+          </form>
+          <div id="editOutput"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-ok" data-dismiss="modal" id="saveQuestionBtn">Save Changes</button>
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel (Discard Changes)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
 var selectedCourse = "";
 var selectedChapter = 0;
 var questions = [];
 var questionid = 0;
 var table = null;
+
+function nextLetter(s){
+  return s.replace(/([A-Z])[^A-Z]*$/, function(a){
+    var c = a.charCodeAt(0);
+    switch(c){
+      case 90: return 'A';
+      default: return String.fromCharCode(++c);
+    }
+  });
+}
+
+var optionLimit = 6
+var numTotal = 1;
+
+function addOption(){
+  if(numTotal < optionLimit){
+    var $div = $('div[id^="optionRow"]:last');
+    var newRow = $div.clone().prop('id', 'optionRow' + numTotal );
+    var letter = newRow.find('#optionLetterHidden').val().toUpperCase();
+    newRow.find('#optionLetter').html(nextLetter(letter));
+    newRow.find('#optionLetterHidden').val(nextLetter(letter));
+    newRow.find('#answerRadio').val(nextLetter(letter));
+    newRow.find('#optionText').val('');
+    $("#addOption").before(newRow);
+    numTotal++;
+    if(numTotal >= optionLimit){
+      $("#addOptionBtn").prop("disabled", true);
+      $("#addOption").append('<p><small>Limit ' + optionLimit + ' options per question</small></p>');
+    }
+  }
+};
 
 var getCourses = function(){
   $.ajax({
@@ -122,14 +199,68 @@ var getQuestions = function(){
         Object.keys(q.choices).forEach(function(key){
           htmlStr += key + ': ' + q.choices[key] + '<br>';
         });
-        htmlStr += '</td><td>' + q.answer + '</td><td><a href="inst-editquestion.php?mode=edit&qid=' + id + '"><button class="btn btn-info">Edit</button></a><br><button class="btn btn-danger deleteQuestionBtn" data-toggle="modal" data-target="#confirmDelete" id="' + id + '">Delete</button></td></tr>';
+        htmlStr += '</td><td>' + q.answer + '</td><td><button class="btn btn-info editBtn" data-toggle="modal" data-target="#editModal" id="' + id + '"">Edit</button><br><button class="btn btn-danger deleteQuestionBtn" data-toggle="modal" data-target="#confirmDelete" id="' + id + '">Delete</button></td></tr>';
       }
       htmlStr += '</tbody></table>';
       $('#output').html(htmlStr);
       table = $('#table').DataTable({ paging: false, "order": [[0, 'asc']] });
+
       $('.deleteQuestionBtn').click(function(){
         $('#modalBody2').html('Are you sure you want to delete question #' + $(this).attr('id') + '?');
         questionid = $(this).attr('id');
+      });
+
+      $('.editBtn').click(function(){
+        questionid = $(this).attr('id');
+        $.ajax({
+          type: 'GET',
+          url: 'api-getonequestion.php?qid=' + questionid,
+          dataType: 'json',
+          success: function(data){
+            var q = $.parseJSON(data['question']);
+            $('#questionText').val(q.question);
+            var keys = Object.keys(q.choices);
+            for (var i = 0; i < keys.length; i++) {
+              if(i < keys.length-1) addOption();
+              $('#optionRow' + i).children('#optionText').val(q.choices[keys[i]]);
+            }
+            $('#answerRadio[value='+ q.answer +']').prop("checked", true);
+          }
+        });
+      });
+
+      $('#saveQuestionBtn').click(function(){
+        var formArray = $('form').serializeArray();
+        console.log(formArray);
+        var questionBank = {};
+        questionBank.choices = {};
+        for (var i = 0; i < formArray.length; i++) {
+          switch (formArray[i].name) {
+            case 'optionText':
+              // console.log(formArray[i-1]);
+              questionBank.choices[formArray[i-1].value] = formArray[i].value;
+              break;
+            case 'questionText':
+              questionBank.question = formArray[i].value;
+              break;
+            case 'answer':
+              questionBank.answer = formArray[i].value;
+              break;
+            default:
+              break;
+          }
+        }
+
+        $.ajax({
+          type: 'POST',
+          url: 'api-updatequestion.php',
+          data: { questionBank: questionBank, questionid: questionid },
+          success: function(data) {
+            getQuestions();
+            $('div[id^="optionRow"]').not(':first').remove();
+            numTotal = 1;
+          }
+        });
       });
     }
   });
@@ -138,6 +269,11 @@ var getQuestions = function(){
 $(function (){
   $('#selectChapterDiv').hide();
   $('#noChapters').hide();
+
+  $('#editModal').on('hide.bs.modal', function () {
+    $('div[id^="optionRow"]').not(':first').remove();
+    numTotal = 1;
+  })
 
   $("#selectCourseBtn").click(function(){
     $('#output').empty();
@@ -163,10 +299,13 @@ $(function (){
       url: 'api-deletequestion.php',
       data: { questionid : questionid },
       success: function(data){
-        // $('#row' + questionid).remove();
         getQuestions();
       }
     });
+  });
+
+  $("#addOptionBtn").click(function(){
+    addOption();
   });
 
   getCourses();
