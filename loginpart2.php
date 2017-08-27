@@ -13,9 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     if($user['isInstructor']){ //instructor, check password
       if ( password_verify($_POST['password'], $user['password']) ) {
         $_SESSION['c_number'] = $user['c_number'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['first_name'] = $user['first_name'];
-        $_SESSION['last_name'] = $user['last_name'];
         $_SESSION['play_name'] = $user['play_name'];
         $_SESSION['avatarnum'] = $user['avatarnum'];
         $_SESSION['active'] = $user['active'];
@@ -32,9 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
       //check avatar and name of student to log them in
       if( $_POST['avatarSelect'] == $user['avatarnum'] && $_POST['nameSelect'] == substr($user['play_name'], 0, -3)){
         $_SESSION['c_number'] = $user['c_number'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['first_name'] = $user['first_name'];
-        $_SESSION['last_name'] = $user['last_name'];
         $_SESSION['play_name'] = $user['play_name'];
         $_SESSION['avatarnum'] = $user['avatarnum'];
         $_SESSION['active'] = $user['active'];

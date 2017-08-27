@@ -20,10 +20,7 @@ if ( $result->num_rows > 0 ) {
   $play_name .= ' ' . substr($c_number, -2);
 
   // Set session variables to be used on profile.php page
-  $_SESSION['email'] = $email;
   $_SESSION['c_number'] = $c_number;
-  $_SESSION['first_name'] = $first_name;
-  $_SESSION['last_name'] = $last_name;
   $_SESSION['play_name'] = $play_name;
   $_SESSION['avatarnum'] = $avatarnum;
 
