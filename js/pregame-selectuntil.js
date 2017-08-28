@@ -2,12 +2,12 @@
 var preGameStateSU = Object.create(preGameState);
 
 preGameStateSU.instructLines = [
-  "Hi, I'm Annabelle. Welcome to 'Wild, Wild, Guess', ",
-  "To survive on the frontier we need people with good instincts, people who are good at guessin'.",
-  "I'm gonna show you some questions to see which of you is best at guessin'.",
-  "Click/tap a question to see its options.",
-  "Keep choosin' until yer right, but more guesses means less points.",
-  "Meet yer competition!"
+  "Welcome to Wild Wild Guess. I'm your guide Annabelle.\n"
+  + "To survive on the frontier, you have to be good at guessing.\n"
+  + "The three of you will answer a series of questions\n"
+  + "Click/tap the question to reveal the options\n"
+  + "Keep choosing options 'till you get it right, but more guesses means less points\n"
+  + "Your goal is to outperform your competition\n"
 ];
 
 preGameStateSU.makeHost = function(){

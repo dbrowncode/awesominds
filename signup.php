@@ -70,10 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
       ?>
       </div>
       <div class="btn-group" role="group">
-        <button type="button" value="-" class="imgbtnminus btn btn-secondary" id="imgbtnminus">-</button>
-        <button type="button" value="+" class="imgbtnplus btn btn-secondary" id="imgbtnplus">+</button>
+        <button type="button" value="-" class="imgbtnminus btn btn-secondary" id="imgbtnminus"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+        <button type="button" value="+" class="imgbtnplus btn btn-secondary" id="imgbtnplus"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
       </div>
-      <p><small>Click the + and - buttons until you find a character you like</small></p>
+      <p><small>Click the <i class="fa fa-chevron-up" aria-hidden="true"></i> and <i class="fa fa-chevron-down" aria-hidden="true"></i> buttons until you find a character you like</small></p>
       <input type="hidden" name="avatarnum" value="1" />
 
       <?php

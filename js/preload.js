@@ -95,7 +95,6 @@ var preloadState = {
     game.global.music = game.add.audio('menu');
 
     game.sound.volume = Math.round(game.global.session.user_volume * 10) / 10;
-    console.log(game.sound.volume);
 
     game.global.shuffleArray = function(array) {
       for (var i = array.length - 1; i > 0; i--) {
@@ -118,7 +117,13 @@ var preloadState = {
 
       // Set up our text and run our custom wrapping routine on it
       var prefix = isAnswerText ? choice + '. ' : '';
-      this.bitmapText = game.add.text(Math.floor(x + game.global.borderFrameSize + 5), Math.floor(y + (game.global.borderFrameSize/3) + 5), prefix + text, isJin ? game.global.jinFont : game.global.mainFont);
+      var fontStyle = game.global.mainFont;
+      if(isJin){
+        fontStyle = game.global.jinFont;
+      } else if (text =='\uE8B8') { //settings icon
+        fontStyle = {font: 'Material Icons', fontSize: 22 * dpr, align: 'center'};
+      }
+      this.bitmapText = game.add.text(Math.floor(x + game.global.borderFrameSize + 5), Math.floor(y + (game.global.borderFrameSize/3) + 5), prefix + text, fontStyle);
       // set width for wrapping and let phaser figure out where it should wrap the lines
       this.bitmapText.wordWrapWidth = width - game.global.mainFont.fontSize - 10;
       var prewrapped = this.bitmapText.precalculateWordWrap(prefix + text);
@@ -346,7 +351,6 @@ var preloadState = {
       if(game.paused && game.global.inputInside(this)){
         //save user volume
         game.global.session.user_volume = Math.round(game.sound.volume * 10) / 10;
-        console.log(game.global.session.user_volume);
         $.ajax({
           type: 'POST',
           url: 'setuservolume.php',

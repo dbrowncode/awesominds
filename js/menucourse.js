@@ -43,7 +43,7 @@ var menuCourseState = {
         }
       });
     });
-    game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width, 0, game.width, 'II', false, true, game.global.pauseMenu));
+    game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width, 0, game.width, '\uE8B8', false, true, game.global.pauseMenu));
     game.global.pauseButton.x -= game.global.pauseButton.bubblewidth + game.global.borderFrameSize;
     game.stage.addChild(game.global.pauseButton);
 

@@ -42,10 +42,11 @@ playStateSU.btnClick = function(){
   function btnClickHostFeedback(){
     //set host's attitude based on right or wrong answer
     var speech = this.data.correct ? 'right' : 'wrong';
-    game.global.jinny.frame = this.data.correct ? 2 : 1;
+    var comment = game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)];
+    if(!this.data.correct) comment += '. Keep guessing!';
 
     game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false, null, false, null, true));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), comment, true, false, null, false, null, true));
 
     //points graphic
     if(this.data.correct){

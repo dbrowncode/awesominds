@@ -1,10 +1,11 @@
 var preGameState = {
   instructLines : [
-    "Hi! I'm your host, Jin. Welcome to Awesominds, ",
-    "Earn points by correctly answering each question before time runs out.",
-    "Click/tap a question to reveal its options and start the timer.",
-    "Answer before your competitors to earn full point value.",
-    "Meet your competition!"
+    "Welcome to Countdown Crown. I'm your guide Jin.\n"
+    + "This Realm is looking for a new monarch, one who is quick and bright.\n"
+    + "Each Village will present the three of you with a series of questions.\n"
+    + "Click/tap the question to reveal the options.\n"
+    + "The more quickly you answer correctly, the more preeminence points you earn.\n"
+    + "Your goal is to impress the most villages, and become the new monarch of this realm."
   ],
 
   makeHost: function(){
@@ -22,7 +23,7 @@ var preGameState = {
     this.pregameUI = game.add.group();
 
     var instructLines = game.state.getCurrentState().instructLines.slice();
-    instructLines[0] += game.global.session['play_name'] + "!";
+    // instructLines[0] += game.global.session['play_name'] + "!";
 
     var courseText = game.add.text(game.global.pauseButton.left, game.world.y, game.global.selectedCourseName, game.global.smallerWhiteFont);
     courseText.x = Math.round(courseText.x - courseText.width - game.global.borderFrameSize);
@@ -51,8 +52,9 @@ var preGameState = {
       }
     }
 
-    var winChances = [20, 40, 60, 75];
+    var winChances = [65, 75];
     winChances = game.global.shuffleArray(winChances);
+    winChances.unshift(0); //loop below doesn't use first index of winchances, so put garbage in there
     game.global.chars = [];
     game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys);
 
@@ -61,7 +63,7 @@ var preGameState = {
     if(dpr>=2) game.global.imagecheck.scale.setTo(dpr/4,dpr/4);
     var image = game.global.imagecheck;
 
-    prevHeights += bubbles[bubbles.length - 1].bubbleheight + (10*dpr);
+    prevHeights += 10*dpr;
 
     for(var i = 0; i < 3; i++){
       game.global.chars[i] = {};
@@ -81,18 +83,18 @@ var preGameState = {
     }
 
     //loop again to add ai tweens; needs to be done after the sprites were made in this case
-    for (var i = 1; i < game.global.chars.length; i++) {
-      game.global.chars[i].tween = game.add.tween(game.global.chars[i].sprite).to({x: game.global.jinny.right}, 300, Phaser.Easing.Default, false, 500);
-      if(i==1){
+    for (var i = 0; i < game.global.chars.length; i++) {
+      game.global.chars[i].tween = game.add.tween(game.global.chars[i].sprite).to({x: Math.floor(((game.width/game.global.chars.length)*(i+1) -game.width/game.global.chars.length)+(game.width/25)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, false);
+      if(i==0){
         sbtweens[sbtweens.length - 1].chain(game.global.chars[i].tween);
       }else{
         game.global.chars[i-1].tween.chain(game.global.chars[i].tween);
       }
     }
 
-    var skip = game.world.add(new game.global.SpeechBubble(game, game.width, game.height, game.width, "Continue", false, true, this.skipFunction));
-    skip.x = Math.floor(skip.x - (skip.bubblewidth + game.global.borderFrameSize));
-    skip.y = Math.floor(game.height - skip.bubbleheight - game.global.borderFrameSize);
+    var skip = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.height, game.width, "Play", false, true, this.skipFunction));
+    skip.x = Math.floor(skip.x - (skip.bubblewidth/2));
+    skip.y = Math.floor(bubbles[bubbles.length-1].y + bubbles[bubbles.length-1].bubbleheight + (10*dpr));
     this.pregameUI.add(skip);
 
     sbtweens[0].start();
@@ -120,7 +122,7 @@ var preGameState = {
     });
   },
   update: function(){
-    for (var i = 1; i < game.global.chars.length; i++) {
+    for (var i = 0; i < game.global.chars.length; i++) {
       game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.right + (10*dpr));
       game.global.chars[i].name.y = Math.floor(game.global.chars[i].sprite.centerY + (10*dpr));
     }

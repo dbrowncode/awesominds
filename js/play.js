@@ -66,12 +66,12 @@ var playState = {
     //Host
     game.global.jinny.frame = 0;
     game.global.hostComments = {
-      right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive","That's a Texas size Ten-Four good buddy"],
-      wrong : [ "Oh no!"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
+      right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive"],
+      wrong : [ "Oh no"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
     };
     game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.isRehash ? "Second chance. Five points each!" : 'Here comes your first question...', true, false, null, false, null, true));
 
-    //animate avatars to the bottom
+    //animate avatars to the bottom; needed in case this state was skipped to before animation finished in pregame
     var image = game.global.imagecheck;
     for (var i = 0; i < game.global.chars.length; i++) {
       game.add.tween(game.global.chars[i].sprite).to({x: Math.floor(((game.width/game.global.chars.length)*(i+1) -game.width/game.global.chars.length)+(game.width/25)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
@@ -239,7 +239,7 @@ var playState = {
     //timer - better/more universal way?
     var thisState = game.state.getCurrentState();
     thisState.startTime = new Date();
-    thisState.totalTime = 20;
+    thisState.totalTime = 25;
     thisState.timeElapsed = 0;
     thisState.createTimer();
     thisState.gameTimer = game.time.events.loop(100, function(){ game.state.getCurrentState().updateTimer() });
@@ -274,7 +274,7 @@ var playState = {
       if(!fromButton){
         //only replace the speech if this function was not called from btn click and came from the timer
         game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), "Now worth 10 points!", true, false, null, false, null, true));
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), "Not much time left!", true, false, null, false, null, true));
       }
       for(i=1;i<game.global.chars.length;i++){
         game.add.tween(game.global.chars[i].answerBubble).to({width: game.global.answerBubbleWidth }, 100, Phaser.Easing.Default, true, 250 * i);
@@ -290,6 +290,7 @@ var playState = {
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
     //disable timer
     game.state.getCurrentState().timerOn = false;
+    game.global.scoreToAdd = game.state.getCurrentState().seconds; //capture time remaining to use as score
     //increment number of answered questions
     game.global.questionsAnswered++;
 
@@ -301,7 +302,7 @@ var playState = {
       }else{
         game.global.answeredBeforeAI = false;
       }
-    }
+    };
 
     function btnClickSymbolFeedback(){
       //bring in a symbol of right or wrong
@@ -328,7 +329,7 @@ var playState = {
           }
         });
       }
-    }
+    };
 
     function btnClickHostFeedback(){
       //set host's attitude based on right or wrong answer
@@ -336,11 +337,18 @@ var playState = {
       game.global.jinny.frame = this.data.correct ? 2 : 1;
 
       game.global.jinnySpeech.destroy();
-      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)] + '\n', true, false, null, false, null, true));
+      game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.hostComments[speech][Math.floor(Math.random() * game.global.hostComments[speech].length)], true, false, null, false, null, true));
 
       //points graphic
       if(!game.global.isRehash && this.data.correct){
-        var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.answeredBeforeAI ? 'pts25' : 'pts10');
+        // var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.answeredBeforeAI ? 'pts25' : 'pts10');
+        var ptsImage = game.add.text(game.world.centerX, game.world.height, game.global.scoreToAdd + ' pts!');
+        ptsImage.font = 'Arial';
+        ptsImage.fontWeight = 'bold';
+        ptsImage.fill = '#ffffff';
+        ptsImage.stroke = '#000000';
+        ptsImage.strokeThickness = Math.max(game.global.scoreToAdd / 2, 10) * dpr;
+        ptsImage.fontSize = Math.max(game.global.scoreToAdd * 4, 40) * dpr;
         // ptsImage.scale.setTo(dpr);
         var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
         var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
@@ -348,8 +356,7 @@ var playState = {
         tweenA.start();
         game.global.questionUI.add(ptsImage);
       }
-
-    }
+    };
 
     game.global.timer.stop();
     game.global.timer.add(500, btnClickShowAnswers, this);
@@ -385,11 +392,13 @@ var playState = {
      if(game.global.isRehash){
        game.global.totalStats.score += 5;
      }else{
-       if(game.global.answeredBeforeAI){
-         game.global.totalStats.score += 25;
-       }else{
-         game.global.totalStats.score += 10;
-       }
+      //  if(game.global.answeredBeforeAI){
+      //    game.global.totalStats.score += 25;
+      //  }else{
+      //    game.global.totalStats.score += 10;
+      //  }
+      game.global.totalStats.score += game.global.scoreToAdd;
+      game.global.scoreToAdd = 0;
      }
 
      if(game.global.totalStats.numRight !=0 && (game.global.totalStats.numRight % 5 == 0)){
@@ -494,7 +503,7 @@ var playState = {
   },
 
   createTimer : function(){
-    this.timeLabel = game.add.bitmapText(game.world.width + 1000, game.global.jinnySpeech.bottom + (11 * dpr), '8bitoperator', '20', 11 * dpr);
+    this.timeLabel = game.add.bitmapText(game.world.width + 1000, game.global.jinnySpeech.bottom + (11 * dpr), '8bitoperator', game.state.getCurrentState().totalTime, 11 * dpr);
     this.timeLabel.tint = 0x000000;
     this.gfx = game.add.graphics(game.world.x - 1000, game.world.y - 1000);
     this.gfx.lineStyle(1, 0x000000, 1);
