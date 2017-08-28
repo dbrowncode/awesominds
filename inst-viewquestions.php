@@ -310,6 +310,26 @@ $(function (){
 
   getCourses();
 
+  <?php
+    if(isset($_GET["courseid"])){
+      $c = $_GET["courseid"];
+      echo "selectedCourse = '$c';
+            $.ajax({
+              type: 'POST',
+              url: 'setcourse.php',
+              data: { course: selectedCourse },
+              success: function(data){
+                getChapters(selectedCourse);";
+              if(isset($_GET["chapter"])){
+                $ch = $_GET["chapter"];
+                echo "selectedChapter = '$ch';
+                      getQuestions();";
+              }
+        echo "}
+            });";
+    }
+  ?>
+
 });
 </script>
 

@@ -8,26 +8,27 @@
     }
     include 'css/css.html';
   ?>
+  <title>Add Chapter/Game - Awesominds</title>
 </head>
 <body>
   <?php include 'inst-nav2.php' ?>
   <div class="container text-center">
   <div class="formWrap form">
     <h2>Add Chapter/Game</h2><br>
-    <div id='selectCourseDiv' class='tab-content field-wrap'>
-      <p>Select a course to add a new chapter/game of questions to</p>
-      <select id='courseDropdown'>
-        <option value="default">No Courses Found</option>
+    <p id="selectCourseText">Select a course to add a new chapter/game of questions to</p>
+    <div id='selectCourseDiv' class='input-group container' style="max-width: 400px">
+      <select class="form-control" id='courseDropdown'>
+        <!-- <option value="default">No Courses Found</option> -->
       </select>
-      <button id='selectBtn' value='Select'>Select</button>
+      <span class="input-group-btn"><button class="btn btn-primary" id='selectBtn' value='Select'>Select</button></span>
     </div>
-    <div id='uploadDiv' class='tab-content field-wrap'>
+    <p class="uploadText"><br>Select a .doc or .txt file of questions to upload. Chapter number must be included in the file.</p><br>
+    <div id='uploadDiv' class='form-group container' style="max-width: 400px">
       <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
-
-          <p>Select a .doc or .txt file of questions to upload. Chapter number must be included in the file.</p>
-          <input type="file" name="fileToUpload" id="fileToUpload">
-          <input class='button button-block' type="submit" value="Upload file" name="submit">
-
+        <!-- <div class="input-group"> -->
+          <input type="file" class="form-control-file" name="fileToUpload" id="fileToUpload"><br>
+          <button class='btn btn-primary' type="submit" value="Upload File" name="submit">Upload File</button>
+        <!-- </div> -->
       </form>
       <p id="output"></p>
     </div>
@@ -49,6 +50,7 @@ var getCourses = function(){
   });
 }
 $(function (){
+  $('.uploadText').hide();
   $('#uploadDiv').hide();
   $("#selectBtn").click(function(){
     $.ajax({
@@ -56,38 +58,18 @@ $(function (){
       url: 'setcourse.php',
       data: { course: $('#courseDropdown').find(":selected").val() },
       success: function(data){
-
+        $('.uploadText').show();
         $('#uploadDiv').show();
-        var selectedCourseText = '<p>Course: ' + $.parseJSON(data).course + '</p><p><a href="inst-addquestions.php">Back to Select</a></p>'
+        var selectedCourseText = '<p>Course: ' + $.parseJSON(data).course + '</p><p><a href="inst-addquestions.php">Back to Select</a></p>';
         $('#uploadDiv').append(selectedCourseText);
         $('#selectCourseDiv').hide();
+        $('#selectCourseText').hide();
       }
     });
   });
   getCourses();
 });
-</script>
-<script>
-var create_output           = '#confirm';
-var createForm              = $('#createCourseForm');
-createForm.submit(function (e) {
-  e.preventDefault();
-  $.ajax({
-    type: createForm.attr('method'),
-    url: createForm.attr('action'),
-    data: createForm.serialize(),
-    success: function(data) {
-     $(create_output).html(data);
-      console.log(data);
-    },
-  error: function(data) {
-    console.log(data);
-  },
- });
-});
-</script>
 
-<script>
 //configuration
 var max_file_size           = 1048576 * 3; //allowed file size. (1 MB = 1048576)
 //var allowed_file_types      = ['application/msword']; //allowed file types
@@ -144,7 +126,10 @@ $(my_form_id).on( "submit", function(event) {
                 mimeType:"multipart/form-data"
             }).done(function(res){ //
                 $(my_form_id)[0].reset(); //reset form
-                $(result_output).html(res); //output response from server
+                var courseid = $('#courseDropdown').find(":selected").val();
+                var chapter = res.match(/chapter \d+/)[0].match(/\d+/)[0];
+                console.log(chapter);
+                $(result_output).html(res + '<p><a href="inst-viewquestions.php?courseid=' + courseid + '&chapter=' + chapter + '">View Questions</a></p>'); //output response from server
                 console.log(res);
                 submit_btn.val("Upload file").prop( "disabled", false); //enable submit button once ajax is done
             });
