@@ -20,10 +20,9 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
 
         $email = $user['email'];
         $hash = $user['hash'];
-        $first_name = $user['first_name'];
 
         // Session message to display on success.php
-        $_SESSION['message'] = "<p>Please check your email for a confirmation link to complete your password reset!</p>";
+        $_SESSION['message'] = "<p>Please check your email for a link to complete your password reset!</p>";
 
         // Send registration confirmation link (reset.php)
         $to      = $email;
@@ -32,9 +31,8 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
                    "Reply-To: noreply@gbl.cs.camosun.bc.ca" . "\r\n" .
                    "X-Mailer: PHP/" . phpversion();
         $message_body = '
-        Hello '.$first_name.',
 
-        You have requested password reset!
+        A password reset has been requested on your Awesominds account.
 
         Please click this link to reset your password:
 
@@ -42,36 +40,32 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
 
         mail($to, $subject, $message_body, $headers);
 
-        header("location: success.php");
+        header("location: index.php");
   }
 }
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Reset Your Password</title>
+  <title>Reset Your Password - Awesominds</title>
   <?php include 'css/css.html'; ?>
 </head>
 
 <body>
-
-  <div class="form">
-
-    <h1>Reset Your Password</h1>
-
+  <?php include 'inst-nav2.php' ?>
+  <div class="container text-center">
+    <h2>Reset Your Password</h2>
+    <p>Enter your Camosun ID to receive a password reset link via the email address you registered from.</p>
     <form action="forgot.php" method="post">
-     <div class="field-wrap">
-      <label>
-        Camosun ID<span class="req">*</span>
-      </label>
-      <input type="text" required autocomplete="off" name="c_number"/>
-    </div>
-    <button class="button button-block"/>Reset</button>
+      <div class="form-group container" id="loginPart1" style="max-width: 400px;">
+        <label for="cnumberInput" class="form-label"><b>Camosun ID*</b></label>
+        <div class="input-group">
+          <input class="form-control" type="text" required autocomplete="off" name="c_number" id="cnumberInput"/>
+          <span class="input-group-btn"><button class="btn btn-primary" id="resetBtn">Submit</button></span>
+        </div>
+      </div>
     </form>
   </div>
-
-<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-<script src="js/index.js"></script>
 </body>
 
 </html>

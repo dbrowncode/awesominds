@@ -32,11 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
         if($_SESSION['loginpart2'] == 2){ //instructor
           echo '<form action="loginpart2.php" method="post" autocomplete="off" id="loginForm">
                   <div class="form-group container" id="loginPart2" style="max-width: 400px;">
-                    <label for="passwordInput" class="form-label"><b>Password*<b> </label>
+                    <label for="passwordInput" class="form-label"><b>Password*</b></label>
                     <div class="input-group">
                       <input class="form-control" type="password" required autocomplete="off" name="password" id="passwordInput"/>
                       <span class="input-group-btn"><button class="btn btn-primary" name="login" id="loginBtn">Log In</button></span>
                     </div>
+                    <small><a href="forgot.php">Forgot Password?</a></small>
                   </div>
                 </form>';
         } else { //student

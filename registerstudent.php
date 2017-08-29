@@ -22,15 +22,16 @@ if ( $result->num_rows > 0 ) {
   $_SESSION['avatarnum'] = $avatarnum;
 
   if(isset($_SESSION['invitecode'])){ //register as instructor and consume invite
-    $query = $dbcon->prepare("SELECT invitecode FROM invite WHERE invitecode = :invitecode");
+    $query = $dbcon->prepare("SELECT * FROM invite WHERE invitecode = :invitecode");
     $query->bindParam(':invitecode', $_SESSION["invitecode"]);
     $query->execute();
-    if($query->fetch(PDO::FETCH_ASSOC)){ //code exists, save it in session for now
+    if($result = $query->fetch(PDO::FETCH_ASSOC)){ //code exists
       $password = $mysqli->escape_string(password_hash($_POST['password'], PASSWORD_BCRYPT));
       $hash = $mysqli->escape_string( md5( rand(0,1000) ) );
-      $sql = "INSERT INTO users (play_name, c_number, avatarnum, active, isInstructor, password, hash) "
-           . "VALUES ('$play_name', '$c_number', '$avatarnum', 1, 1, '$password', '$hash')";
-    } else {
+      $email = $result['email_sentto'];
+      $sql = "INSERT INTO users (play_name, c_number, avatarnum, email, active, isInstructor, password, hash) "
+           . "VALUES ('$play_name', '$c_number', '$avatarnum', '$email', 1, 1, '$password', '$hash')";
+    } else { // code does not exist
       $_SESSION['message'] = 'Invalid invite code!';
       header("location: index.php");
     }
@@ -44,7 +45,7 @@ if ( $result->num_rows > 0 ) {
   if ( $mysqli->query($sql) ){
     $_SESSION['active'] = 1; //accounts no longer need email verification
     $_SESSION['logged_in'] = 1; // So we know the user has logged in
-    if(isset($_SESSION['invitecode'])){
+    if(isset($_SESSION['invitecode'])){ //if we got this far with an invite code, it was valid and used to register an instructor. delete the invite
       $inviteCode = $_SESSION['invitecode'];
       $_SESSION['isInstructor'] = 1;
       $mysqli->query("DELETE FROM invite WHERE invitecode='$inviteCode'");
