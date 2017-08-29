@@ -1,19 +1,13 @@
 <head>
   <meta charset="UTF-8" />
   <?php
-    // Check if user is logged in using the session variable
-    if ( $_SESSION['logged_in'] != 1 ) {
-      $_SESSION['message'] = "You must log in before viewing your profile page!";
-      header("location: error.php");
-    }
-    else {
-        // Makes it easier to read
-        $c_number = $_SESSION['c_number'];
-        $active = $_SESSION['active'];
-        $avatarnum = $_SESSION['avatarnum'];
-        $play_name = $_SESSION['play_name'];
-        $isInstructor = $_SESSION['isInstructor'];
-    }
+    include('redir-notloggedin.php');
+    // Makes it easier to read
+    $c_number = $_SESSION['c_number'];
+    $active = $_SESSION['active'];
+    $avatarnum = $_SESSION['avatarnum'];
+    $play_name = $_SESSION['play_name'];
+    $isInstructor = $_SESSION['isInstructor'];
   ?>
   <title>Welcome <?= $play_name ?></title>
   <?php include 'css/css.html'; ?>
@@ -46,8 +40,7 @@
     ?>
     <h4>You are logged in as</h4><br>
     <?php echo '<img src="assets/opp2/oppon' . $avatarnum . '.png" width=120/>'; ?>
-    <h3><?php echo $play_name; ?></h3><br>
+    <h3><?php echo $play_name; ?></h3><h5><?php echo $c_number; ?></h5>
     </div>
   </div>
-<script src="js/index.js"></script>
 </body>

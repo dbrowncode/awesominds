@@ -132,7 +132,7 @@ var playState = {
   * scores AI for new question
   */
   showQuestion: function(question){
-   console.log(question.answer + ' - questions left: ' + game.global.questions.length );
+    if(devmode) console.log(question.answer + ' - questions left: ' + game.global.questions.length );
     if (game.global.questionShown){
       game.state.getCurrentState().removeQuestion();
     }
