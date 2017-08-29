@@ -7,11 +7,12 @@ $c_number = $mysqli->escape_string($_POST['cnumber']);
 $avatarnum = $_POST['avatarnum'];
 
 // Check if user with that c number already exists
-$result = $mysqli->query("SELECT * FROM users WHERE c_number='$c_number'") or die($mysqli->error());
+$result = $mysqli->query("SELECT * FROM users WHERE c_number='$c_number'");
 
 // We know user id exists if the rows returned are more than 0
 if ( $result->num_rows > 0 ) {
   $_SESSION['message'] = 'User with this Camosun ID already exists!';
+  // header("location: signup.php");
 } else { // id doesn't already exist in a database, proceed...
   // add last 2 digits of C number to the display name
   $play_name .= ' ' . substr($c_number, -2);
@@ -55,4 +56,4 @@ if ( $result->num_rows > 0 ) {
     $_SESSION['message'] = 'Registration failed!';
   }
 }
-header("location: index.php");
+// header("location: index.php");

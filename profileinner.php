@@ -16,7 +16,6 @@
 <body>
   <?php include 'inst-nav2.php' ?>
   <div class="container text-center">
-  <div class="form">
     <h2>Welcome to Awesominds</h2>
     <p>
     <?php
@@ -40,7 +39,7 @@
     ?>
     <h4>You are logged in as</h4><br>
     <?php echo '<img src="assets/opp2/oppon' . $avatarnum . '.png" width=120/>'; ?>
-    <h3><?php echo $play_name; ?></h3><h5><?php echo $c_number; ?></h5>
-    </div>
+    <h3><?php echo $play_name; ?></h3><h5><?php echo $c_number; ?></h5><br>
+    <p><a class="btn btn-success" href="questiongame.php">Play Game</a></p>
   </div>
 </body>

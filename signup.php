@@ -5,6 +5,9 @@
   require '../../db.php';
   require '../../conn.php';
   session_start();
+  if($_SESSION["logged_in"]){
+    header("location: index.php");
+  }
   include 'css/css.html';
 ?>
 </head>
@@ -30,9 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
   <script src="js/displaynames.js"></script>
   <script>
     jQuery(document).ready(function($){
+      $("#displayNameField").val(displayNames[Math.floor(Math.random() * displayNames.length)]);
   	  $("#random").click(function(){
         $("#displayNameField").val(displayNames[Math.floor(Math.random() * displayNames.length)]);
-        $("#displayNameLabel").addClass('active highlight');
   	   });
   	});
   </script>

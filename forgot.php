@@ -12,7 +12,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
     if ( $result->num_rows == 0 ) // User doesn't exist
     {
         $_SESSION['message'] = "User with that ID doesn't exist!";
-        header("location: error.php");
+        header("location: index.php");
     }
     else { // User exists (num_rows != 0)
 
@@ -52,7 +52,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' )
 </head>
 
 <body>
-  <?php include 'inst-nav2.php' ?>
+  <?php include 'inst-nav2.php'; ?>
   <div class="container text-center">
     <h2>Reset Your Password</h2>
     <p>Enter your Camosun ID to receive a password reset link via the email address you registered from.</p>

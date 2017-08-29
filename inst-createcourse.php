@@ -12,28 +12,23 @@
 <body>
   <?php include 'inst-nav2.php' ?>
   <div class="container text-center">
-    <div class="formWrap form">
-      <h2>Create a Course</h2><br>
-        <div class="createClass">
-          <form action="createCourse.php" method="post" id="createCourseForm">
-            <!-- could use js to restrict input type here -->
+    <h2>Create a Course</h2><br>
+    <form action="createCourse.php" method="post" id="createCourseForm">
+      <p>Enter a course code and name to create a new course.</p>
+      <div class="form-group container" style="max-width: 400px;">
+        <p>Course Code</p>
+        <input class="form-control" type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150" pattern="[A-Za-z]{3,4}[0-9]{3}" title="3-4 letters followed by 3 numbers; no spaces.">
+        <p>Course Name</p>
+        <input class="form-control" type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150">
 
-              <p>Create a new course based on the alphanumeric course code and name.</p>
-              <p>Course Code: <input type="text" name="courseID" id="courseID" required="true" placeholder="PSYC150" pattern="[A-Za-z]{3,4}[0-9]{3}" title="3-4 letters, 3 numbers, no spaces."></p>
-              <p>Course Name: <input type="text" name="courseName" id="courseName" required="true" placeholder="PSYCHOLOGY 150"></p>
-
-            <input type="submit" class='button button-block' value="Create Course" name"createC">
-          </form>
-        <p id="confirm"></p>
+        <input type="submit" class='btn btn-primary' value="Create Course" name"createC">
       </div>
-    </div>
+    </form>
+    <p id="createCourseOutput"></p>
   </div>
 
-
-<!--jquery goes here-->
-
 <script>
-var create_output           = '#confirm';
+var create_output           = '#createCourseOutput';
 var createForm              = $('#createCourseForm');
 createForm.submit(function (e) {
   e.preventDefault();

@@ -15,24 +15,22 @@
 <body>
   <?php include 'inst-nav2.php' ?>
   <div class="container text-center">
-    <div class="formWrap form">
-      <h2>View Student Progress</h2><br>
-      <p>Select a course to view its game statistics.<br> You may then select a chapter/game for specific stats.<br> Courses and chapters/games with no available statistics are not shown.</p>
-      <p>Select a course:</p>
-      <div id='selectCourseDiv' class="input-group container" style="max-width: 400px">
-        <select class="form-control" id='courseDropdown'>
-          <!-- <option value="default">No Courses Found</option> -->
-        </select>
-        <span class="input-group-btn"><button class="btn btn-primary" id='selectCourseBtn' value='Select'>Select</button></span>
-      </div>
-      <br><p class='selectChapterText'>Select a chapter/game:</p>
-      <div id='selectChapterDiv' class="input-group container" style="max-width: 400px">
-        <select class="form-control" id='chapterDropdown'>
-          <!-- <option value="default">No Chapters Found</option> -->
-        </select>
-        <span class="input-group-btn"><button class="btn btn-primary" id='selectChapterBtn' value='Select'>Select</button></span>
-        <p> </p>
-      </div>
+    <h2>View Student Progress</h2><br>
+    <p>Select a course to view its game statistics.<br> You may then select a chapter/game for specific stats.<br> Courses and chapters/games with no available statistics are not shown.</p>
+    <p>Select a course:</p>
+    <div id='selectCourseDiv' class="input-group container" style="max-width: 400px">
+      <select class="form-control" id='courseDropdown'>
+        <!-- <option value="default">No Courses Found</option> -->
+      </select>
+      <span class="input-group-btn"><button class="btn btn-primary" id='selectCourseBtn' value='Select'>Select</button></span>
+    </div>
+    <br><p class='selectChapterText'>Select a chapter/game:</p>
+    <div id='selectChapterDiv' class="input-group container" style="max-width: 400px">
+      <select class="form-control" id='chapterDropdown'>
+        <!-- <option value="default">No Chapters Found</option> -->
+      </select>
+      <span class="input-group-btn"><button class="btn btn-primary" id='selectChapterBtn' value='Select'>Select</button></span>
+      <p> </p>
     </div>
     <div id="output" class="container"></div>
   </div>
