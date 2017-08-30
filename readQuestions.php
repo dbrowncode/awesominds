@@ -7,6 +7,7 @@
       //must call session_start() before you can access $_SESSION
       session_start();
       $courseid = $_SESSION["course"];
+      $insertChapter = $_SESSION["chapterid"];
       $questionBank = array();
       $arrayFilled = array();
 		  $index = 0;
@@ -20,16 +21,16 @@
         $line = preg_replace('/[^\PC\s]/u', "\n", $line);
         // echo $line.'<br>';
 
-        //chapter number and name
-        if(preg_match("/CHAPTER \d+|CHAPTER \d+:/i",$line,$match)){
-          // echo 'chapter found<br>';
-          // $lineArray =  explode(" ", $line);
-          // $insertChapter = str_replace(":",'',$lineArray[1]);
-          preg_match('/[0-9]+/', $match[0], $chapnummatches);
-          $insertChapter = $chapnummatches[0];
-          $chapterName = preg_replace("/CHAPTER \d+|CHAPTER \d+:/i","",$line);
-          // echo 'chapter: '.$insertChapter.'<br>';
-	  		}
+        // //chapter number and name
+        // if(preg_match("/CHAPTER \d+|CHAPTER \d+:/i",$line,$match)){
+        //   // echo 'chapter found<br>';
+        //   // $lineArray =  explode(" ", $line);
+        //   // $insertChapter = str_replace(":",'',$lineArray[1]);
+        //   preg_match('/[0-9]+/', $match[0], $chapnummatches);
+        //   $insertChapter = $chapnummatches[0];
+        //   $chapterName = preg_replace("/CHAPTER \d+|CHAPTER \d+:/i","",$line);
+        //   // echo 'chapter: '.$insertChapter.'<br>';
+	  		// }
 
         //question text
         if(preg_match("/^\d+\)|^\d+\./",$line)){

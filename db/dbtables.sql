@@ -1,5 +1,6 @@
 Set foreign_Key_checks = 0;
 drop table if exists course cascade;
+drop table if exists chapter cascade;
 drop table if exists users cascade;
 drop table if exists question cascade;
 drop table if exists score cascade;
@@ -38,6 +39,17 @@ CREATE TABLE `course` (
   PRIMARY KEY (`courseid`),
   KEY `user_course_fk_idx` (`c_number`),
   CONSTRAINT `user_course_fk` FOREIGN KEY (`c_number`) REFERENCES `users` (`c_number`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `chapter` (
+  `courseid` varchar(9) NOT NULL,
+  `chapterid` int(11) NOT NULL,
+  `chaptername` tinytext NOT NULL,
+  `date_start` varchar(99) NOT NULL,
+  `date_end` varchar(99) NOT NULL,
+  PRIMARY KEY (`courseid`, `chapterid`),
+  KEY `chapter_course_fk_idx` (`courseid`),
+  CONSTRAINT `chapter_course_fk` FOREIGN KEY (`courseid`) REFERENCES `course` (`courseid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `question` (

@@ -8,7 +8,7 @@
   if($_POST["deletingCourse"] == "true"){
     $sqltext = array("DELETE FROM score WHERE courseid = :courseid;", "DELETE FROM question WHERE courseid = :courseid;", "DELETE FROM course WHERE courseid = :courseid;");
   } else {
-    $sqltext = array("DELETE FROM score WHERE courseid = :courseid AND chapter = :chapter;", "DELETE FROM question WHERE courseid = :courseid AND chapter = :chapter;");
+    $sqltext = array("DELETE FROM score WHERE courseid = :courseid AND chapter = :chapter;", "DELETE FROM question WHERE courseid = :courseid AND chapter = :chapter;", "DELETE FROM chapter WHERE courseid = :courseid AND chapterid = :chapter;");
   }
 
   $output = [];

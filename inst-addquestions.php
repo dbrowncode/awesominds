@@ -72,13 +72,11 @@ $(function (){
 
 //configuration
 var max_file_size           = 1048576 * 3; //allowed file size. (1 MB = 1048576)
-//var allowed_file_types      = ['application/msword']; //allowed file types
 var result_output           = '#output'; //ID of an element for response output
-var my_form_id              = '#uploadForm'; //ID of an element for response output
 var total_files_allowed     = 1; //Number files allowed to upload
 
 //on form submit
-$(my_form_id).on( "submit", function(event) {
+$('#uploadForm').on( "submit", function(event) {
     event.preventDefault();
     var proceed = true; //set proceed flag
     var error = []; //errors
@@ -125,7 +123,7 @@ $(my_form_id).on( "submit", function(event) {
                 processData:false,
                 mimeType:"multipart/form-data"
             }).done(function(res){ //
-                $(my_form_id)[0].reset(); //reset form
+                $('#uploadForm')[0].reset(); //reset form
                 var courseid = $('#courseDropdown').find(":selected").val();
                 var chapter = res.match(/chapter \d+/)[0].match(/\d+/)[0];
                 console.log(chapter);

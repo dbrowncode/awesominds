@@ -7,17 +7,18 @@
     <div class="navbar-nav in">
 
       <?php if ($_SESSION['isInstructor']){
+        // <a class="dropdown-item" href="inst-createcourse.php">Create Course</a>
+        // <a class="dropdown-item" href="inst-addquestions.php">Add Chapter/Game</a>
+        // <a class="dropdown-item" href="inst-viewquestions.php">View Questions</a>
+        // <a class="dropdown-item" href="inst-deletecourse.php">Delete Courses/Chapters</a>
         echo '  <div class="nav-item dropdown">
             <a class="d-block dropdown-toggle btn btn-outline-primary" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Instructor Options
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="inst-createcourse.php">Create Course</a>
-              <a class="dropdown-item" href="inst-addquestions.php">Add Chapter/Game</a>
-              <a class="dropdown-item" href="inst-viewquestions.php">View Questions</a>
+              <a class="dropdown-item" href="inst-coursemgmt.php">Manage Courses</a>
               <a class="dropdown-item" href="inst-inviteinstructor.php">Invite Instructor</a>
               <a class="dropdown-item" href="inst-stats.php">View Student Progress</a>
-              <a class="dropdown-item" href="inst-deletecourse.php">Delete Courses/Chapters</a>
             </div>
           </div>';
       }
