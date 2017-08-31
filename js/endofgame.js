@@ -1,9 +1,8 @@
 var endOfGameState = {
   hostMindStates : [
-    { min: 90, max: 100, mind: "You have an awesomind!", label: "Awesome!", gameOver: false, bonus: 0},
-    { min: 70, max: 89, mind: "You have a great mind!", label: "Great", gameOver: false, bonus: 0},
-    { min: 50, max: 69, mind: "You have a good mind.", label: "Good", gameOver: false, bonus: 0},
-    { min: 0, max: 49, mind: "You have a mediocre mind.", label: "Mediocre", gameOver: false, bonus: 0}
+    { min: 70, max: 100, mind: "You have earned a jewel for your crown!", label: "Achievement", gameOver: false, bonus: 0},
+    { min: 50, max: 69, mind: "You may continue to the next village!", label: "Continue", gameOver: false, bonus: 0},
+    { min: 0, max: 49, mind: "You have been banished from the realm!", label: "Banishment", gameOver: true, bonus: 0}
   ],
 
   optionButtons: function(gameOver){
@@ -98,58 +97,80 @@ var endOfGameState = {
   },
 
   isGameOver: function(mindStateGameOver){
-    return false; //in original countdown mode, no reason for game over.
+    var winnerFound = false;
+    for (var i = 0; i < game.global.chars.length; i++) {
+      if(game.global.chars[i].numJewels >= 5){
+        winnerFound = true;
+        break;
+      }
+    }
+    return (mindStateGameOver || winnerFound);
   },
 
   makeStatUI: function(){
     var mindStates = game.state.getCurrentState().hostMindStates.slice();
     var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numOrigQuestions * 25)) * 100));
-    var lineGfx = game.add.graphics(0,0);
-    this.endGameUI.add(lineGfx);
-    lineGfx.lineStyle(1, 0x333333, 1);
 
     if(score > mindStates[0].min){
       //if awesomind, be happy
       game.global.jinny.frame = 2;
     }
 
+    var mindStateToUse = mindStates[mindStates.length];
     // set up visual areas for score ranges
     for (var i = 0; i < mindStates.length; i++) {
       if(score >= mindStates[i].min && score <= mindStates[i].max){
-        game.global.jinnySpeech.destroy();
-        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), mindStates[i].mind, true, false, null, false, null, true));
-        this.endGameUI.add(game.global.jinnySpeech);
-        var gameOver = game.state.getCurrentState().isGameOver(mindStates[i].gameOver);
-        game.state.getCurrentState().buttons = game.state.getCurrentState().optionButtons(gameOver);
-        game.state.getCurrentState().statLines = game.state.getCurrentState().getStatLines(gameOver);
-        game.global.bonus = mindStates[i].bonus;
+        mindStateToUse = mindStates[i];
+        break;
       }
-      var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, game.global.jinny.bottom);
-      lineGfx.moveTo(0, lineYposition);
-      lineGfx.lineTo(game.world.width, lineYposition);
-      var label = game.add.text(game.world.centerX, lineYposition, mindStates[i].label, game.global.whiteFont);
-      label.x -= label.width/2;
-      label.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
-      label.padding.x = 5;
-      this.endGameUI.add(label);
     }
 
-    // convert score + progress bars to percentage
     var winningScore = 0;
+    for (var i = 0; i < game.global.chars.length; i++) { // calculate top score first for tie purposes
+      winningScore = Math.max(winningScore, game.global.chars[i].score);
+      var thisCharScore = Math.min(100, Math.floor(((game.global.chars[i].score) / (game.global.numOrigQuestions * 25)) * 100));
+      if(thisCharScore >= mindStates[0].min && thisCharScore <= mindStates[0].max){ //char is in top score range
+        game.global.chars[i].numJewels++;
+        console.log('char ' + i + ' now has ' + game.global.chars[i].numJewels + ' jewels');
+      }
+    }
+
+    var gameOver = game.state.getCurrentState().isGameOver(mindStateToUse.gameOver);
+    game.state.getCurrentState().buttons = game.state.getCurrentState().optionButtons(gameOver);
+    game.state.getCurrentState().statLines = game.state.getCurrentState().getStatLines(gameOver);
+    game.global.bonus = mindStateToUse.bonus;
+
+    var btns = [ {text: 'Stats', clickFunction: game.state.getCurrentState().viewStatsClick} ];
+    if(!gameOver) btns.push({text: 'Play Next Round', clickFunction: game.state.getCurrentState().playAgainClick});
+    btns.push({text: 'Quit', clickFunction: game.state.getCurrentState().chooseCourseClick});
+
+    var prevHeightsBtns = game.global.chapterText.bottom;
+    var maxBtnWidth = 0;
+    for (var b in btns) {
+      var btn = game.world.add(new game.global.SpeechBubble(game, game.world.width, prevHeightsBtns, Math.floor(game.world.width - (game.global.jinny.width*2)), btns[b].text, false, true, btns[b].clickFunction));
+      btn.x = Math.floor(game.world.width - (btn.bubblewidth + game.global.borderFrameSize));
+      game.state.getCurrentState().endGameUI.add(btn);
+      prevHeightsBtns += btn.bubbleheight + 5;
+      maxBtnWidth = Math.max(maxBtnWidth, btn.bubblewidth);
+    };
+
+    game.global.jinnySpeech.destroy();
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width + maxBtnWidth + 10), mindStateToUse.mind, true, false, null, false, null, true));
+    this.endGameUI.add(game.global.jinnySpeech);
+
+    // convert score + progress bars to percentage
     for (var i = 0; i < game.global.chars.length; i++) {
       this.endGameUI.add(game.global.chars[i].gfx);
       this.endGameUI.add(game.global.chars[i].barSprite);
-      winningScore = Math.max(winningScore, game.global.chars[i].score);
-    }
-    for (var i = 0; i < game.global.chars.length; i++) {
       var topBar = Math.min(game.global.chars[i].score, game.global.numOrigQuestions * 25);
       var scorePercent = Math.floor(((topBar) / (game.global.numOrigQuestions * 25)) * 100);
-      var y = game.global.mapNum(scorePercent, 0, 100, game.global.chars[i].sprite.top, game.global.jinny.bottom);
+      var y = game.global.mapNum(scorePercent, 0, 100, game.global.chars[i].sprite.top, prevHeightsBtns + 5);
       scorePercentLabel = game.add.bitmapText(game.global.chars[i].sprite.centerX, game.global.chars[i].sprite.top, '8bitoperator', scorePercent + '%', 11 * dpr);
-      scorePercentLabel.centerX = Math.floor(game.global.chars[i].sprite.centerX);
+      scorePercentLabel.x = Math.floor(game.global.chars[i].sprite.centerX - scorePercentLabel.width/2);
+      scorePercentLabel.y = Math.floor(game.global.chars[i].sprite.top - (scorePercentLabel.height*2));
       scorePercentLabel.tint = 0x000044;
       this.endGameUI.add(scorePercentLabel);
-      game.add.tween(scorePercentLabel).to({y: y}, 500, Phaser.Easing.Default, true, 250);
+      // game.add.tween(scorePercentLabel).to({y: y}, 500, Phaser.Easing.Default, true, 250); game.global.chars[i].numJewels
       game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].sprite.top - y, 1)}, 500, Phaser.Easing.Default, true, 250);
       this.endGameUI.add(game.global.chars[i].barSprite);
       if(game.global.chars[i].score == winningScore){
@@ -161,21 +182,34 @@ var endOfGameState = {
       }
     }
 
-    var viewStatsBtn = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.chapterText.bottom, Math.floor(game.world.width - (game.global.jinny.width*2)), 'Stats & Options', false, true, game.state.getCurrentState().viewStatsClick));
-    game.add.tween(viewStatsBtn).to({x: game.world.width - (viewStatsBtn.bubblewidth + game.global.borderFrameSize)}, 500, Phaser.Easing.Default, true, 250);
-    game.state.getCurrentState().endGameUI.add(viewStatsBtn);
+    var lineGfx = game.add.graphics(0,0);
+    this.endGameUI.add(lineGfx);
+    lineGfx.lineStyle(1, 0x333333, 1);
+
+    //loop mindstates again to add the labels on top of the progress bars
+    for (var i = 0; i < mindStates.length; i++) {
+      var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, prevHeightsBtns + 5);
+      lineGfx.moveTo(0, lineYposition);
+      lineGfx.lineTo(game.world.width, lineYposition);
+      var label = game.add.text(game.world.centerX, lineYposition, mindStates[i].label, game.global.whiteFont);
+      label.x -= label.width/2;
+      label.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+      label.padding.x = 5;
+      label.z++;
+      this.endGameUI.add(label);
+    }
 
     game.state.getCurrentState().statsUI = game.add.group();
     game.state.getCurrentState().statsUI.visible = false;
     var statBG = game.add.graphics(0, 0);
     statBG.lineStyle(2, 0x000000, 1);
     statBG.beginFill(0x078EB7, 1);
-    var rect = statBG.drawRoundedRect(game.world.x + 10, game.global.jinny.bottom, game.world.width - 20, game.world.height - game.global.jinny.height - 10, 10);
+    var rect = statBG.drawRoundedRect(game.world.x + 10, game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight + 5, game.world.width - 20, game.world.height - game.global.jinny.height - 10, 10);
     game.state.getCurrentState().statsUI.add(statBG);
 
     var statLines = game.state.getCurrentState().statLines;
 
-    var prevHeights = game.global.jinny.bottom;
+    var prevHeights = game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight + 5;
     for (var i = 0; i < statLines.length; i++) {
       var t = game.add.text(game.world.centerX, prevHeights, statLines[i], game.global.whiteFont);
       t.x -= t.width/2;

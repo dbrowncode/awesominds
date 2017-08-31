@@ -16,7 +16,7 @@
   <?php include 'inst-nav2.php' ?>
   <div class="container text-center">
     <h2>View Student Progress</h2><br>
-    <p>Select a course to view its game statistics.<br> You may then select a chapter/game for specific stats.<br> Courses and chapters/games with no available statistics are not shown.</p>
+    <p>Select a course to view its game statistics.<br> You may then select a chapter/game for specific stats.</p>
     <p>Select a course:</p>
     <div id='selectCourseDiv' class="input-group container" style="max-width: 400px">
       <select class="form-control" id='courseDropdown'>
@@ -38,12 +38,12 @@
 <script>
 var getCourses = function(){
   $.ajax({
-    url: 'getcourses-forstats.php',
+    url: 'getcourses.php',
     success: function(data){
-      console.log('got courses');
+      // console.log('got courses');
       $('#courseDropdown').empty();
       var courses = $.parseJSON(data);
-      console.log(data);
+      // console.log(data);
       for (var i = 0; i < courses.length; i++) {
         $('#courseDropdown').append('<option value="' + courses[i].courseid + '">' + courses[i].courseid + ' - ' + courses[i].name + '</option>');
       }

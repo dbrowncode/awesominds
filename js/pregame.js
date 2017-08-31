@@ -74,6 +74,7 @@ var preGameState = {
       game.global.chars[i].scoreText.tint = 0x000000;
       game.global.chars[i].name = game.add.bitmapText(0 - game.world.width, 0 - game.world.height, '8bitoperator', 'You', 11 * dpr);
       game.global.chars[i].name.tint = 0x000000;
+      game.global.chars[i].numJewels = 0;
       if(i!=0){
         prevHeights += Math.floor(image.height + (10 * dpr));
         game.global.chars[i].name.text = game.global.oppImageKeys[i].name;

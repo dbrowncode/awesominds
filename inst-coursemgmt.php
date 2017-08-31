@@ -609,7 +609,8 @@ $(function (){
           success: function(data){
             getCourses();
             $('#selectChapterDiv').hide();
-            console.log(data);
+            $('.selectChapterUI').hide();
+            // console.log(data);
           }
         });
         break;
@@ -621,7 +622,7 @@ $(function (){
           success: function(data){
             getChapters(selectedCourse);
             $('#selectedChapterOutput').empty();
-            console.log(data);
+            // console.log(data);
           }
         });
         break;

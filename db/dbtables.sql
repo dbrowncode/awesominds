@@ -19,7 +19,7 @@ CREATE TABLE `users` (
   `active` tinyint(1) NOT NULL DEFAULT 0,
   `laston` datetime DEFAULT NULL,
   `isInstructor` tinyint(1) NOT NULL DEFAULT 0,
-  `user_volume` decimal(2,1) NOT NULL DEFAULT 0.5,
+  `user_volume` decimal(2,1) NOT NULL DEFAULT 0.2,
   PRIMARY KEY (`c_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
