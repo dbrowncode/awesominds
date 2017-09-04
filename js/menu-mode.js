@@ -22,8 +22,8 @@ var menuModeState = {
     text.style.wordWrapWidth = game.world.width - (game.global.borderFrameSize * 2);
 
     var modes = [
-      { name: 'Countdown', desc: 'The faster you respond, the more points you get', prestate: 'pregame', gamestate: 'play', id: 0, endstate: 'endOfGame'},
-      { name: 'Wild Wild Guess', desc: 'Keep guessing until you get it right', prestate: 'pregameSU', gamestate: 'playSU', id: 1, endstate: 'endOfGameWWG'},
+      { name: 'Countdown Crown', desc: 'The faster you respond, the more points you get', prestate: 'pregame', gamestate: 'play', id: 0, endstate: 'endOfGame'},
+      { name: 'Wild Wild Guess', desc: 'Keep guessing until you get it right\n(Best for beginners)', prestate: 'pregameSU', gamestate: 'playSU', id: 1, endstate: 'endOfGameWWG'},
     ];
     var prevHeights = 10 * dpr;
     for (var i = 0; i < modes.length; i++) {

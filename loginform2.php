@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
   <?php include 'inst-nav2.php' ?>
   <div class="container text-center">
     <h2>Log In</h2>
-    <p>First time here? <a href="signup.php">Create an account</a></p>
+    <!-- <p>First time here? <a href="signup.php">Create an account</a></p> -->
     <?php
       if( isset($_SESSION['message']) AND !empty($_SESSION['message']) ){
         echo $_SESSION['message'];
@@ -71,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
       } else {
         echo '<form action="loginpart1.php" method="post" autocomplete="off" id="loginForm">
                 <div class="form-group container" id="loginPart1" style="max-width: 400px;">
-                  <label for="cnumberInput" class="form-label"><b>Camosun ID*</b></label>
+                  <label for="cnumberInput" class="form-label"><b>Enter your Camosun C number below</b></label>
                   <div class="input-group">
-                    <input class="form-control" type="text" required autocomplete="off" name="cnumber" id="cnumberInput"/>
+                    <input class="form-control" type="text" required autocomplete="off" name="cnumber" id="cnumberInput" pattern="[C][0-9]{7}" title="C + 7 numbers, eg \'C0654321\'"/>
                     <input id="name1" name="name1" type="hidden" class="randomName">
                     <input id="name2" name="name2" type="hidden" class="randomName">
                     <input id="name3" name="name3" type="hidden" class="randomName">
@@ -93,3 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     ?>
   </div>
 </body>
+<script>
+$(document).ready(function() {
+    $('form:first *:input[type!=hidden]:first').focus();
+});
+</script>

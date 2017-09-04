@@ -11,8 +11,8 @@ $result = $mysqli->query("SELECT * FROM users WHERE c_number='$c_number'");
 
 // We know user id exists if the rows returned are more than 0
 if ( $result->num_rows > 0 ) {
-  $_SESSION['message'] = 'User with this Camosun ID already exists!';
-  // header("location: signup.php");
+  $_SESSION['message'] = 'User with this Camosun ID already exists! Please log in.';
+  header("location: index.php");
 } else { // id doesn't already exist in a database, proceed...
   // add last 2 digits of C number to the display name
   $play_name .= ' ' . substr($c_number, -2);
@@ -52,6 +52,7 @@ if ( $result->num_rows > 0 ) {
       $mysqli->query("DELETE FROM invite WHERE invitecode='$inviteCode'");
       unset($_SESSION['invitecode']);
     }
+    header("location: index.php");
   } else {
     $_SESSION['message'] = 'Registration failed!';
   }

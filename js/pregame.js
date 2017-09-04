@@ -1,11 +1,6 @@
 var preGameState = {
   instructLines : [
-    "Welcome to Countdown Crown. I'm your guide Jin.\n"
-    + "This Realm is looking for a new monarch, one who is quick and bright.\n"
-    + "Each Village will present the three of you with a series of questions.\n"
-    + "Click/tap the question to reveal the options.\n"
-    + "The more quickly you answer correctly, the more preeminence points you earn.\n"
-    + "Your goal is to impress the most villages, and become the new monarch of this realm."
+    "How to play:\nA question will appear.\nClick/tap the question to make the answer choices appear.\nChoose the right answer as quickly as possible.\nThe faster you are, the more points you earn.\n \nEach round has 10 questions.\n \nGoal:\nTo win the round, score more points than your opponents.\nThe winner of each round earns a jewel for their crown.\nBe the first to complete your crown to win the game."
   ],
 
   makeHost: function(){

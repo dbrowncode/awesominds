@@ -6,7 +6,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
   $c_number = $mysqli->escape_string($_POST['cnumber']);
   $result = $mysqli->query("SELECT * FROM users WHERE c_number='$c_number'");
   if ( $result->num_rows == 0 ){ // User doesn't exist
-    $_SESSION['message'] = '<small class="error">User with Camosun ID "'.$c_number.'" doesn\'t exist. Try again or <a href="signup.php">create an account</a>.</small>';
+    $_SESSION['message'] = "Looks like it's your first time here, " . $c_number . ". Please create an account.";
+    $_SESSION['c_number_signup'] = $c_number;
+    header("location: signup.php");
   } else { // User exists
     $user = $result->fetch_assoc();
     $_SESSION['message'] = 'Logging in as ' . $user['c_number'] .'. <a href="">Cancel</a>';
@@ -29,6 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
       shuffle($names);
       $_SESSION['names'] = $names;
     }
+    header("location: index.php");
   }
 }
-header("location: index.php");

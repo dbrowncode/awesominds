@@ -88,7 +88,7 @@ var preloadState = {
     game.global.mainFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left'};
     game.global.jinFont = { font: 'Varela Round', fontSize: 20 * dpr, align: 'left', fill: '#a50010'};
     game.global.whiteFont = { font: 'Varela Round', fontSize: 24 * dpr, fill: 'white'};
-    game.global.smallerWhiteFont = { font: 'Varela Round', fontSize: 17 * dpr, fill: 'white', align: 'right'};
+    game.global.smallerWhiteFont = { font: 'Varela Round', fontSize: 17 * dpr, fill: 'white', align: 'center'};
 
     game.global.wrongsounds.push(game.add.audio('wrong1'));
     game.global.rightsounds.push(game.add.audio('correct'));
@@ -119,7 +119,7 @@ var preloadState = {
       var prefix = isAnswerText ? choice + '. ' : '';
       var fontStyle = game.global.mainFont;
       if(isJin){
-        fontStyle = game.global.jinFont;
+        // fontStyle = game.global.jinFont;
       } else if (text =='\uE8B8') { //settings icon
         fontStyle = {font: 'Material Icons', fontSize: 22 * dpr, align: 'center'};
       }

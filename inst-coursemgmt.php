@@ -23,7 +23,7 @@
         <div class="input-group">
           <span class="input-group-addon">Course</span>
           <select class="form-control" id='courseDropdown'>
-            <option value="null">Select a Course</option>
+            <option value="null">Select an Existing Course</option>
           </select>
           <!-- <span class="input-group-btn"><button class="btn btn-primary" id='selectCourseBtn' value='Select'>Select</button></span> -->
         </div>
@@ -32,13 +32,13 @@
     </div>
 
     <div class='card selectChapterUI'>
-      <p id="selectChapterText">Select a chapter/game to manage, or create a new chapter/game.</p>
+      <!-- <p id="selectChapterText">Select a chapter/game to manage, or create a new chapter/game.</p> -->
       <div id='selectChapterDiv' class="container" style="max-width: 400px">
         <p><button class="btn btn-success newChapterBtn" data-toggle="modal" data-target="#createChapterModal"></button></p>
         <div class="input-group">
           <span class="input-group-addon">Chapter</span>
           <select class='form-control' id='chapterDropdown'>
-            <option value="null">Select a Chapter</option>
+            <option value="null">Select a Chapter/Game to Manage</option>
           </select>
           <!-- <span class="input-group-btn"><button id='selectChapterBtn' class='btn btn-primary' value='Select'>Select</button></span> -->
         </div>
@@ -80,9 +80,9 @@
             <p>Enter a course code and name to create a new course.</p>
             <div class="form-group container" style="max-width: 400px;">
               <p>Course Code</p>
-              <input class="form-control" type="text" name="courseID" id="courseIDinput" required placeholder="PSYC150" pattern="[A-Za-z]{3,4}[0-9]{3}" title="3-4 letters followed by 3 numbers; no spaces."><br>
+              <input class="form-control" type="text" name="courseID" id="courseIDinput" required placeholder="e.g. 'PSYC150'" pattern="[A-Za-z]{3,4}[0-9]{3}" title="3-4 letters followed by 3 numbers; no spaces."><br>
               <p>Course Name</p>
-              <input class="form-control" type="text" name="courseName" id="courseNameinput" required placeholder="PSYCHOLOGY 150">
+              <input class="form-control" type="text" name="courseName" id="courseNameinput" required placeholder="e.g. 'Psychology 150'">
             </div>
 
         </div>
@@ -292,7 +292,7 @@ var getChapters = function(course){
         $('#chapterDropdown').append('<option value="' + chapters[i].chapterid + '">' + chapters[i].chapterid + ' - ' + chapters[i].chaptername + '</option>');
       }
       $('#selectChapterDiv').show();
-      $('#selectChapterText').show();
+      // $('#selectChapterText').show();
       $('.newChapterBtn').html('Create New Chapter in Course "' + selectedCourse + '"');
       $("#selectedCourseOutput").html('<br><p><button id="deleteCourseBtn" data-toggle="modal" data-target="#confirmDelete" class="btn btn-danger">Delete Course "'+ selectedCourse +'"</button></p>');
       $('#deleteCourseBtn').click(function(){
@@ -541,7 +541,7 @@ $('.newChapterBtn').click(function(){
 $(function (){
   $('.selectChapterUI').hide();
   $('#selectChapterDiv').hide();
-  $('#selectChapterText').hide();
+  // $('#selectChapterText').hide();
   $('#output').hide();
 
   $('#editModal').on('hide.bs.modal', function () {
@@ -566,7 +566,7 @@ $(function (){
       $('.selectChapterUI').hide();
       $('#selectedCourseOutput').empty();
       $('#selectChapterDiv').hide();
-      $('#selectChapterText').hide();
+      // $('#selectChapterText').hide();
       $('#output').hide();
     }
     $('#selectedChapterOutput').empty();

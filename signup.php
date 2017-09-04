@@ -54,7 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     ?>
     <form action="signup.php" method="post" autocomplete="off" id="registerForm">
       <label for="cnumberInput" class="form-label"><b>Camosun ID*</b></label>
-      <input class="form-control" type="text" required autocomplete="off" name="cnumber" id="cnumberInput" pattern="[C][0-9]{7}" title="C + 7 numbers, eg 'C0654321'"/><br>
+      <input class="form-control" type="text" required autocomplete="off" name="cnumber" id="cnumberInput" pattern="[C][0-9]{7}"
+      <?php if (isset($_SESSION['c_number_signup'])){
+        echo 'value="' .$_SESSION['c_number_signup'].'"';
+        unset($_SESSION['c_number_signup']);
+      } ?>title="C + 7 numbers, eg 'C0654321'"/><br>
 
       <label id="displayNameLabel" for="displayNameField"><b>Choose Display Name</b></label>
       <div class="input-group">
@@ -115,5 +119,7 @@ jQuery(document).ready(function($){
       $('input[name="avatarnum"]').val(val);
     }
   });
+
+  $('form:first *:input[type!=hidden]:first').focus();
 });
 </script>

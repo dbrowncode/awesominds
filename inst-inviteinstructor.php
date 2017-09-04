@@ -13,7 +13,7 @@
   <?php include 'inst-nav2.php' ?>
   <div class="container text-center">
     <h2>Invite Instructor</h2>
-    <p>Enter an email address here to invite another instructor.<br>They will be sent a link that will let them create their own Awesominds instructor account.</p>
+    <p>To invite another instructor to create their own courses/games, enter their email address here.<br>They will be sent a link that will let them create their own Awesominds instructor account.</p>
     <form method="post" autocomplete="off" id="inviteForm">
       <div class="form-group container" style="max-width: 400px;">
         <label for="emailInput" class="form-label"><b>Email Address*</b></label>

@@ -2,12 +2,7 @@
 var preGameStateSU = Object.create(preGameState);
 
 preGameStateSU.instructLines = [
-  "Welcome to Wild Wild Guess. I'm your guide Annabelle.\n"
-  + "To survive on the frontier, you have to be good at guessing.\n"
-  + "The three of you will answer a series of questions\n"
-  + "Click/tap the question to reveal the options\n"
-  + "Keep choosing options 'till you get it right, but more guesses means less points\n"
-  + "Your goal is to outperform your competition\n"
+  "How to play:\nA question will appear.\nClick/tap the question to make the answer choices appear.\nChoose the right answer.\nIf you are incorrect, keep guessing.\nYou'll score more points with fewer guesses.\n \nEach round has 10 questions.\n \nGoal:\nTo win the round, score more points than your opponents\nThe first to win 5 rounds wins the game."
 ];
 
 preGameStateSU.makeHost = function(){

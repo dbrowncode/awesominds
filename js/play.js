@@ -69,7 +69,7 @@ var playState = {
       right : ["That's correct","Well done","Good job","Nice going","Nice!","Yes!","You betcha","Good guess","Right!","You got it!","Impressive"],
       wrong : [ "Oh no"," Not quite", "Sorry", "Incorrect", "That's a miss", "Too bad", "Unfortunate", "That's not it", "Nope", "Uh-uh", "Ouch"]
     };
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.isRehash ? "Second chance. Five points each!" : 'Here comes your first question...', true, false, null, false, null, true));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), game.global.isRehash ? "Welcome to the rehash round!\nThis is a second chance to earn some points on the questions you answered incorrectly.\nCorrect answers are worth 5 points, and your opponents are sitting out this round." : 'Here comes your first question...', true, false, null, false, null, true));
 
     //animate avatars to the bottom; needed in case this state was skipped to before animation finished in pregame
     var image = game.global.imagecheck;
@@ -77,8 +77,20 @@ var playState = {
       game.add.tween(game.global.chars[i].sprite).to({x: Math.floor(((game.width/game.global.chars.length)*(i+1) -game.width/game.global.chars.length)+(game.width/25)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
     }
 
-    //show the first question
-    this.showQuestion(game.global.questions.shift());
+    //show the rehash splash or the first question
+    if(game.global.isRehash){
+      function playBtnClick(){
+        game.global.jinnySpeech.destroy();
+        this.destroy();
+        game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), 'Here comes your first question...', true, false, null, false, null, true));
+        game.state.getCurrentState().showQuestion(game.global.questions.shift());        
+      }
+      var playBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.height, game.width, "Play", false, true, playBtnClick));
+      playBtn.x = Math.floor(playBtn.x - (playBtn.bubblewidth/2));
+      playBtn.y = Math.floor(game.global.jinnySpeech.y + game.global.jinnySpeech.bubbleheight + (10*dpr));
+    } else {
+      this.showQuestion(game.global.questions.shift());
+    }
   },
 
   /*
