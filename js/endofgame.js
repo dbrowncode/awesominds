@@ -109,7 +109,7 @@ var endOfGameState = {
 
   makeStatUI: function(){
     var mindStates = game.state.getCurrentState().hostMindStates.slice();
-    var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numOrigQuestions * 25)) * 100));
+    var score = Math.min(100, Math.floor(((game.global.totalStats.score) / (game.global.numOrigQuestions * game.global.selectedMode.maxPtsPerQ)) * 100));
 
     if(score > mindStates[0].min){
       //if awesomind, be happy
@@ -128,10 +128,12 @@ var endOfGameState = {
     var winningScore = 0;
     for (var i = 0; i < game.global.chars.length; i++) { // calculate top score first for tie purposes
       winningScore = Math.max(winningScore, game.global.chars[i].score);
-      var thisCharScore = Math.min(100, Math.floor(((game.global.chars[i].score) / (game.global.numOrigQuestions * 25)) * 100));
+      var thisCharScore = Math.min(100, Math.floor(((game.global.chars[i].score) / (game.global.numOrigQuestions * game.global.selectedMode.maxPtsPerQ)) * 100));
       if(thisCharScore >= mindStates[0].min && thisCharScore <= mindStates[0].max){ //char is in top score range
-        game.global.chars[i].numJewels++;
-        console.log('char ' + i + ' now has ' + game.global.chars[i].numJewels + ' jewels');
+        if(game.global.selectedMode.id == 0){ //id for countdown crown mode
+          game.global.chars[i].crown.frame = ++game.global.chars[i].numJewels; //increment number of jewels and use that frame of the crown spritesheet
+          console.log('char ' + i + ' now has ' + game.global.chars[i].numJewels + ' jewels');
+        }
       }
     }
 
@@ -162,19 +164,19 @@ var endOfGameState = {
     for (var i = 0; i < game.global.chars.length; i++) {
       this.endGameUI.add(game.global.chars[i].gfx);
       this.endGameUI.add(game.global.chars[i].barSprite);
-      var topBar = Math.min(game.global.chars[i].score, game.global.numOrigQuestions * 25);
-      var scorePercent = Math.floor(((topBar) / (game.global.numOrigQuestions * 25)) * 100);
-      var y = game.global.mapNum(scorePercent, 0, 100, game.global.chars[i].sprite.top, prevHeightsBtns + 5);
-      scorePercentLabel = game.add.bitmapText(game.global.chars[i].sprite.centerX, game.global.chars[i].sprite.top, '8bitoperator', scorePercent + '%', 11 * dpr);
+      var topBar = Math.min(game.global.chars[i].score, game.global.numOrigQuestions * game.global.selectedMode.maxPtsPerQ);
+      var scorePercent = Math.floor(((topBar) / (game.global.numOrigQuestions * game.global.selectedMode.maxPtsPerQ)) * 100);
+      var y = game.global.mapNum(scorePercent, 0, 100, (game.global.selectedMode.id == 0) ? game.global.chars[i].crown.y : game.global.chars[i].sprite.y, prevHeightsBtns + 5);
+      scorePercentLabel = game.add.bitmapText(game.global.chars[i].sprite.centerX, (game.global.selectedMode.id == 0) ? game.global.chars[i].crown.y : game.global.chars[i].sprite.y, '8bitoperator', scorePercent + '%', 11 * dpr);
       scorePercentLabel.x = Math.floor(game.global.chars[i].sprite.centerX - scorePercentLabel.width/2);
-      scorePercentLabel.y = Math.floor(game.global.chars[i].sprite.top - (scorePercentLabel.height*2));
+      scorePercentLabel.y = Math.floor(((game.global.selectedMode.id == 0) ? game.global.chars[i].crown.y : game.global.chars[i].sprite.y) - (scorePercentLabel.height*2));
       scorePercentLabel.tint = 0x000044;
       this.endGameUI.add(scorePercentLabel);
       // game.add.tween(scorePercentLabel).to({y: y}, 500, Phaser.Easing.Default, true, 250); game.global.chars[i].numJewels
-      game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].sprite.top - y, 1)}, 500, Phaser.Easing.Default, true, 250);
+      game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(((game.global.selectedMode.id == 0) ? game.global.chars[i].crown.y : game.global.chars[i].sprite.y) - y, 1)}, 500, Phaser.Easing.Default, true, 250);
       this.endGameUI.add(game.global.chars[i].barSprite);
       if(game.global.chars[i].score == winningScore){
-        var medal = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.top, 'medal');
+        var medal = game.add.sprite(game.global.chars[i].sprite.x, (game.global.selectedMode.id == 0) ? game.global.chars[i].crown.y : game.global.chars[i].sprite.y, 'medal');
         medal.width = game.global.chars[i].sprite.width;
         medal.height = game.global.chars[i].sprite.height;
         this.endGameUI.add(medal);
@@ -188,7 +190,7 @@ var endOfGameState = {
 
     //loop mindstates again to add the labels on top of the progress bars
     for (var i = 0; i < mindStates.length; i++) {
-      var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, game.global.chars[0].sprite.top, prevHeightsBtns + 5);
+      var lineYposition = game.global.mapNum(mindStates[i].max, 0, 100, (game.global.selectedMode.id == 0) ? game.global.chars[0].crown.y : game.global.chars[0].sprite.y, prevHeightsBtns + 5);
       lineGfx.moveTo(0, lineYposition);
       lineGfx.lineTo(game.world.width, lineYposition);
       var label = game.add.text(game.world.centerX, lineYposition, mindStates[i].label, game.global.whiteFont);

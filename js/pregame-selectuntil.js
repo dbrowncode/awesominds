@@ -8,3 +8,10 @@ preGameStateSU.instructLines = [
 preGameStateSU.makeHost = function(){
   game.global.jinny = game.add.sprite(0,0, 'annabelle', 0);
 };
+
+preGameStateSU.update = function(){
+  for (var i = 0; i < game.global.chars.length; i++) {
+    game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.right + (10*dpr));
+    game.global.chars[i].name.y = Math.floor(game.global.chars[i].sprite.centerY + (10*dpr));
+  }
+}

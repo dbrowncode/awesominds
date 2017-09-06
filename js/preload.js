@@ -45,6 +45,8 @@ var preloadState = {
 
     var jinSheetDim = (dpr >= 2) ? [264, 364] : [66, 91];
     game.load.spritesheet('jin', assetPath + 'jin.png', jinSheetDim[0], jinSheetDim[1]);
+    var crownSheetDim = (dpr >= 2) ? [397, 332] : [83, 69];
+    game.load.spritesheet('crown', assetPath + 'crownsheet.png', crownSheetDim[0], crownSheetDim[1]);
     game.load.image('annabelle', assetPath + 'annabelle.png');
 
     game.load.start();

@@ -51,26 +51,16 @@ playStateSU.btnClick = function(){
     //points graphic
     if(this.data.correct){
       //set the number of points earned here, use it to load the appropriate graphic and to update the score later
-      var ptsImageScale = .5;
-      switch (game.state.getCurrentState().timesAnswered) {
-        case 1:
-          game.global.pointsToAdd = 25;
-          ptsImageScale = 1;
-          break;
-        case 2:
-          game.global.pointsToAdd = 15;
-          ptsImageScale = .75;
-          break;
-        case 3:
-          game.global.pointsToAdd = 5;
-          break;
-        default:
-          game.global.pointsToAdd = 0;
-          break;
-      }
+      game.global.pointsToAdd = Math.max(0, 20 - (5 * game.state.getCurrentState().timesAnswered));
       if(game.global.pointsToAdd > 0){
-        var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.pointsToAdd + 'pts');
-        ptsImage.scale.setTo(ptsImageScale);
+        // var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.pointsToAdd + 'pts');
+        var ptsImage = game.add.text(game.world.centerX, game.world.height, game.global.pointsToAdd + ' pts!');
+        ptsImage.font = 'Arial';
+        ptsImage.fontWeight = 'bold';
+        ptsImage.fill = '#ffffff';
+        ptsImage.stroke = '#000000';
+        ptsImage.strokeThickness = Math.max(game.global.pointsToAdd / 2, 10) * dpr;
+        ptsImage.fontSize = Math.max(game.global.pointsToAdd * 4, 40) * dpr;
         var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
         var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
         tweenA.chain(tweenB);
@@ -94,7 +84,7 @@ playStateSU.btnClick = function(){
 playStateSU.updateScores = function(answerCorrect, didntAnswer){
   for(i = 1 ; i < game.global.chars.length; i++){
     if(game.global.chars[i].correct){
-      game.global.chars[i].score += 25;
+      game.global.chars[i].score += 15;
     }
   }
 

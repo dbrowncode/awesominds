@@ -74,7 +74,7 @@ var playState = {
     //animate avatars to the bottom; needed in case this state was skipped to before animation finished in pregame
     var image = game.global.imagecheck;
     for (var i = 0; i < game.global.chars.length; i++) {
-      game.add.tween(game.global.chars[i].sprite).to({x: Math.floor(((game.width/game.global.chars.length)*(i+1) -game.width/game.global.chars.length)+(game.width/25)), y: (game.height - image.height - game.global.chars[i].name.height*2)}, 250, Phaser.Easing.Default, true);
+      game.add.tween(game.global.chars[i].sprite).to({x: Math.floor(((game.width/game.global.chars.length)*(i+1) -game.width/game.global.chars.length)+(game.width/25))}, 250, Phaser.Easing.Default, true);
     }
 
     //show the rehash splash or the first question
@@ -83,7 +83,7 @@ var playState = {
         game.global.jinnySpeech.destroy();
         this.destroy();
         game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width*2), 'Here comes your first question...', true, false, null, false, null, true));
-        game.state.getCurrentState().showQuestion(game.global.questions.shift());        
+        game.state.getCurrentState().showQuestion(game.global.questions.shift());
       }
       var playBtn = game.world.add(new game.global.SpeechBubble(game, game.world.centerX, game.height, game.width, "Play", false, true, playBtnClick));
       playBtn.x = Math.floor(playBtn.x - (playBtn.bubblewidth/2));
@@ -106,7 +106,8 @@ var playState = {
       game.global.chars[i].scoreText.x = Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize);
       game.global.chars[i].scoreText.y = Math.floor(game.global.chars[i].sprite.centerY + (11*dpr));
       game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.centerX - game.global.chars[i].name.width/2);
-      game.global.chars[i].name.y = Math.floor(game.world.height - game.global.chars[i].name.height*2);
+      game.global.chars[i].name.y = Math.floor(game.global.chars[i].sprite.bottom);
+      game.global.chars[i].crown.centerX = Math.floor(game.global.chars[i].sprite.centerX);
     }
 
     if(this.timerOn){
@@ -220,12 +221,23 @@ var playState = {
       game.global.promptShown = false;
     }
 
+    function setupTimer(){
+      var thisState = game.state.getCurrentState();
+      thisState.startTime = new Date();
+      thisState.totalTime = game.global.selectedMode.maxPtsPerQ + 1;
+      thisState.timeElapsed = 0;
+      thisState.createTimer();
+      thisState.gameTimer = game.time.events.loop(100, function(){ game.state.getCurrentState().updateTimer() });
+      thisState.timerOn = true;
+    }
+
     //Create a button for each choice, and put some data into it in case we need it
     game.global.choiceBubbles = game.add.group();
     var i = 0;
     var prevHeights = 10 *dpr;
     //array to store available letter choices for ai to choose from for this question
     var availChoices = [];
+    var tweens = [];
     var question = this.question;
     for (var c in question.choices) {
       var cbwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width)), game.global.jinny.width * 5);
@@ -233,7 +245,7 @@ var playState = {
       //cb.y += Math.floor(cb.bubbleheight + prevHeights);
       cb.y += Math.floor(prevHeights);
       prevHeights += cb.bubbleheight + 10 *dpr;
-      game.add.tween(cb).to({x: Math.floor(game.world.centerX - cb.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
+      tweens[i] = game.add.tween(cb).to({x: Math.floor(game.world.centerX - cb.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
       cb.data = {
         letter: c,
         text: c + '. ' + question.choices[c],
@@ -244,18 +256,11 @@ var playState = {
       availChoices[i] = c;
       i++;
     }
-    game.global.questionUI.add(game.global.choiceBubbles);
+    tweens[tweens.length-1].onComplete.add(setupTimer, this);
 
+    game.global.questionUI.add(game.global.choiceBubbles);
     game.global.questionShown = true;
 
-    //timer - better/more universal way?
-    var thisState = game.state.getCurrentState();
-    thisState.startTime = new Date();
-    thisState.totalTime = 25;
-    thisState.timeElapsed = 0;
-    thisState.createTimer();
-    thisState.gameTimer = game.time.events.loop(100, function(){ game.state.getCurrentState().updateTimer() });
-    thisState.timerOn = true;
 
     //determine AI answers
     for(i=1; i<game.global.chars.length; i++){
@@ -302,7 +307,7 @@ var playState = {
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
     //disable timer
     game.state.getCurrentState().timerOn = false;
-    game.global.scoreToAdd = game.state.getCurrentState().seconds; //capture time remaining to use as score
+    game.global.pointsToAdd = game.state.getCurrentState().seconds; //capture time remaining to use as score
     //increment number of answered questions
     game.global.questionsAnswered++;
 
@@ -354,13 +359,13 @@ var playState = {
       //points graphic
       if(!game.global.isRehash && this.data.correct){
         // var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.answeredBeforeAI ? 'pts25' : 'pts10');
-        var ptsImage = game.add.text(game.world.centerX, game.world.height, game.global.scoreToAdd + ' pts!');
+        var ptsImage = game.add.text(game.world.centerX, game.world.height, game.global.pointsToAdd + ' pts!');
         ptsImage.font = 'Arial';
         ptsImage.fontWeight = 'bold';
         ptsImage.fill = '#ffffff';
         ptsImage.stroke = '#000000';
-        ptsImage.strokeThickness = Math.max(game.global.scoreToAdd / 2, 10) * dpr;
-        ptsImage.fontSize = Math.max(game.global.scoreToAdd * 4, 40) * dpr;
+        ptsImage.strokeThickness = Math.max(game.global.pointsToAdd / 2, 10) * dpr;
+        ptsImage.fontSize = Math.max(game.global.pointsToAdd * 4, 40) * dpr;
         // ptsImage.scale.setTo(dpr);
         var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
         var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
@@ -384,7 +389,7 @@ var playState = {
   updateScores : function(answerCorrect, didntAnswer){
     for(i = 1 ; i < game.global.chars.length; i++){
       if(game.global.chars[i].correct && !game.global.isRehash){
-        game.global.chars[i].score += 25;
+        game.global.chars[i].score += game.global.selectedMode.maxPtsPerQ;
       }
     }
 
@@ -404,13 +409,8 @@ var playState = {
      if(game.global.isRehash){
        game.global.totalStats.score += 5;
      }else{
-      //  if(game.global.answeredBeforeAI){
-      //    game.global.totalStats.score += 25;
-      //  }else{
-      //    game.global.totalStats.score += 10;
-      //  }
-      game.global.totalStats.score += game.global.scoreToAdd;
-      game.global.scoreToAdd = 0;
+      game.global.totalStats.score += game.global.pointsToAdd;
+      game.global.pointsToAdd = 0;
      }
 
      if(game.global.totalStats.numRight !=0 && (game.global.totalStats.numRight % 5 == 0)){
@@ -454,8 +454,8 @@ var playState = {
           game.global.chars[i].gfx = game.add.graphics(0,0);
           game.global.chars[i].gfx.visible = false;
           game.global.chars[i].gfx.beginFill(0x02C487, 1);
-          game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
-          game.global.chars[i].barSprite = game.add.sprite(game.global.chars[i].sprite.x, game.global.chars[i].sprite.y, game.global.chars[i].gfx.generateTexture());
+          game.global.chars[i].gfx.drawRect(game.global.chars[i].sprite.x, (game.global.selectedMode.id == 0) ? game.global.chars[i].crown.y : game.global.chars[i].sprite.y, game.global.chars[i].sprite.width, 1);
+          game.global.chars[i].barSprite = game.add.sprite(game.global.chars[i].sprite.x, (game.global.selectedMode.id == 0) ? game.global.chars[i].crown.y : game.global.chars[i].sprite.y, game.global.chars[i].gfx.generateTexture());
           game.global.chars[i].barSprite.anchor.y = 1;
         }
         game.add.tween(game.global.chars[i].barSprite).to({height: Math.max(game.global.chars[i].score, 1)}, 1000, Phaser.Easing.Default, true, 0);
