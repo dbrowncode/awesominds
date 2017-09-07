@@ -62,21 +62,23 @@ var preGameState = {
 
     for(var i = 0; i < 3; i++){
       game.global.chars[i] = {};
-      game.global.chars[i].name = game.add.bitmapText(0 - game.world.width, 0 - game.world.height, '8bitoperator', 'You', 11 * dpr);
-      game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, (game.world.height - image.height - (game.global.chars[i].name.height*2)), (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i].imageKey);
+      game.global.chars[i].name = game.add.text(0 - game.world.width, 0 - game.world.height, 'You', game.global.smallerWhiteFont);
+      game.global.chars[i].name.fill= 0xffffff;
+      game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, (game.world.height - image.height - (game.global.chars[i].name.height)), (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i].imageKey);
       if(dpr>=2) game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
       game.global.chars[i].score = 0;
-      game.global.chars[i].scoreText = game.add.bitmapText(Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY + 20), '8bitoperator', '0', 11 * dpr);
-      game.global.chars[i].scoreText.tint = 0x000000;
-      game.global.chars[i].name.tint = 0x000000;
+      game.global.chars[i].scoreText = game.add.text(0 - game.world.width, 0 - game.world.height, '0', game.global.smallerWhiteFont);
+      game.global.chars[i].scoreText.fill = 0xffffff;
       if(game.global.selectedMode.id == 0){ //id for countdown crown
         game.global.chars[i].crown = game.add.sprite(0 - game.world.width, Math.floor(game.global.chars[i].sprite.top - game.global.chars[i].sprite.height/2), 'crown', 0);
+        if(dpr>=2) game.global.chars[i].crown.scale.setTo(dpr/4,dpr/4);
         game.global.chars[i].numJewels = 0;
-      }    
+      }
       if(i!=0){
         prevHeights += Math.floor(image.height + (10 * dpr));
         game.global.chars[i].name.text = game.global.oppImageKeys[i].name;
         game.global.chars[i].chance = winChances[i];
+        console.log(game.global.chars[i].chance);
         game.global.chars[i].correct = false;
       }
     }
