@@ -25,6 +25,9 @@
       if ($_SESSION['logged_in'] && $_SESSION['active']){
         echo '<a class="btn btn-outline-success" href="questiongame.php">Play</a>';
       }
+      if ($_SESSION['logged_in'] && $_SESSION['active'] && !($_SESSION['isInstructor'])){
+        echo '<a class="btn btn-outline-primary" href="leaderboard.php">Leaderboards</a>';
+      }
       echo '<a class="btn btn-outline-info" href="" name="story" data-toggle="modal" data-target="#creditsModal">About</a>';
       if ($_SESSION['logged_in']){
         echo '<a class="btn btn-outline-warning" href="logout.php">Log Out</a>';

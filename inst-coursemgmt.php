@@ -2,10 +2,7 @@
 <html>
 <head>
   <?php
-    session_start();
-    if(!$_SESSION['logged_in'] || !$_SESSION['active'] || !$_SESSION['isInstructor']){
-      header("location: index.php");
-    }
+    include('redir-notinstructor.php');
     include 'css/css.html';
   ?>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">

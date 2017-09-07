@@ -1,9 +1,9 @@
 <?php
 //get all scores for a particular course and chapter (currently regardless of game mode)
   require('../../conn.php');
-  include('redir-notinstructor.php');
+  include('redir-notloggedin.php');
 
-  $query = $dbcon->prepare("SELECT u.c_number, u.play_name, s.high_score, s.total_score, s.chapter, s.game_mode, s.times_played
+  $query = $dbcon->prepare("SELECT u.play_name, s.high_score, s.total_score, s.chapter, s.game_mode, s.times_played
                             FROM users u, score s
                             WHERE s.courseid = :courseid
                             AND u.c_number = s.c_number");

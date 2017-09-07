@@ -3,7 +3,7 @@
   require('../../conn.php');
   include('redir-notinstructor.php');
 
-  $query = $dbcon->prepare("SELECT u.c_number, u.play_name, s.total_score, s.game_mode, s.times_played
+  $query = $dbcon->prepare("SELECT u.c_number, u.play_name, s.high_score, s.total_score, s.game_mode, s.times_played
                             FROM users u, score s
                             WHERE s.courseid = :courseid
                             AND s.chapter = :chapter

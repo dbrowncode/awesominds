@@ -2,18 +2,18 @@
 <html>
 <head>
   <?php
-    include('redir-notinstructor.php');
+    include('redir-notloggedin.php');
     include 'css/css.html';
   ?>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
-  <title>View Student Progress - Awesominds</title>
+  <title>Leaderboards - Awesominds</title>
 </head>
 <body>
   <?php include 'inst-nav2.php' ?>
   <div class="container text-center">
-    <h2>View Student Progress</h2><br>
-    <p>Select a course to view its game statistics.<br> You may then select a chapter/game for specific stats.</p>
+    <h2>Leaderboards</h2><br>
+    <p>Select a course to view its leaderboard.<br> You may then select a chapter/game for its specific leaderboard.</p>
     <div class="card">
       <p>Select a course:</p>
       <div id='selectCourseDiv' class="container" style="max-width: 400px">
@@ -90,16 +90,16 @@ $(function (){
         getChapters();
         $('.selectChapterUI').show();
         $.ajax({
-          url: 'getscores-allusers-course.php',
+          url: 'getscores-course-forstudent.php',
           data: 'courseid=' + $('#courseDropdown').find(":selected").val(),
           success: function(data){
-            var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + '</h2><p>Click a column heading to sort by that attribute</p><table id="table" class="display"><thead><tr><th>C Number</th><th>Display Name</th><th>Chapter</th><th>Game Mode</th><th>High Score</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
+            var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + '</h2><p>Click a column heading to sort by that attribute</p><table id="table" class="display"><thead><tr><th>Display Name</th><th>Chapter</th><th>Game Mode</th><th>High Score</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
             var scores = $.parseJSON(data);
             for (var i = 0; i < scores.length; i++) {
-              str += '<tr><td>' + scores[i].c_number + '</td><td>' + scores[i].play_name + '</td><td>' + scores[i].chapter + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].times_played + '</td></tr>';
+              str += '<tr><td>' + scores[i].play_name + '</td><td>' + scores[i].chapter + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].times_played + '</td></tr>';
             }
             $('#output').html(str + '</tbody></table>');
-            $('#table').DataTable({ paging: false, "order": [[1, 'asc']] });
+            $('#table').DataTable({ paging: false, "order": [[0, 'asc']] });
           }
         });
       }
@@ -110,16 +110,16 @@ $(function (){
     $('#output').empty();
     $('#output').show();
     $.ajax({
-      url: 'getscores-allusers-chapter.php',
+      url: 'getscores-chapter-forstudent.php',
       data: 'courseid=' + $('#courseDropdown').find(":selected").val() + '&chapter=' + $('#chapterDropdown').find(":selected").val(),
       success: function(data){
-        var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + ", Chapter " + $('#chapterDropdown').find(":selected").val() + ' </h2><p>Click a column heading to sort by that attribute</p><table id="table" class="display"><thead><tr><th>C Number</th><th>Display Name</th><th>Game Mode</th><th>High Score</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
+        var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + ", Chapter " + $('#chapterDropdown').find(":selected").val() + ' </h2><p>Click a column heading to sort by that attribute</p><table id="table" class="display"><thead><tr><th>Display Name</th><th>Game Mode</th><th>High Score</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
         var scores = $.parseJSON(data);
         for (var i = 0; i < scores.length; i++) {
-          str += '<tr><td>' + scores[i].c_number + '</td><td>' + scores[i].play_name + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].times_played + '</td></tr>';
+          str += '<tr><td>' + scores[i].play_name + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].times_played + '</td></tr>';
         }
         $('#output').html(str + '</tbody></table>');
-        $('#table').DataTable({ paging: false, "order": [[1, 'asc']] });
+        $('#table').DataTable({ paging: false, "order": [[0, 'asc']] });
       }
     });
   });
