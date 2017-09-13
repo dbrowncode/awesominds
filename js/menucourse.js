@@ -43,15 +43,17 @@ var menuCourseState = {
         }
       });
     });
-    game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width, 0, game.width, '\uE8B8', false, true, game.global.pauseMenu));
-    game.global.pauseButton.x -= game.global.pauseButton.bubblewidth + game.global.borderFrameSize;
-    game.stage.addChild(game.global.pauseButton);
+    if(typeof(game.global.pauseButton) == "undefined"){
+      game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width, 0, game.width, '\uE8B8', false, true, game.global.pauseMenu));
+      game.global.pauseButton.x -= game.global.pauseButton.bubblewidth + game.global.borderFrameSize;
+      game.stage.addChild(game.global.pauseButton);
 
-    game.global.unpauseButton = game.world.add(new game.global.SpeechBubble(game, game.global.pauseButton.x, game.global.pauseButton.y, game.width, 'I>', false, true, game.global.unpause));
-    game.global.unpauseButton.visible = false;
-    game.stage.addChild(game.global.unpauseButton);
+      game.global.unpauseButton = game.world.add(new game.global.SpeechBubble(game, game.global.pauseButton.x, game.global.pauseButton.y, game.width, 'I>', false, true, game.global.unpause));
+      game.global.unpauseButton.visible = false;
+      game.stage.addChild(game.global.unpauseButton);
 
-    game.global.pauseButton.visible = true;
+      game.global.pauseButton.visible = true;
+    }
   },
 
   courseBtnClick: function(){
