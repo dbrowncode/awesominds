@@ -145,7 +145,7 @@ var playState = {
   * scores AI for new question
   */
   showQuestion: function(question){
-    if(devmode) console.log(question.answer + ' - questions left: ' + game.global.questions.length );
+    if(devmode) console.log('questions left: ' + game.global.questions.length );
     if (game.global.questionShown){
       game.state.getCurrentState().removeQuestion();
     }
@@ -239,19 +239,30 @@ var playState = {
     var availChoices = [];
     var tweens = [];
     var question = this.question;
+    var shuffChoices = [];
+    var answerText = '';
+    for (var c in question.choices) {
+      availChoices[i] = c;
+      shuffChoices[i] = question.choices[c];
+      if(c == question.answer[0]) answerText = question.choices[c];
+      i++;
+    }
+    shuffChoices = game.global.shuffleArray(shuffChoices);
+    console.log(shuffChoices);
+    i = 0;
     for (var c in question.choices) {
       var cbwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width)), game.global.jinny.width * 5);
-      var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, cbwidth, question.choices[c], false, true, game.state.getCurrentState().btnClick, true, c));
-      //cb.y += Math.floor(cb.bubbleheight + prevHeights);
+      var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, cbwidth, shuffChoices[i], false, true, game.state.getCurrentState().btnClick, true, c));
       cb.y += Math.floor(prevHeights);
       prevHeights += cb.bubbleheight + 10 *dpr;
       tweens[i] = game.add.tween(cb).to({x: Math.floor(game.world.centerX - cb.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
       cb.data = {
         letter: c,
-        text: c + '. ' + question.choices[c],
-        correct: (c == question.answer[0]),
+        text: c + '. ' + shuffChoices[i],
+        correct: (shuffChoices[i] == answerText),
         fullQuestion: question
       };
+      if(shuffChoices[i] == answerText) question.answer = c;
       game.global.choiceBubbles.add(cb);
       availChoices[i] = c;
       i++;
@@ -260,7 +271,7 @@ var playState = {
 
     game.global.questionUI.add(game.global.choiceBubbles);
     game.global.questionShown = true;
-
+    if(devmode) console.log('answer' + question.answer);
 
     //determine AI answers
     for(i=1; i<game.global.chars.length; i++){

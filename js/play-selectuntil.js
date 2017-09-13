@@ -111,7 +111,7 @@ playStateSU.update = function(){
     game.global.chars[i].scoreText.x = Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize);
     game.global.chars[i].scoreText.y = Math.floor(game.global.chars[i].sprite.centerY + (11*dpr));
     game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.centerX - game.global.chars[i].name.width/2);
-    game.global.chars[i].name.y = Math.floor(game.world.height - game.global.chars[i].name.height*2);
+    game.global.chars[i].name.y = Math.floor(game.global.chars[i].sprite.bottom);
   }
 };
 
