@@ -5,6 +5,9 @@ var preGameState = {
 
   makeHost: function(){
     game.global.jinny = game.add.sprite(0,0, 'jin', 0);
+    game.global.hostText = game.add.text(0, 0, 'Jin', game.global.smallerWhiteFont);
+    game.global.hostText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    game.global.hostText.padding.x = 5;
   },
 
   create: function(){
@@ -14,6 +17,9 @@ var preGameState = {
     game.global.bonus = 0;
     game.state.getCurrentState().makeHost();
     if (dpr >=2) game.global.jinny.scale.setTo(dpr/4, dpr/4);
+    game.global.hostText.centerX = Math.floor(game.global.jinny.centerX);
+    game.global.hostText.x = Math.floor(game.global.hostText.x);
+    game.global.hostText.y = Math.floor(game.global.jinny.bottom);
     game.add.tween(game.global.logoText).to({x: Math.floor(game.global.jinny.right + game.global.borderFrameSize)}, 60, Phaser.Easing.Default, true, 0);
     this.pregameUI = game.add.group();
 

@@ -7,6 +7,9 @@ preGameStateSU.instructLines = [
 
 preGameStateSU.makeHost = function(){
   game.global.jinny = game.add.sprite(0,0, 'annabelle', 0);
+  game.global.hostText = game.add.text(0, 0, 'Annabelle', game.global.smallerWhiteFont);
+  game.global.hostText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+  game.global.hostText.padding.x = 5;
 };
 
 preGameStateSU.update = function(){
