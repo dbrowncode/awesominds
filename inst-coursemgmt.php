@@ -546,6 +546,10 @@ $(function (){
     numTotal = 1;
   })
 
+  $('#uploadModal').on('hide.bs.modal', function () {
+    getQuestions();
+  })
+
   $("#courseDropdown").change(function(){
     $('#output').empty();
     if($('#courseDropdown').find(":selected").val() != 'null'){
