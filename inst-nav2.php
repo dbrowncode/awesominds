@@ -1,16 +1,12 @@
-<nav class="navbar sticky-top navbar-toggleable navbar-light bg-faded">
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
+  <a class="navbar-brand" href="index.php">Awesominds</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" href="index.php">Awesominds</a>
-  <div class="navbar-collapse in" id="navbarNavAltMarkup">
-    <div class="navbar-nav in">
+  <div class="collapse navbar-collapse" id="navbar">
+    <div class="navbar-nav">
 
       <?php if ($_SESSION['isInstructor']){
-        // <a class="dropdown-item" href="inst-createcourse.php">Create Course</a>
-        // <a class="dropdown-item" href="inst-addquestions.php">Add Chapter/Game</a>
-        // <a class="dropdown-item" href="inst-viewquestions.php">View Questions</a>
-        // <a class="dropdown-item" href="inst-deletecourse.php">Delete Courses/Chapters</a>
         echo '  <div class="nav-item dropdown">
             <a class="d-block dropdown-toggle btn btn-outline-primary" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Instructor Options
@@ -27,8 +23,9 @@
       }
       if ($_SESSION['logged_in'] && $_SESSION['active'] && !($_SESSION['isInstructor'])){
         echo '<a class="btn btn-outline-primary" href="leaderboard.php">Leaderboards</a>';
-      }
-      echo '<a class="btn btn-outline-info" href="" name="story" data-toggle="modal" data-target="#creditsModal">About</a>';
+      } ?>
+      <a class="btn btn-outline-info" href="" name="story" data-toggle="modal" data-target="#creditsModal">About</a>
+      <?php
       if ($_SESSION['logged_in']){
         echo '<a class="btn btn-outline-warning" href="logout.php">Log Out</a>';
       } else {
