@@ -164,31 +164,33 @@
         </div>
         <div class="modal-body container text-center" id='editModalBody'>
           <form id='editQuestionForm'>
-
             <label class="col-form-label" for="questionText">Question Text</label>
 
             <div class="form-group row" id="questionRow">
               <textarea name="questionText" class="col-sm-12 form-control" id="questionText" required rows="3"></textarea>
             </div>
 
+            <p><small>Add up to 6 options and select the <i class="fa fa-check" aria-hidden="true"></i> next to the correct answer for this question.<br>
+            Click the <i class="fa fa-trash" aria-hidden="true"></i> button next to an option to remove it.</small></p>
             <label class="col-form-label" for="optionText">Options</label>
 
             <div class="form-group input-group optionRow" id="optionRow0">
+              <span class="input-group-btn"><button type="button" class="btn btn-danger deleteOptionBtn"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></button></span>
               <span class="input-group-addon" id="optionLetter" value="A">A</span>
               <input name="optionLetterHidden" id="optionLetterHidden" type="hidden" value="A">
 
               <input name="optionText" type="text" class="form-control" id="optionText">
 
               <span class="input-group-addon">
-                <small class="form-text">Correct</small>
+                <i class="fa fa-check fa-lg" aria-hidden="true"></i>
                 <input type="radio" name="answer" id="answerRadio" value="A" checked>
               </span>
             </div>
 
             <div class="form-group" id="addOption">
               <button id="addOptionBtn" type="button" class="btn btn-success">+ Add Option</button>
+              <div id="limitMessage"></div>
             </div>
-            <!-- <button id="saveQuestionBtn" type="button" class="btn btn-primary">Save Question</button> -->
 
           </form>
           <div id="editOutput"></div>
@@ -222,7 +224,38 @@ function nextLetter(s){
 var optionLimit = 6
 var numTotal = 1;
 
+function deleteOption(thing){ //delete an option, then reletter all options to stick to ABC pattern
+  if($('div[id^="optionRow"]').length > 1){
+    var rowsBefore = thing.parents();
+    rowsBefore[1].remove();
+    numTotal = $('div[id^="optionRow"]').length;
+    if (numTotal < optionLimit){
+      $("#addOptionBtn").prop("disabled", false);
+      $("#limitMessage").empty();
+    }
+    var row = $('div[id^="optionRow"]')[0];
+    $(row).find('#optionLetter').val('A');
+    $(row).find('#optionLetter').html('A');
+    $(row).find('#optionLetterHidden').val('A');
+    $(row).find('#answerRadio').val('A');
+    for (var i = 1; i < $('div[id^="optionRow"]').length; i++) {
+      var row = $('div[id^="optionRow"]')[i];
+      var prevRow = $('div[id^="optionRow"]')[i-1];
+      var letter = $(prevRow).find('#optionLetter').val();
+      $(row).find('#optionLetter').val(nextLetter(letter));
+      $(row).find('#optionLetter').html(nextLetter(letter));
+      $(row).find('#optionLetterHidden').val(nextLetter(letter));
+      $(row).find('#answerRadio').val(nextLetter(letter));
+    }
+    //if answer was deleted, mark the last option as the answer to avoid having an undefined answer
+    if (!$("input[name='answer']:checked").val()) $("input[name='answer']:last").prop("checked", true);
+    //disable delete button if there's only one option left
+    if($('div[id^="optionRow"]').length <= 1) $('.deleteOptionBtn').prop("disabled", true);
+  }
+}
+
 function addOption(){
+  numTotal = $('div[id^="optionRow"]').length;
   if(numTotal < optionLimit){
     var $div = $('div[id^="optionRow"]:last');
     var newRow = $div.clone().prop('id', 'optionRow' + numTotal );
@@ -233,9 +266,14 @@ function addOption(){
     newRow.find('#optionText').val('');
     $("#addOption").before(newRow);
     numTotal++;
+    if($('div[id^="optionRow"]').length > 1) $('.deleteOptionBtn').prop("disabled", false);
+    $(".deleteOptionBtn").off('click');
+    $(".deleteOptionBtn").click(function(){
+      deleteOption($(this));
+    });
     if(numTotal >= optionLimit){
       $("#addOptionBtn").prop("disabled", true);
-      $("#addOption").append('<p><small>Limit ' + optionLimit + ' options per question</small></p>');
+      $("#limitMessage").html('<p><small>Limit ' + optionLimit + ' options per question</small></p>');
     }
   }
 };
@@ -332,7 +370,6 @@ var getQuestions = function(){
       for (var i = 0; i < data.length; i++) {
         var q = $.parseJSON(data[i]["question"]);
         var id = $.parseJSON(data[i]["questionid"]);
-        // console.log(q);
         htmlStr += '<tr id="row' + id + '"><td>' + id +'</td><td>' + q.question + '</td><td>'
         Object.keys(q.choices).forEach(function(key){
           htmlStr += key + ': ' + q.choices[key] + '<br>';
@@ -373,14 +410,19 @@ var getQuestions = function(){
               if(i < keys.length-1) addOption();
               $('#optionRow' + i).children('#optionText').val(q.choices[keys[i]]);
             }
+            if($('div[id^="optionRow"]').length <= 1) $('.deleteOptionBtn').prop("disabled", true);
             $('#answerRadio[value='+ q.answer +']').prop("checked", true);
+            numTotal = $('div[id^="optionRow"]').length;
+            if (numTotal < optionLimit){
+              $("#addOptionBtn").prop("disabled", false);
+              $("#limitMessage").empty();
+            }
           }
         });
       });
 
       $('#saveQuestionBtn').click(function(){
         var formArray = $('form').serializeArray();
-        console.log(formArray);
         var questionBank = {};
         questionBank.choices = {};
         for (var i = 0; i < formArray.length; i++) {
@@ -423,12 +465,12 @@ createForm.submit(function (e) {
     data: createForm.serialize(),
     success: function(data) {
     //  $(create_output).html(data);
-      console.log(data);
+      // console.log(data);
       window.location.href = "inst-coursemgmt.php?courseid=" + $('#courseIDinput').val().toUpperCase();
     },
     error: function(data) {
-      console.log('error');
-      console.log(data);
+      // console.log('error');
+      // console.log(data);
     }
   });
 });
@@ -443,7 +485,7 @@ createChapterForm.submit(function (e) {
     date_start: $('#date_start_input').val(),
     date_end: $('#date_end_input').val()
   };
-  console.log(postData);
+  // console.log(postData);
   $.ajax({
     type: createChapterForm.attr('method'),
     url: createChapterForm.attr('action'),
@@ -454,12 +496,12 @@ createChapterForm.submit(function (e) {
         window.location.href = "inst-coursemgmt.php?courseid=" + selectedCourse + "&chapter=" + $('#chapterIDinput').val();
       } else if(data.includes('Duplicate')){
         $('#createChapterOutput').html('Error creating chapter - chapter number already exists!');
-        console.log(data);
+        // console.log(data);
       }
     },
     error: function(data) {
-      console.log('error');
-      console.log(data);
+      // console.log('error');
+      // console.log(data);
     }
   });
 });
@@ -519,7 +561,7 @@ $('#uploadForm').submit(function(e) {
       }).done(function(res){ //
         $('#uploadForm')[0].reset(); //reset form
         $(result_output).html(res + '<p><a href="inst-coursemgmt.php?courseid=' + selectedCourse + '&chapter=' + selectedChapter + '">View Questions</a></p>'); //output response from server
-        console.log(res);
+        // console.log(res);
         submit_btn.val("Upload file").prop( "disabled", false); //enable submit button once ajax is done
       });
     }
