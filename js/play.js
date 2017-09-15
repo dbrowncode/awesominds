@@ -256,13 +256,13 @@ var playState = {
       cb.y += Math.floor(prevHeights);
       prevHeights += cb.bubbleheight + 10 *dpr;
       tweens[i] = game.add.tween(cb).to({x: Math.floor(game.world.centerX - cb.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250 * i);
+      if(shuffChoices[i] == answerText) question.newAnswer = c;
       cb.data = {
         letter: c,
         text: c + '. ' + shuffChoices[i],
         correct: (shuffChoices[i] == answerText),
         fullQuestion: question
       };
-      if(shuffChoices[i] == answerText) question.answer = c;
       game.global.choiceBubbles.add(cb);
       availChoices[i] = c;
       i++;
@@ -271,15 +271,15 @@ var playState = {
 
     game.global.questionUI.add(game.global.choiceBubbles);
     game.global.questionShown = true;
-    if(devmode) console.log('answer' + question.answer);
+    if(devmode) console.log('answer' + question.newAnswer);
 
     //determine AI answers
     for(i=1; i<game.global.chars.length; i++){
       if(game.global.chars[i].correct){
-        game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, question.answer, true, false));
+        game.global.chars[i].answerBubble = game.world.add(new game.global.SpeechBubble(game, Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize), Math.floor(game.global.chars[i].sprite.centerY - 20), game.world.width, question.newAnswer, true, false));
       }else{
         choice = availChoices[Math.floor(Math.random() * availChoices.length)];
-        answer = question.answer;
+        answer = question.newAnswer;
         //strip any whitespace so comparisons will work
         answer = answer.replace(/(^\s+|\s+$)/g,"");
         choice = choice.replace(/(^\s+|\s+$)/g,"");
