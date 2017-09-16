@@ -155,19 +155,19 @@
     </div>
   </div>
 
-  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3">
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title text-center" id="myModalLabel3">Editing Question</h4>
+          <h4 class="modal-title text-center" id="editModalLabel">Editing Question</h4>
         </div>
         <div class="modal-body container text-center" id='editModalBody'>
           <form id='editQuestionForm'>
             <label class="col-form-label" for="questionText">Question Text</label>
 
             <div class="form-group row" id="questionRow">
-              <textarea name="questionText" class="col-sm-12 form-control" id="questionText" required rows="3"></textarea>
+              <textarea name="questionText" class="col-sm-12 form-control question" id="questionText" required rows="3"></textarea>
             </div>
 
             <p><small>Add up to 6 options and select the <i class="fa fa-check" aria-hidden="true"></i> next to the correct answer for this question.<br>
@@ -179,7 +179,7 @@
               <span class="input-group-addon" id="optionLetter" value="A">A</span>
               <input name="optionLetterHidden" id="optionLetterHidden" type="hidden" value="A">
 
-              <input name="optionText" type="text" class="form-control" id="optionText">
+              <input name="optionText" type="text" class="form-control question" id="optionText">
 
               <span class="input-group-addon">
                 <i class="fa fa-check fa-lg" aria-hidden="true"></i>
@@ -197,7 +197,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary btn-ok" data-dismiss="modal" id="saveQuestionBtn">Save Changes</button>
-          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel (Discard Changes)</button>
+          <button type="button" class="btn btn-primary btn-ok" data-dismiss="modal" id="newQuestionBtn">Save Question</button>
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
@@ -365,8 +366,7 @@ var getQuestions = function(){
       questions = [];
       $('#output').empty();
       $('#output').show();
-      // <button class="btn btn-success addQuestionBtn" data-toggle="modal" data-target="#addQuestionModal">Add a Question</button>
-      var htmlStr = '<h3>'+ selectedCourse + ' - Chapter ' + selectedChapter + ' Questions</h3><p><button class="btn btn-success uploadQuestionsBtn" data-toggle="modal" data-target="#uploadModal">Upload .doc File of Questions</button></p><table id="table" class="display table table-hover table-bordered text-left"><thead><tr><th>ID#</th><th>Question Text</th><th>Choices</th><th>Answer</th><th>Options</th></tr></thead><tbody>';
+      var htmlStr = '<h3>'+ selectedCourse + ' - Chapter ' + selectedChapter + ' Questions</h3><p><button class="btn btn-success addQuestionBtn" data-toggle="modal" data-target="#editModal">Add Question</button> <button class="btn btn-success uploadQuestionsBtn" data-toggle="modal" data-target="#uploadModal">Upload .doc File of Questions</button></p><table id="table" class="display table table-hover table-bordered text-left"><thead><tr><th>ID#</th><th>Question Text</th><th>Choices</th><th>Answer</th><th>Options</th></tr></thead><tbody>';
       for (var i = 0; i < data.length; i++) {
         var q = $.parseJSON(data[i]["question"]);
         var id = $.parseJSON(data[i]["questionid"]);
@@ -396,8 +396,12 @@ var getQuestions = function(){
         questionid = $(this).attr('id');
       });
 
+      $(".editBtn").off('click');
       $('.editBtn').click(function(){
+        $('#saveQuestionBtn').show();
+        $('#newQuestionBtn').hide();
         questionid = $(this).attr('id');
+        $('#editModalLabel').html('Edit Question #' + questionid);
         $.ajax({
           type: 'GET',
           url: 'api-getonequestion.php?qid=' + questionid,
@@ -421,8 +425,20 @@ var getQuestions = function(){
         });
       });
 
-      $('#saveQuestionBtn').click(function(){
-        var formArray = $('form').serializeArray();
+      $(".addQuestionBtn").off('click');
+      $('.addQuestionBtn').click(function(){
+        $('#saveQuestionBtn').hide();
+        $('#newQuestionBtn').show();
+        $('#editModalLabel').html('Add Question');
+        $('.question').val('');
+        $("input[name='answer']:last").prop("checked", true);
+        $('.deleteOptionBtn').prop("disabled", true);
+        $("#addOptionBtn").prop("disabled", false);
+        $("#limitMessage").empty();
+      });
+
+      function prepQuestion(){
+        var formArray = $('#editQuestionForm').serializeArray();
         var questionBank = {};
         questionBank.choices = {};
         for (var i = 0; i < formArray.length; i++) {
@@ -440,11 +456,31 @@ var getQuestions = function(){
               break;
           }
         }
+        return questionBank;
+      };
 
+      $("#saveQuestionBtn").off('click');
+      $('#saveQuestionBtn').click(function(){
+        var questionBank = prepQuestion();
         $.ajax({
           type: 'POST',
           url: 'api-updatequestion.php',
-          data: { questionBank: questionBank, questionid: questionid },
+          data: { questionBank: prepQuestion(), questionid: questionid },
+          success: function(data) {
+            getQuestions();
+            $('div[id^="optionRow"]').not(':first').remove();
+            numTotal = 1;
+          }
+        });
+      });
+
+      $("#newQuestionBtn").off('click');
+      $('#newQuestionBtn').click(function(){
+        var questionBank = prepQuestion();
+        $.ajax({
+          type: 'POST',
+          url: 'api-insert.php',
+          data: { questionBank: prepQuestion(), chapter: selectedChapter, courseid: selectedCourse },
           success: function(data) {
             getQuestions();
             $('div[id^="optionRow"]').not(':first').remove();
