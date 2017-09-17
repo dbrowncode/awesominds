@@ -22,14 +22,12 @@
           <select class="form-control" id='courseDropdown'>
             <option value="null">Select an Existing Course</option>
           </select>
-          <!-- <span class="input-group-btn"><button class="btn btn-primary" id='selectCourseBtn' value='Select'>Select</button></span> -->
         </div>
       </div>
       <div id="selectedCourseOutput"></div>
     </div>
 
     <div class='card selectChapterUI'>
-      <!-- <p id="selectChapterText">Select a chapter/game to manage, or create a new chapter/game.</p> -->
       <div id='selectChapterDiv' class="container" style="max-width: 400px">
         <p><button class="btn btn-success newChapterBtn" data-toggle="modal" data-target="#createChapterModal"></button></p>
         <div class="input-group">
@@ -37,9 +35,10 @@
           <select class='form-control' id='chapterDropdown'>
             <option value="null">Select a Chapter/Game to Manage</option>
           </select>
-          <!-- <span class="input-group-btn"><button id='selectChapterBtn' class='btn btn-primary' value='Select'>Select</button></span> -->
         </div>
-        <div id="selectedChapterOutput"></div>
+        <div id="selectedChapterOutput">
+          <br><p><button id="editChapterBtn" data-toggle="modal" data-target="#createChapterModal" class="btn btn-primary">Edit Chapter</button> <button id="deleteChapterBtn" data-toggle="modal" data-target="#confirmDelete" class="btn btn-danger">Delete Chapter</button></p>
+        </div>
       </div>
     </div><br>
     <div id="output" class="card"></div>
@@ -101,23 +100,22 @@
         </div>
         <form action="api-createchapter.php" method="post" id="createChapterForm">
         <div class="modal-body text-center" id='createChapterModalBody'>
-
-            <p>Enter a chapter number, chapter name, and availability dates to create a new chapter.</p>
-            <div class="form-group container" style="max-width: 400px;">
-              <p>Chapter Number</p>
-              <input class="form-control" type="number" name="chapterid" id="chapterIDinput" required value="1" min="1" max="999"><br>
-              <p>Chapter Name</p>
-              <input class="form-control" type="text" name="chaptername" id="chapterNameinput" required placeholder="eg. Intro to Topic"><br>
-              <p>Available from:</p>
-              <input class="form-control" type="datetime-local" id="date_start_input" required><br>
-              <p>To:</p>
-              <input class="form-control" type="datetime-local" id="date_end_input" required>
-              <p id="createChapterOutput"></p>
-            </div>
-
+          <p id="createChapterModalDesc">Enter a chapter number, chapter name, and availability dates to create a new chapter.</p>
+          <div class="form-group container" style="max-width: 400px;">
+            <p>Chapter Number</p>
+            <input class="form-control" type="number" name="chapterid" id="chapterIDinput" required value="1" min="1" max="999"><br>
+            <p>Chapter Name</p>
+            <input class="form-control" type="text" name="chaptername" id="chapterNameinput" required placeholder="eg. Intro to Topic"><br>
+            <p>Available from:</p>
+            <input class="form-control" type="datetime-local" id="date_start_input" required><br>
+            <p>To:</p>
+            <input class="form-control" type="datetime-local" id="date_end_input" required>
+            <p id="createChapterOutput"></p>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary btn-ok" id="createChapterBtn">Create Chapter</button>
+          <button type="submit" class="btn btn-primary btn-ok" id="updateChapterBtn">Save Changes</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
         </form>
@@ -352,6 +350,26 @@ var getChapters = function(course){
               }";
       }
       ?>
+
+      $("#editChapterBtn").off('click');
+      $('#editChapterBtn').click(function(){
+        $('#createChapterBtn').hide();
+        $('#updateChapterBtn').show();
+        $('#chapterIDinput').prop('readonly', true);
+        $('#createChapterModalLabel').html('Edit Chapter ' + selectedCourse + ' - ' + selectedChapter);
+        $('#createChapterModalDesc').html('You may edit the name and dates of the selected chapter here');
+        $.ajax({
+          type: 'GET',
+          url: 'api-getonechapter.php?chapter=' + selectedChapter,
+          dataType: 'json',
+          success: function(data){
+            $('#chapterIDinput').val(data.chapterid);
+            $('#chapterNameinput').val(data.chaptername);
+            $('#date_start_input').val(data.date_start);
+            $('#date_end_input').val(data.date_end);
+          }
+        });
+      });
     }
   });
 }
@@ -378,7 +396,7 @@ var getQuestions = function(){
       }
       htmlStr += '</tbody></table>';
       $('#output').html(htmlStr);
-      $('#selectedChapterOutput').html('<br><p><button id="deleteChapterBtn" data-toggle="modal" data-target="#confirmDelete" class="btn btn-danger">Delete Chapter "'+ selectedCourse +' - ' + selectedChapter + '"</button></p>');
+      $('#selectedChapterOutput').show();
 
       $('.uploadQuestionsBtn').click(function(){
         $('#uploadModalLabel').html('Upload Questions to "' + selectedCourse + ' - '+ selectedChapter + '"');
@@ -500,13 +518,7 @@ createForm.submit(function (e) {
     url: createForm.attr('action'),
     data: createForm.serialize(),
     success: function(data) {
-    //  $(create_output).html(data);
-      // console.log(data);
       window.location.href = "inst-coursemgmt.php?courseid=" + $('#courseIDinput').val().toUpperCase();
-    },
-    error: function(data) {
-      // console.log('error');
-      // console.log(data);
     }
   });
 });
@@ -521,23 +533,18 @@ createChapterForm.submit(function (e) {
     date_start: $('#date_start_input').val(),
     date_end: $('#date_end_input').val()
   };
-  // console.log(postData);
+  var url = createChapterForm.attr('action');
+  if(document.activeElement.id == 'updateChapterBtn') url = 'api-updatechapter.php';
   $.ajax({
     type: createChapterForm.attr('method'),
-    url: createChapterForm.attr('action'),
+    url: url,
     data: postData,
     success: function(data) {
-    //  $(create_output).html(data);
       if(data.includes('successfully')){
         window.location.href = "inst-coursemgmt.php?courseid=" + selectedCourse + "&chapter=" + $('#chapterIDinput').val();
       } else if(data.includes('Duplicate')){
         $('#createChapterOutput').html('Error creating chapter - chapter number already exists!');
-        // console.log(data);
       }
-    },
-    error: function(data) {
-      // console.log('error');
-      // console.log(data);
     }
   });
 });
@@ -597,7 +604,6 @@ $('#uploadForm').submit(function(e) {
       }).done(function(res){ //
         $('#uploadForm')[0].reset(); //reset form
         $(result_output).html(res + '<p><a href="inst-coursemgmt.php?courseid=' + selectedCourse + '&chapter=' + selectedChapter + '">View Questions</a></p>'); //output response from server
-        // console.log(res);
         submit_btn.val("Upload file").prop( "disabled", false); //enable submit button once ajax is done
       });
     }
@@ -608,7 +614,12 @@ $('#uploadForm').submit(function(e) {
 });
 
 $('.newChapterBtn').click(function(){
+  $('#createChapterBtn').show();
+  $('#updateChapterBtn').hide();
+  $('#createChapterForm').trigger('reset');
+  $('#chapterIDinput').prop('readonly', false);
   $('#createChapterModalLabel').html('Create Chapter in Course "' + selectedCourse + '"');
+  $('#createChapterModalDesc').html('Enter a chapter number, chapter name, and availability dates to create a new chapter.');
   $('#date_start_input').val(moment().format("YYYY-MM-DDThh:mm"));
   $('#date_end_input').val(moment().add(14, 'days').format("YYYY-MM-DDThh:mm"));
 });
@@ -648,7 +659,7 @@ $(function (){
       // $('#selectChapterText').hide();
       $('#output').hide();
     }
-    $('#selectedChapterOutput').empty();
+    $('#selectedChapterOutput').hide();
   });
 
   $("#chapterDropdown").change(function(){
@@ -689,7 +700,6 @@ $(function (){
             getCourses();
             $('#selectChapterDiv').hide();
             $('.selectChapterUI').hide();
-            // console.log(data);
           }
         });
         break;
@@ -700,8 +710,7 @@ $(function (){
           data: { courseid: selectedCourse, deletingCourse: false, chapter: selectedChapter },
           success: function(data){
             getChapters(selectedCourse);
-            $('#selectedChapterOutput').empty();
-            // console.log(data);
+            $('#selectedChapterOutput').hide();
           }
         });
         break;
