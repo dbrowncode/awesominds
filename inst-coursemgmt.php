@@ -620,8 +620,8 @@ $('.newChapterBtn').click(function(){
   $('#chapterIDinput').prop('readonly', false);
   $('#createChapterModalLabel').html('Create Chapter in Course "' + selectedCourse + '"');
   $('#createChapterModalDesc').html('Enter a chapter number, chapter name, and availability dates to create a new chapter.');
-  $('#date_start_input').val(moment().format("YYYY-MM-DDThh:mm"));
-  $('#date_end_input').val(moment().add(14, 'days').format("YYYY-MM-DDThh:mm"));
+  $('#date_start_input').val(moment().format("YYYY-MM-DDTHH:mm"));
+  $('#date_end_input').val(moment().add(14, 'days').format("YYYY-MM-DDTHH:mm"));
 });
 
 $(function (){

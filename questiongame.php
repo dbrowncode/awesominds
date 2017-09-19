@@ -3,6 +3,7 @@
 <title>Awesominds</title>
 
 <script type="text/javascript" src="js/phaser.min.js"></script>
+<script type="text/javascript" src="js/moment.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
 <?php

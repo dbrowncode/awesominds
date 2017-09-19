@@ -157,17 +157,11 @@ var preloadState = {
       var bubbleGfx = game.add.graphics(0, 0);
       bubbleGfx.lineStyle(2 * dpr, 0x000000, 1);
       bubbleGfx.beginFill(0xffffff, 1);
-      bubbleGfx.drawRoundedRect(x, y, width, height, 8*dpr);
-
-      // Create all of our corners and edges
-      this.borders = [
-        bubbleGfx //replaced the images; TODO actually remove them
-      ];
-
-      // Add all of the above to this sprite
-      for (var b in this.borders) {
-        this.addChild(this.borders[b]);
+      if(clickFunction == menuChapterState.chapterBtnClick && !asButton){ //can tell this is an unavailable chapter button
+        bubbleGfx.beginFill(0x888888, 1);
       }
+      bubbleGfx.drawRoundedRect(x, y, width, height, 8*dpr);
+      this.addChild(bubbleGfx)
 
       if(withTail){
         // Add the tail
@@ -192,31 +186,23 @@ var preloadState = {
         this.input.useHandCursor = true;
         //functions to be used if this is a button
         this.over = function(){
-          for (var b in this.borders) {
-            this.borders[b].tint = 0x5AC5E8;
-          }
+          bubbleGfx.tint = 0x5AC5E8;
         };
 
         this.out = function(){
-          for (var b in this.borders) {
-            this.borders[b].tint = 0xffffff;
-          }
+          bubbleGfx.tint = 0xffffff;
         };
 
         this.click = function(thing, pointer, isOver){
           if(isOver){
-            for (var b in this.borders) {
-              this.borders[b].tint = 0xffffaa;
-            }
+            bubbleGfx.tint = 0xffffaa;
             clickFunction.call(this);
           }
           else{
             for (var i = 0; i < this.parent.children.length; i++) {
               var item = this.parent.children[i];
               if((typeof item == 'object') && (item.hasOwnProperty('isButton')) && (pointer.x > item.x && pointer.x < item.x + item.bubblewidth + game.global.borderFrameSize && pointer.y > item.y && pointer.y < item.y + item.bubbleheight + game.global.borderFrameSize)){
-                for (var b in item.borders) {
-                  item.borders[b].tint = 0xffffaa;
-                }
+                bubbleGfx.tint = 0xffffaa;
                 clickFunction.call(item);
               }
             }
