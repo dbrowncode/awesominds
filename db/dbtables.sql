@@ -34,11 +34,14 @@ CREATE TABLE `invite` (
 CREATE TABLE `course` (
   `courseid` varchar(9) NOT NULL,
   `name` tinytext NOT NULL,
-  `instructor` varchar(11) DEFAULT NULL,
-  `c_number` varchar(11) DEFAULT NULL,
-  PRIMARY KEY (`courseid`),
-  KEY `user_course_fk_idx` (`c_number`),
-  CONSTRAINT `user_course_fk` FOREIGN KEY (`c_number`) REFERENCES `users` (`c_number`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `regcode` varchar(40) NOT NULL,
+  PRIMARY KEY (`courseid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `usercoursereg` (
+  `c_number` varchar(11) NOT NULL,
+  `courseid` varchar(9) NOT NULL,
+  PRIMARY KEY (`c_number`, `courseid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `chapter` (

@@ -49,8 +49,8 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title text-center" id="myModalLabel2">Are you sure?</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body text-center" id='modalBody2'>
           Are you sure you want to delete this question?
@@ -67,8 +67,8 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title text-center" id="createCourseModalLabel">Create Course</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <form action="createCourse.php" method="post" id="createCourseForm">
         <div class="modal-body text-center" id='createCourseModalBody'>
@@ -95,8 +95,8 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title text-center" id="createChapterModalLabel">Create Chapter</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <form action="api-createchapter.php" method="post" id="createChapterForm">
         <div class="modal-body text-center" id='createChapterModalBody'>
@@ -127,8 +127,8 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title text-center" id="uploadModalLabel">Upload Questions</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <form action="upload2.php" method="post" enctype="multipart/form-data" id="uploadForm">
         <div class="modal-body text-center" id='uploadModalBody'>
@@ -153,12 +153,32 @@
     </div>
   </div>
 
+  <div class="modal fade" id="inviteStudentsModal" tabindex="-1" role="dialog" aria-labelledby="inviteStudentsModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h4 class="modal-title text-center" id="inviteStudentsModalLabel">Invite Students</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body text-center" id='inviteStudentsModalBody'>
+          <p>Copy the following link and paste it in a D2L post, or anywhere else that only students in your course will see it.</p>
+          <textarea readonly id="studentReglink" class="form-control"></textarea>
+          <p>Students can click the link to add this course to their Awesominds account, adding it to their in-game course list.</p>
+          <p>Other instructors can click the link to add this course to their Awesominds account, giving them access to course management features for this course.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-ok" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title text-center" id="editModalLabel">Editing Question</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body container text-center" id='editModalBody'>
           <form id='editQuestionForm'>
@@ -204,6 +224,7 @@
 
 <script>
 var selectedCourse = "";
+var courses = [];
 var selectedChapter = 0;
 var thingToDelete = "";
 var questions = [];
@@ -284,7 +305,7 @@ var getCourses = function(){
       $('#courseDropdown').empty();
       $('#courseDropdown').append('<option value="null">Select a Course</option>');
       $("#selectedCourseOutput").empty();
-      var courses = $.parseJSON(data);
+      courses = $.parseJSON(data);
       for (var i = 0; i < courses.length; i++) {
         $('#courseDropdown').append('<option value="' + courses[i].courseid + '">' + courses[i].courseid + ' - ' + courses[i].name + '</option>');
       }
@@ -328,7 +349,7 @@ var getChapters = function(course){
       $('#selectChapterDiv').show();
       // $('#selectChapterText').show();
       $('.newChapterBtn').html('Create New Chapter in Course "' + selectedCourse + '"');
-      $("#selectedCourseOutput").html('<br><p><button id="deleteCourseBtn" data-toggle="modal" data-target="#confirmDelete" class="btn btn-danger">Delete Course "'+ selectedCourse +'"</button></p>');
+      $("#selectedCourseOutput").html('<br><p><button id="inviteStudentsBtn" data-toggle="modal" data-target="#inviteStudentsModal" class="btn btn-primary">Invite Students</button> <button id="deleteCourseBtn" data-toggle="modal" data-target="#confirmDelete" class="btn btn-danger">Delete Course "'+ selectedCourse +'"</button></p>');
       $('#deleteCourseBtn').click(function(){
         $('#modalBody2').html('Are you sure you want to delete the course "' + selectedCourse + '"?');
         thingToDelete = 'course';
@@ -350,6 +371,15 @@ var getChapters = function(course){
               }";
       }
       ?>
+      $('#inviteStudentsBtn').off('click');
+      $('#inviteStudentsBtn').click(function(){
+        for (var i = 0; i < courses.length; i++) { //find this course's regcode and make the link
+          if(courses[i].courseid === selectedCourse) $('#studentReglink').val('http://gbl.cs.camosun.bc.ca/awesominds/index.php?regcode=' + courses[i].regcode);
+        }
+        $('#studentReglink').off('click');
+        $('#studentReglink').click(function(){ this.select(); });
+        $('#inviteStudentsModalLabel').html('Invite Students to ' + selectedCourse);
+      });
 
       $("#editChapterBtn").off('click');
       $('#editChapterBtn').click(function(){

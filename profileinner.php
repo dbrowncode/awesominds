@@ -1,15 +1,7 @@
 <head>
   <meta charset="UTF-8" />
-  <?php
-    include('redir-notloggedin.php');
-    // Makes it easier to read
-    $c_number = $_SESSION['c_number'];
-    $active = $_SESSION['active'];
-    $avatarnum = $_SESSION['avatarnum'];
-    $play_name = $_SESSION['play_name'];
-    $isInstructor = $_SESSION['isInstructor'];
-  ?>
-  <title>Welcome <?= $play_name ?></title>
+  <?php include('redir-notloggedin.php'); ?>
+  <title>Welcome <?= $_SESSION['play_name'] ?></title>
   <?php include 'css/css.html'; ?>
 </head>
 
@@ -19,27 +11,38 @@
     <h2>Welcome to Awesominds</h2>
     <p>
     <?php
-    // Display message about account verification link only once
+    // Display any set message only once, then remove it
     if ( isset($_SESSION['message']) ){
       echo $_SESSION['message'];
-      // Don't annoy the user with more messages upon page refresh
       unset( $_SESSION['message'] );
+    }
+    if(isset($_SESSION['regcode'])){ //if there's a registration code, register in the course, let them know, and remove the code from the session
+      require('../../conn.php');
+      $stmt = $dbcon->prepare("SELECT courseid FROM course WHERE regcode = :regcode");
+      $stmt->bindParam(':regcode', $_SESSION['regcode']);
+      $stmt->execute();
+      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      if($result){
+        $stmt2 = $dbcon->prepare("INSERT INTO usercoursereg (c_number, courseid) VALUES(:c_number, :courseid)");
+        $stmt2->bindParam(':c_number', $_SESSION['c_number']);
+        $stmt2->bindParam(':courseid', $result['courseid']);
+        if($stmt2->execute()){
+          echo '<div class="alert alert-success" role="alert">
+                  You have successfully registered for ' . $result['courseid'] .'
+                </div>';
+        }
+      } else {
+        echo '<div class="alert alert-danger" role="alert">
+                Invalid registration link, please try again!
+              </div>';
+      }
+      unset($_SESSION['regcode']);
     }
     ?>
     </p>
-    <?php
-    // Keep reminding the user this account is not active, until they activate
-    if ( !$active ){
-      echo
-      '<div class="info">
-      Account is unverified, please confirm your email address by clicking
-      on the email link!
-      </div>';
-    }
-    ?>
     <h4>You are logged in as</h4><br>
-    <?php echo '<img src="assets/opp2/oppon' . $avatarnum . '.png" width=120/>'; ?>
-    <h3><?php echo $play_name; ?></h3><h5><?php echo $c_number; ?></h5><br>
+    <?php echo '<img src="assets/opp2/oppon' . $_SESSION['avatarnum'] . '.png" width=120/>'; ?>
+    <h3><?php echo $_SESSION['play_name']; ?></h3><h5><?php echo $_SESSION['c_number']; ?></h5><br>
     <p><a class="btn btn-success" href="questiongame.php">Play Game</a></p>
   </div>
 </body>

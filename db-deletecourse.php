@@ -6,7 +6,7 @@
 
   //due to foreign key constraints, delete score, then question, then course?
   if($_POST["deletingCourse"] == "true"){
-    $sqltext = array("DELETE FROM score WHERE courseid = :courseid;", "DELETE FROM question WHERE courseid = :courseid;", "DELETE FROM chapter WHERE courseid = :courseid", "DELETE FROM course WHERE courseid = :courseid;");
+    $sqltext = array("DELETE FROM usercoursereg WHERE courseid = :courseid;", "DELETE FROM score WHERE courseid = :courseid;", "DELETE FROM question WHERE courseid = :courseid;", "DELETE FROM chapter WHERE courseid = :courseid", "DELETE FROM course WHERE courseid = :courseid;");
   } else {
     $sqltext = array("DELETE FROM score WHERE courseid = :courseid AND chapter = :chapter;", "DELETE FROM question WHERE courseid = :courseid AND chapter = :chapter;", "DELETE FROM chapter WHERE courseid = :courseid AND chapterid = :chapter;");
   }
