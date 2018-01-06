@@ -19,7 +19,7 @@ var preloadState = {
     game.scale.windowConstraints.bottom = "visual";
     game.stage.disableVisibilityChange = true;
 
-    var assetPath = (dpr >= 2) ? 'assets/' : 'assets/small/';
+    var assetPath = (dpr >= 2) ? 'assets/' : 'assets/small/'; //use smaller version of most assets on lower dpr devices
 
     game.load.image('right', 'assets/right.png');
     game.load.image('wrong', 'assets/wrong.png');
@@ -68,9 +68,11 @@ var preloadState = {
     game.global.oppImageKeys = [];
     //this sets the name for all the characters, in order of the image numbers (plus 'zero' just for index fixing)
     var charNames = ['Zero', 'Jamar', 'Bruno', 'Edward', 'Sofia', 'Dahra', 'Manu', 'Jira', 'Chandi', 'Dimbo', 'Lamar', 'Seadog', 'Kit', 'Pablo', 'Fernanda', 'Mickey', 'Rose', 'Harpo', 'Geraldine'];
+    //load each avatar with an appropriate key
     for (var i = 1; i <= numOppImages; i++) {
-      game.load.image('opp' + i, assetPath + 'opp2/oppon' + i + '.png');
-      if(i != game.global.session['avatarnum']){
+      game.load.image('opp' + i, assetPath + 'opp2/oppon' + i + '.png'); //load an avatar
+      if(dpr < 2) game.load.image('opp' + i + 'big', 'assets/opp2/oppon' + i + '.png'); //if on lower dpr, load the bigger images as well for winner screen
+      if(i != game.global.session['avatarnum']){ //if the current avatar is not the player's avatar, give it a key and character name and add it to the opponent image keys array
         var opp = {
           imageKey: 'opp' + i,
           name: charNames[i]
@@ -80,7 +82,6 @@ var preloadState = {
     }
 
     game.global.borderFrameSize = 9 * dpr;
-    game.load.spritesheet('bubble-border','assets/bubbleborder' + dpr + '.png', game.global.borderFrameSize, game.global.borderFrameSize);
     game.load.image('bubble-tail', 'assets/bubbletailleft' + dpr + '.png');
     game.load.bitmapFont('8bitoperator', 'assets/8bitoperator.png', 'assets/8bitoperator.xml');
   },

@@ -97,14 +97,15 @@ var endOfGameState = {
   },
 
   isGameOver: function(mindStateGameOver){
-    var winnerFound = false;
+    game.state.getCurrentState().winningChar = -1;
     for (var i = 0; i < game.global.chars.length; i++) {
-      if(game.global.chars[i].numJewels >= 5){
-        winnerFound = true;
+      if(game.global.chars[i].numJewels >= 1){ //CHANGE BACK TO 5 AFTER TESTING
+        game.state.getCurrentState().winningChar = i; //save index of winning character
+        console.log(i + ' wins');
         break;
       }
     }
-    return (mindStateGameOver || winnerFound);
+    return (mindStateGameOver || (game.state.getCurrentState().winningChar >= 0) );
   },
 
   makeStatUI: function(){
@@ -142,6 +143,34 @@ var endOfGameState = {
     game.state.getCurrentState().statLines = game.state.getCurrentState().getStatLines(gameOver);
     game.global.bonus = mindStateToUse.bonus;
 
+    var winner = game.state.getCurrentState().winningChar; //get index of winning character
+    if(gameOver && winner >= 0){ //if we have a winner, bring their avatar and name front and center
+      game.state.getCurrentState().winnerUI = game.add.group();
+      var winnerBG = game.add.graphics(0, 0);
+      winnerBG.lineStyle(2, 0x000000, 1);
+      winnerBG.beginFill(0xffffff, 1);
+      var winnerRect = winnerBG.drawRoundedRect(game.world.centerX - game.global.chars[winner].sprite.width*2.5, game.world.centerY - game.global.chars[winner].sprite.height*2, game.global.chars[winner].sprite.width*5, game.global.chars[winner].sprite.height*3.5, 10);
+      game.state.getCurrentState().winnerUI.add(winnerRect);
+      // game.world.bringToTop(winnerRect);
+      var winnerImageKey = game.global.chars[winner].imageKey;
+      if (dpr < 2) winnerImageKey += 'big'; //if using smaller images for lower dpr, bring in the bigger image for the winner screen
+      var winnerSprite = game.add.sprite(0,0, winnerImageKey, 0);
+      winnerSprite.height = game.global.chars[winner].sprite.height*2;
+      winnerSprite.width = game.global.chars[winner].sprite.width*2;
+      winnerSprite.x = Math.floor(game.world.centerX - winnerSprite.width/2);
+      winnerSprite.y = Math.floor(game.world.centerY - winnerSprite.height/2);
+      game.state.getCurrentState().winnerUI.add(winnerSprite);
+      game.state.getCurrentState().endGameUI.add(game.state.getCurrentState().winnerUI);
+
+      // var newheight = game.global.chars[winner].sprite.height*2;
+      // var newwidth = game.global.chars[winner].sprite.width*2
+      // game.add.tween(game.global.chars[winner].sprite).to({height: newheight, width: newwidth, x: Math.floor(game.world.centerX - newwidth/2), y: Math.floor(game.world.centerY - newheight/2)}, 250, Phaser.Easing.Default, true);
+      // game.world.bringToTop(game.global.chars[winner].sprite);
+      // game.world.bringToTop(game.global.chars[winner].crown);
+      // game.world.bringToTop(game.global.chars[winner].name);
+      // game.world.bringToTop(game.global.chars[winner].scoreText);
+    }
+
     var btns = [ {text: 'Stats', clickFunction: game.state.getCurrentState().viewStatsClick} ];
     if(!gameOver) btns.push({text: 'Play Next Round', clickFunction: game.state.getCurrentState().playAgainClick});
     btns.push({text: 'Quit', clickFunction: game.state.getCurrentState().chooseCourseClick});
@@ -156,8 +185,9 @@ var endOfGameState = {
       maxBtnWidth = Math.max(maxBtnWidth, btn.bubblewidth);
     };
 
+    //set the host's dialogue based on the score level of the player or whether there is a winner
     game.global.jinnySpeech.destroy();
-    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width + maxBtnWidth + 10), mindStateToUse.mind, true, false, null, false, null, true));
+    game.global.jinnySpeech = game.world.add(new game.global.SpeechBubble(game, game.global.jinny.right + (game.global.borderFrameSize * 2), game.global.chapterText.bottom, game.world.width - (game.global.jinny.width + maxBtnWidth + 10), (gameOver && winner >= 0) ? 'We have a winner!' : mindStateToUse.mind, true, false, null, false, null, true));
     this.endGameUI.add(game.global.jinnySpeech);
 
     // convert score + progress bars to percentage
@@ -235,6 +265,9 @@ var endOfGameState = {
     }
 
     game.state.getCurrentState().endGameUI.add(game.state.getCurrentState().statsUI);
+    if(gameOver && winner >= 0){
+      game.world.bringToTop(game.state.getCurrentState().winnerUI);
+    }
   },
 
   playAgainClick: function(){
@@ -264,5 +297,17 @@ var endOfGameState = {
 
   viewStatsClick: function(){
     game.state.getCurrentState().statsUI.visible = !game.state.getCurrentState().statsUI.visible;
+    game.world.bringToTop(game.state.getCurrentState().statsUI);
   }
+  //
+  // update: function(){
+  //   for (var i = 0; i < game.global.chars.length; i++) {
+  //     game.global.chars[i].scoreText.x = Math.floor(game.global.chars[i].sprite.right + game.global.borderFrameSize);
+  //     game.global.chars[i].scoreText.y = Math.floor(game.global.chars[i].sprite.centerY + (11*dpr));
+  //     game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.centerX - game.global.chars[i].name.width/2);
+  //     game.global.chars[i].name.y = Math.floor(game.global.chars[i].sprite.bottom);
+  //     game.global.chars[i].crown.centerX = Math.floor(game.global.chars[i].sprite.centerX);
+  //     game.global.chars[i].crown.y = Math.floor(game.global.chars[i].sprite.top - game.global.chars[i].sprite.height/2);
+  //   }
+  // }
 };

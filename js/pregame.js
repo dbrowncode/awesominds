@@ -57,7 +57,7 @@ var preGameState = {
     winChances = game.global.shuffleArray(winChances);
     winChances.unshift(0); //loop below doesn't use first index of winchances, so put garbage in there
     game.global.chars = [];
-    game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys);
+    game.global.oppImageKeys = game.global.shuffleArray(game.global.oppImageKeys); //randomize order of avatars
 
     //Dirty fix for opponents being on screen for smaller devices
     game.global.imagecheck = game.add.sprite((game.width + game.width) ,(game.height + game.height), game.global.oppImageKeys[1].imageKey);
@@ -66,11 +66,12 @@ var preGameState = {
 
     prevHeights += 10*dpr;
 
-    for(var i = 0; i < 3; i++){
+    for(var i = 0; i < 3; i++){ //set up the 3 characters including the player
       game.global.chars[i] = {};
       game.global.chars[i].name = game.add.text(0 - game.world.width, 0 - game.world.height, 'You', game.global.smallerWhiteFont);
       game.global.chars[i].name.fill= 0xffffff;
-      game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, (game.world.height - image.height - (game.global.chars[i].name.height)), (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i].imageKey);
+      game.global.chars[i].imageKey = (i==0) ? 'opp' + game.global.session['avatarnum'] : game.global.oppImageKeys[i].imageKey;
+      game.global.chars[i].sprite = game.add.sprite(0 - game.world.width, (game.world.height - image.height - (game.global.chars[i].name.height)), game.global.chars[i].imageKey);
       if(dpr>=2) game.global.chars[i].sprite.scale.setTo(dpr/4,dpr/4);
       game.global.chars[i].score = 0;
       game.global.chars[i].scoreText = game.add.text(0 - game.world.width, 0 - game.world.height, '0', game.global.smallerWhiteFont);
@@ -80,7 +81,7 @@ var preGameState = {
         if(dpr>=2) game.global.chars[i].crown.scale.setTo(dpr/4,dpr/4);
         game.global.chars[i].numJewels = 0;
       }
-      if(i!=0){
+      if(i!=0){ //extra set up for non-player characters
         prevHeights += Math.floor(image.height + (10 * dpr));
         game.global.chars[i].name.text = game.global.oppImageKeys[i].name;
         game.global.chars[i].chance = winChances[i];
