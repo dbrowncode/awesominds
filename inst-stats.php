@@ -116,7 +116,7 @@ $(function (){
         var str = "<h2>Scores for " + $('#courseDropdown').find(":selected").val() + ", Chapter " + $('#chapterDropdown').find(":selected").val() + ' </h2><p>Click a column heading to sort by that attribute</p><table id="table" class="display"><thead><tr><th>C Number</th><th>Display Name</th><th>Game Mode</th><th>High Score</th><th>Total Points Earned</th><th>Times Played</th></tr></thead><tbody>';
         var scores = $.parseJSON(data);
         for (var i = 0; i < scores.length; i++) {
-          str += '<tr><td>' + scores[i].c_number + '</td><td>' + scores[i].play_name + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].times_played + '</td></tr>';
+          str += '<tr><td>' + scores[i].c_number + '</td><td>' + scores[i].play_name + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].times_played + '</td></tr>';
         }
         $('#output').html(str + '</tbody></table>');
         $('#table').DataTable({ paging: false, "order": [[1, 'asc']] });
