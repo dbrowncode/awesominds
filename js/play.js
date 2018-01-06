@@ -188,7 +188,6 @@ var playState = {
     //animation
     game.add.tween(game.global.bubble).to({x: Math.floor(game.world.centerX - game.global.bubble.bubblewidth/2)}, 500, Phaser.Easing.Default, true, 250);
     this.enterSound.play();
-    game.global.buttons = [];
 
     //ai
     game.global.winThreshold = Math.floor(Math.random() * 100) + 1;
@@ -318,7 +317,7 @@ var playState = {
     game.global.choiceBubbles.forEach( function(item){ item.inputEnabled = false; } );
     //disable timer
     game.state.getCurrentState().timerOn = false;
-    game.global.pointsToAdd = game.state.getCurrentState().seconds; //capture time remaining to use as score
+    game.global.pointsToAdd = (typeof game.state.getCurrentState().seconds === 'undefined') ? 25 : game.state.getCurrentState().seconds; //capture time remaining to use as score; if time hasn't been set yet because the user is that fast, give them full points
     //increment number of answered questions
     game.global.questionsAnswered++;
 
@@ -369,7 +368,6 @@ var playState = {
 
       //points graphic
       if(!game.global.isRehash && this.data.correct){
-        // var ptsImage = game.add.sprite(game.world.centerX, game.world.height, game.global.answeredBeforeAI ? 'pts25' : 'pts10');
         var ptsImage = game.add.text(game.world.centerX, game.world.height, game.global.pointsToAdd + ' pts!');
         ptsImage.font = 'Arial';
         ptsImage.fontWeight = 'bold';
@@ -377,7 +375,6 @@ var playState = {
         ptsImage.stroke = '#000000';
         ptsImage.strokeThickness = Math.max(game.global.pointsToAdd / 2, 10) * dpr;
         ptsImage.fontSize = Math.max(game.global.pointsToAdd * 4, 40) * dpr;
-        // ptsImage.scale.setTo(dpr);
         var tweenA = game.add.tween(ptsImage).to({x: Math.floor(game.world.centerX - ptsImage.width/2), y: Math.floor(game.world.centerY - ptsImage.height/2)}, 300, Phaser.Easing.Default, false, 0);
         var tweenB = game.add.tween(ptsImage).to({alpha: 0}, 300, Phaser.Easing.Default, false, 300);
         tweenA.chain(tweenB);
@@ -452,6 +449,7 @@ var playState = {
   },
 
   animateOut : function(didntAnswer){
+    game.state.getCurrentState().timerOn = false;
     game.add.tween(game.global.questionUI).to({x: game.world.x - game.world.width}, 300, Phaser.Easing.Default, true, 0);
 
     makeBars = function(correct, didntAnswer){
@@ -540,7 +538,7 @@ var playState = {
   },
 
   updateTimer : function(){
-    if(this.timerOn){
+    if(game.state.getCurrentState().timerOn){
       var currentTime = new Date();
       var timeDiff = this.startTime.getTime() - currentTime.getTime();
       //time elapsed in seconds
