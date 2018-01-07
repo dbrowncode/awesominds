@@ -13,7 +13,6 @@ var preGameState = {
   create: function(){
     console.log("state: pregame");
     //Host
-    // game.global.jinny = game.add.sprite(0,0, 'jin', 0);
     game.global.bonus = 0;
     game.state.getCurrentState().makeHost();
     if (dpr >=2) game.global.jinny.scale.setTo(dpr/4, dpr/4);
@@ -24,7 +23,6 @@ var preGameState = {
     this.pregameUI = game.add.group();
 
     var instructLines = game.state.getCurrentState().instructLines.slice();
-    // instructLines[0] += game.global.session['play_name'] + "!";
 
     var courseText = game.add.text(game.global.pauseButton.left, game.world.y, game.global.selectedCourseName, game.global.smallerWhiteFont);
     courseText.x = Math.round(courseText.x - courseText.width - game.global.borderFrameSize);
@@ -66,7 +64,7 @@ var preGameState = {
 
     prevHeights += 10*dpr;
 
-    for(var i = 0; i < 3; i++){
+    for(var i = 0; i < 3; i++){ //create avatars and their score and name text
       game.global.chars[i] = {};
       game.global.chars[i].name = game.add.text(0 - game.world.width, 0 - game.world.height, 'You', game.global.smallerWhiteFont);
       game.global.chars[i].name.fill= 0xffffff;
@@ -80,7 +78,7 @@ var preGameState = {
         if(dpr>=2) game.global.chars[i].crown.scale.setTo(dpr/4,dpr/4);
         game.global.chars[i].numJewels = 0;
       }
-      if(i!=0){
+      if(i!=0){ //more setup for non-player avatars
         prevHeights += Math.floor(image.height + (10 * dpr));
         game.global.chars[i].name.text = game.global.oppImageKeys[i].name;
         game.global.chars[i].chance = winChances[i];
@@ -128,7 +126,7 @@ var preGameState = {
       }
     });
   },
-  update: function(){
+  update: function(){ //keeps names and crowns positioned near their avatars
     for (var i = 0; i < game.global.chars.length; i++) {
       game.global.chars[i].name.x = Math.floor(game.global.chars[i].sprite.right + (10*dpr));
       game.global.chars[i].name.y = Math.floor(game.global.chars[i].sprite.centerY + (10*dpr));

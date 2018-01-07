@@ -1,7 +1,5 @@
 var menuModeState = {
   create: function(){
-    console.log('state: menuMode');
-
     var back = game.world.add(new game.global.SpeechBubble(game, game.world.x, game.world.y, game.world.width, 'Back', false, true, menuModeState.backButton));
 
     var courseText = game.add.text(game.global.pauseButton.left, game.world.y, game.global.selectedCourseName, game.global.smallerWhiteFont);
@@ -26,7 +24,7 @@ var menuModeState = {
       { name: 'Wild Wild Guess', desc: 'Keep guessing until you get it right\n(Best for beginners)', prestate: 'pregameSU', gamestate: 'playSU', id: 1, endstate: 'endOfGameWWG', maxPtsPerQ: 15},
     ];
     var prevHeights = 10 * dpr;
-    for (var i = 0; i < modes.length; i++) {
+    for (var i = 0; i < modes.length; i++) { //create a button and text for each game mode
       var b = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, text.bottom, game.world.width * .8, modes[i].name, false, true, this.btnClick));
       b.y += prevHeights;
       prevHeights += b.bubbleheight + (10 * dpr);

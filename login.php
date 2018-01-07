@@ -10,7 +10,7 @@ if ( $result->num_rows == 0 ){ // User doesn't exist
 else { // User exists
   $user = $result->fetch_assoc();
 
-  if ( password_verify($_POST['password'], $user['password']) ) {
+  if ( password_verify($_POST['password'], $user['password']) ) { //if password matches, put user's info into the session and log in
     $_SESSION['c_number'] = $user['c_number'];
     $_SESSION['play_name'] = $user['play_name'];
     $_SESSION['avatarnum'] = $user['avatarnum'];

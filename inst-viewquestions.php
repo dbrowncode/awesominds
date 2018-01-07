@@ -116,7 +116,7 @@ var questions = [];
 var questionid = 0;
 var table = null;
 
-function nextLetter(s){
+function nextLetter(s){ //function takes a letter and returns the next letter alphabetically; useful for lettering the answer options for a question
   return s.replace(/([A-Z])[^A-Z]*$/, function(a){
     var c = a.charCodeAt(0);
     switch(c){
@@ -181,7 +181,7 @@ var getChapters = function(course){
   });
 }
 
-var getQuestions = function(){
+var getQuestions = function(){ //retrieves questions for the selected chapter of the selected course and outputs them to a table
   $.ajax({
     type: 'GET',
     url: 'getquestion.php',
@@ -194,7 +194,6 @@ var getQuestions = function(){
       for (var i = 0; i < data.length; i++) {
         var q = $.parseJSON(data[i]["question"]);
         var id = $.parseJSON(data[i]["questionid"]);
-        // console.log(q);
         htmlStr += '<tr id="row' + id + '"><td>' + id +'</td><td>' + q.question + '</td><td>'
         Object.keys(q.choices).forEach(function(key){
           htmlStr += key + ': ' + q.choices[key] + '<br>';

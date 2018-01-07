@@ -1,4 +1,4 @@
-//copy original playState and then modify it
+//copy original playState and then modify it to create the state for Wild Wild Guess mode
 var playStateSU = Object.create(playState);
 
 playStateSU.timesAnswered = 0;
@@ -101,7 +101,7 @@ playStateSU.createTimer = function(){}; //emptied to remove timer visuals
 
 playStateSU.updateTimer = function(){}; //emptied; not using this timer in this mode
 
-playStateSU.update = function(){
+playStateSU.update = function(){ //animates scores and keeps score text and names positioned near their respective avatars
   for (var i = 0; i < game.global.chars.length; i++) {
     var n = parseInt(game.global.chars[i].scoreText.text);
     if (n < game.global.chars[i].score){
@@ -115,7 +115,7 @@ playStateSU.update = function(){
   }
 };
 
-playStateSU.showAnswers = function(fromButton) {
+playStateSU.showAnswers = function(fromButton) { //show AI's selected answers
   if((!game.global.answersShown) && game.global.questionShown){
     for(i=1;i<game.global.chars.length;i++){
       game.add.tween(game.global.chars[i].answerBubble).to({width: game.global.answerBubbleWidth }, 100, Phaser.Easing.Default, true, 250 * i);

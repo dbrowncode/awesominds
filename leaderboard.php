@@ -34,7 +34,6 @@
           <select class='form-control' id='chapterDropdown'>
             <option value="null">Select a Chapter/Game</option>
           </select>
-          <!-- <span class="input-group-btn"><button id='selectChapterBtn' class='btn btn-primary' value='Select'>Select</button></span> -->
         </div>
         <div id="selectedChapterOutput"></div>
       </div>
@@ -43,15 +42,13 @@
   </div>
 
 <script>
-var getCourses = function(){
+var getCourses = function(){ //loads list of courses from the database and populates the course dropdown
   $.ajax({
     url: 'getcourses.php',
     success: function(data){
-      // console.log('got courses');
       $('#courseDropdown').empty();
       $('#courseDropdown').append('<option value="null">Select a Course</option>');
       var courses = $.parseJSON(data);
-      // console.log(data);
       for (var i = 0; i < courses.length; i++) {
         $('#courseDropdown').append('<option value="' + courses[i].courseid + '">' + courses[i].courseid + ' - ' + courses[i].name + '</option>');
       }
@@ -59,7 +56,7 @@ var getCourses = function(){
   });
 }
 
-var getChapters = function(){
+var getChapters = function(){ //loads list of chapters for the selected course from the database and populates the chapter dropdown
   $('#chapterDropdown').empty();
   $('#chapterDropdown').append('<option value="null">Select a Chapter</option>');
   $.ajax({
@@ -79,17 +76,17 @@ $(function (){
   $('#output').hide();
   var modes = ['Countdown Crown', 'Wild Wild Guess'];
 
-  $("#courseDropdown").change(function(){
+  $("#courseDropdown").change(function(){ //whenever a course is selected from the dropdown, this function fires
     $('#output').empty();
     $('#output').show();
-    $.ajax({
+    $.ajax({ //set the selected course in the php session
       type: 'POST',
       url: 'setcourse.php',
       data: { course: $('#courseDropdown').find(":selected").val() },
       success: function(data){
         getChapters();
         $('.selectChapterUI').show();
-        $.ajax({
+        $.ajax({ //get the scores for the selected course from the database and output them to a table
           url: 'getscores-course-forstudent.php',
           data: 'courseid=' + $('#courseDropdown').find(":selected").val(),
           success: function(data){
@@ -99,17 +96,17 @@ $(function (){
               str += '<tr><td>' + scores[i].play_name + '</td><td>' + scores[i].chapter + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].times_played + '</td></tr>';
             }
             $('#output').html(str + '</tbody></table>');
-            $('#table').DataTable({ paging: false, "order": [[0, 'asc']] });
+            $('#table').DataTable({ paging: false, "order": [[0, 'asc']] }); //fancify the table with datatables.js, adding sorting and searching
           }
         });
       }
     });
   });
 
-  $("#chapterDropdown").change(function(){
+  $("#chapterDropdown").change(function(){ //whenever a chapter is selected from the dropdown, this function fires
     $('#output').empty();
     $('#output').show();
-    $.ajax({
+    $.ajax({ //get the scores for the selected chapter from the database and output them to a table
       url: 'getscores-chapter-forstudent.php',
       data: 'courseid=' + $('#courseDropdown').find(":selected").val() + '&chapter=' + $('#chapterDropdown').find(":selected").val(),
       success: function(data){
@@ -119,7 +116,7 @@ $(function (){
           str += '<tr><td>' + scores[i].play_name + '</td><td>' + modes[scores[i].game_mode] + '</td><td>' + scores[i].high_score + '</td><td>' + scores[i].total_score + '</td><td>' + scores[i].times_played + '</td></tr>';
         }
         $('#output').html(str + '</tbody></table>');
-        $('#table').DataTable({ paging: false, "order": [[0, 'asc']] });
+        $('#table').DataTable({ paging: false, "order": [[0, 'asc']] }); //fancify the table with datatables.js, adding sorting and searching
       }
     });
   });

@@ -26,7 +26,7 @@ var menuCourseState = {
 
     var courses = [];
     $(function (){
-      $.ajax({
+      $.ajax({ //get list of courses from the database, and create a button for each one
         url: 'getcourses.php',
         success: function(data){
           courses = $.parseJSON(data);
@@ -43,7 +43,7 @@ var menuCourseState = {
         }
       });
     });
-    if(typeof(game.global.pauseButton) == "undefined"){
+    if(typeof(game.global.pauseButton) == "undefined"){ //check if pause button already exists in case we're coming back to this state again; if it doesn't exist, create it here
       game.global.pauseButton = game.world.add(new game.global.SpeechBubble(game, game.width, 0, game.width, '\uE8B8', false, true, game.global.pauseMenu));
       game.global.pauseButton.x -= game.global.pauseButton.bubblewidth + game.global.borderFrameSize;
       game.stage.addChild(game.global.pauseButton);

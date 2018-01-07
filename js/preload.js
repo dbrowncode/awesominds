@@ -19,7 +19,7 @@ var preloadState = {
     game.scale.windowConstraints.bottom = "visual";
     game.stage.disableVisibilityChange = true;
 
-    var assetPath = (dpr >= 2) ? 'assets/' : 'assets/small/';
+    var assetPath = (dpr >= 2) ? 'assets/' : 'assets/small/'; //use big assets on screens with high dpr, small assets otherwise
 
     game.load.image('right', 'assets/right.png');
     game.load.image('wrong', 'assets/wrong.png');
@@ -43,7 +43,7 @@ var preloadState = {
     game.load.audio('correct',['assets/music/CorrectAns.m4a','assets/music/CorrectAns.ogg']);
     game.load.audio('applause',['assets/music/playerWins.m4a','assets/music/PlayerWins.ogg']);
 
-    var jinSheetDim = (dpr >= 2) ? [264, 364] : [66, 91];
+    var jinSheetDim = (dpr >= 2) ? [264, 364] : [66, 91]; //sprite sheet sizes vary with dpr
     game.load.spritesheet('jin', assetPath + 'jin.png', jinSheetDim[0], jinSheetDim[1]);
     var crownSheetDim = (dpr >= 2) ? [397, 332] : [83, 69];
     game.load.spritesheet('crown', assetPath + 'crownsheet.png', crownSheetDim[0], crownSheetDim[1]);
@@ -98,7 +98,7 @@ var preloadState = {
 
     game.sound.volume = Math.round(game.global.session.user_volume * 10) / 10;
 
-    game.global.shuffleArray = function(array) {
+    game.global.shuffleArray = function(array) { //function to randomize any array
       for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
         var temp = array[i];

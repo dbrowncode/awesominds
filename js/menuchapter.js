@@ -17,7 +17,7 @@ var menuChapterState = {
 
     var chapters = [];
     $(function (){
-      $.ajax({
+      $.ajax({ //get list of chapters from the database and create a button for each one
         url: 'getchapters.php',
         data: 'courseid=' + game.global.selectedCourse,
         success: function(data){

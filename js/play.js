@@ -7,7 +7,7 @@ var playState = {
    */
   create: function(){
     console.log('state: play');
-    if(game.global.isRehash){
+    if(game.global.isRehash){ //if in rehash round, use the array of questions that were answered incorrectly in the previous round
       game.global.questions = game.global.rehashQuestions;
     } else {
       if(game.global.roundNum == 1){
@@ -121,7 +121,7 @@ var playState = {
         this.timerBar.loadTexture(this.gfx.generateTexture());
       }
 
-      if(Math.floor(this.timeRemaining) <= 3 && game.global.answersShown){
+      if(Math.floor(this.timeRemaining) <= 3 && game.global.answersShown){ //when there's little time left, make the bar red
         this.gfx = game.add.graphics(game.world.x - 1000, game.world.y - 1000);
         this.gfx.lineStyle(1, 0x000000, 1);
         this.gfx.beginFill(0xf70e0e, 1);
@@ -249,7 +249,7 @@ var playState = {
     shuffChoices = game.global.shuffleArray(shuffChoices);
     console.log(shuffChoices);
     i = 0;
-    for (var c in question.choices) {
+    for (var c in question.choices) { //create buttons for each choice from the question
       var cbwidth = Math.min(Math.floor(game.world.width - (game.global.jinny.width)), game.global.jinny.width * 5);
       var cb = game.world.add(new game.global.SpeechBubble(game, game.world.width + 1000, game.global.bubble.y + game.global.bubble.bubbleheight, cbwidth, shuffChoices[i], false, true, game.state.getCurrentState().btnClick, true, c));
       cb.y += Math.floor(prevHeights);
@@ -296,7 +296,7 @@ var playState = {
     }
   },
 
-  showAnswers : function(fromButton) {
+  showAnswers : function(fromButton) { //display ai's selected answers
     if((!game.global.answersShown) && game.global.questionShown && !game.global.isRehash){
       if(!fromButton){
         //only replace the speech if this function was not called from btn click and came from the timer
