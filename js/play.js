@@ -223,7 +223,7 @@ var playState = {
     function setupTimer(){
       var thisState = game.state.getCurrentState();
       thisState.startTime = new Date();
-      thisState.totalTime = game.global.selectedMode.maxPtsPerQ + 1;
+      thisState.totalTime = game.global.selectedMode.totalTime + 1;
       thisState.timeElapsed = 0;
       thisState.createTimer();
       thisState.gameTimer = game.time.events.loop(100, function(){ game.state.getCurrentState().updateTimer() });

@@ -73,7 +73,7 @@ var preGameState = {
       game.global.chars[i].score = 0;
       game.global.chars[i].scoreText = game.add.text(0 - game.world.width, 0 - game.world.height, '0', game.global.smallerWhiteFont);
       game.global.chars[i].scoreText.fill = 0xffffff;
-      if(game.global.selectedMode.id == 0){ //id for countdown crown
+      if(game.global.selectedMode.id == 0 || game.global.selectedMode.id == 2){ //id for countdown crown or time bonus
         game.global.chars[i].crown = game.add.sprite(0 - game.world.width, Math.floor(game.global.chars[i].sprite.top - game.global.chars[i].sprite.height/2), 'crown', 0);
         if(dpr>=2) game.global.chars[i].crown.scale.setTo(dpr/4,dpr/4);
         game.global.chars[i].numJewels = 0;
