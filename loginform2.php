@@ -44,15 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
           echo '<form action="loginpart2.php" method="post" autocomplete="off" id="loginForm">
                   <div class="form-group" id="loginPart2">
                     <p>Select the avatar you registered with:</p>
-                    <select class="image-picker" name="avatarSelect">';
+                    <select class="image-picker-1" name="avatarSelect">';
                     for ($i=0; $i < count($_SESSION['avatarKeys']) ; $i++) {
                       echo '<option data-img-src="assets/oppSmall/oppon'.$_SESSION['avatarKeys'][$i].'.png" data-img-class="img-fluid rounded" value="'.$_SESSION['avatarKeys'][$i].'">'.$i.'</option>';
                     }
               echo '</select>
                     <p>Select the display name you registered with:</p>
-                    <select class="image-picker" name="nameSelect">';
+                    <select class="image-picker-2" name="nameSelect">';
                     for ($i=0; $i < count($_SESSION['names']) ; $i++) {
-                      echo '<option data-img-src="" data-img-alt="'.$_SESSION['names'][$i].'" value="'.$_SESSION['names'][$i].'">'.$i.'</option>';
+                      echo '<option data-img-src="" data-img-label="'.$_SESSION['names'][$i].'" value="'.$_SESSION['names'][$i].'">'.$i.'</option>';
                     }
               echo '</select>
                     <button class="btn btn-primary" name="login" id="loginBtn">Log In</button>
@@ -60,7 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
                 </form>
                 <script>
                 jQuery(document).ready(function($){
-                  $(".image-picker").imagepicker()
+                  $(".image-picker-1").imagepicker()
+                  $(".image-picker-2").imagepicker({
+                    show_label: true
+                  })
                   $(".image_picker_selector").addClass("row");
                   $("li").addClass("col-sm-3 mx-auto");
                 });
