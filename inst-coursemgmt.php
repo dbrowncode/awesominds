@@ -374,7 +374,10 @@ var getChapters = function(course){
       $('#inviteStudentsBtn').off('click');
       $('#inviteStudentsBtn').click(function(){
         for (var i = 0; i < courses.length; i++) { //find this course's regcode and make the link
-          if(courses[i].courseid === selectedCourse) $('#studentReglink').val('http://gbl.cs.camosun.bc.ca/awesominds/index.php?regcode=' + courses[i].regcode);
+          if(courses[i].courseid === selectedCourse){
+            var url = window.location.href.substring(0, window.location.href.indexOf("inst-coursemgmt.php"));
+            $('#studentReglink').val(url + '?regcode=' + courses[i].regcode);
+          } 
         }
         $('#studentReglink').off('click');
         $('#studentReglink').click(function(){ this.select(); });
